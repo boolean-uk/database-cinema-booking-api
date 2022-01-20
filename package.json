@@ -1,0 +1,33 @@
+{
+  "name": "cinema-booking-api",
+  "version": "1.0.0",
+  "description": "> API stands for Application Programming Interface, which is a set of definitions and protocols for building and integrating software. Simply put, they allow two pieces of software to communicate with each other through a pre-defined interface.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boolean-uk/cinema-booking-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/boolean-uk/cinema-booking-api/issues"
+  },
+  "homepage": "https://github.com/boolean-uk/cinema-booking-api#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "prisma": "^3.8.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2"
+  }
+}
