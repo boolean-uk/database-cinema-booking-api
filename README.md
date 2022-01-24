@@ -5,7 +5,6 @@
 ## Learning Objectives
 
 - Design and build a database-backed API
-- Use a specification to provide consistent JSON response structures
 
 ## Introduction
 
