@@ -33,7 +33,7 @@ The full database schema and seed file for this exercise has already been implem
 
 So far, you may have been using `curl` to test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
 
-- [Insomnia](https://insomnia.rest/) (recommended)
+- [Insomnia](https://insomnia.rest/download) (recommended)
 - [Postman](https://www.postman.com/)
 
 These tools are quite similar to your web browser but have some additional functionality to make structuring API requests easier.
