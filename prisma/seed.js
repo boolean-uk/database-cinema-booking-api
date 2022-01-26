@@ -33,8 +33,8 @@ async function createCustomer() {
 
 async function createMovies() {
     const rawMovies = [
-        { title: 'The Matrix', rating: 'PG', runtimeMins: 120 },
-        { title: 'Dodgeball', rating: 'R18', runtimeMins: 154 },
+        { title: 'The Matrix', runtimeMins: 120 },
+        { title: 'Dodgeball', runtimeMins: 154 },
     ];
 
     const movies = [];
