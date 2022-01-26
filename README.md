@@ -27,6 +27,7 @@ The full database schema and seed file for this exercise has already been implem
 
 ## Instructions
 
+- Run the app with `npm start`
 - Work through each file in the `requirements` directory in numerical order
 
 ## Testing your work
