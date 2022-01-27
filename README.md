@@ -4,7 +4,7 @@
 
 ## Learning Objectives
 
-- Design and build a database-backed API
+- Design and build a database-backend API
 
 ## Introduction
 
