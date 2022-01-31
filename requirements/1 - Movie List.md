@@ -1,6 +1,7 @@
 # Movie List
 
 - Build a route to retrieve a list of every movie
+    - [Prisma find multiple records](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#findmany)
 - Include the available screenings for each movie in the response
     - [Prisma Include Related Records](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#include)
 - Add the ability to filter movies by runtime (in minutes), both less than and greater than a value provided in a query
