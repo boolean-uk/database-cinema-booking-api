@@ -1,0 +1,463 @@
+openapi: 3.0.0
+info:
+  title: Cinema Booking API
+  version: 0.0.1
+servers:
+  - url: http://localhost:4040
+basePath: /
+schemes:
+  - http
+paths:
+  /movies:
+    get:
+      summary: Retrieve a list of movies
+      description: The screenings related to them should be included in the response data. As an extension, allow for the runtimeLt and runtimeGt parameters to filter the results; both of these should be able to be used together and by themselves.
+      parameters:
+        - name: runtimeLt
+          in: query
+          description: EXTENSION Only retrieve movies with a runtime less than the provided value
+          schema:
+            type: integer
+        - name: runtimeGt
+          in: query
+          description: EXTENSION Only retrieve movies with a runtime greater than the provided value
+          schema:
+            type: integer
+      tags:
+        - movies
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Movie'
+    post:
+      summary: Create a movie
+      description: As an extension, include the ability to create screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the movie.
+      tags:
+        - movies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoviePost"
+      responses:
+        201:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movie:
+                    type: object
+                    $ref: "#/components/schemas/Movie"
+        400:
+          description: ERROR (EXTENSION) - Missing fields in request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        409:
+          description: ERROR (EXTENSION) - A movie with the provided title already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /movies/{id}:
+    get:
+      summary: Retrieve a movie by ID
+      description: The screenings related to it should be included in the response body. As an extension, allow either an ID or a title to be provided.
+      tags:
+        - movies
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movie:
+                    type: object
+                    $ref: "#/components/schemas/Movie"
+        404:
+          description: ERROR (EXTENSION) - Movie with that id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    put:
+      summary: Update a movie
+      description: As an extension, include the ability to update screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just update the movie.
+      tags:
+        - movies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoviePost"
+      responses:
+        201:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movie:
+                    type: object
+                    $ref: "#/components/schemas/Movie"
+        400:
+          description: ERROR (EXTENSION) - Missing fields in request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        404:
+          description: ERROR (EXTENSION) - Movie with that id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /customers/{id}:
+    put:
+      summary: Update a customer
+      description: As an extension, include the ability to update the contact data for the customer if the request body has a contact property. If that property doesn't exist in the request body, just update the customer.
+      tags:
+        - customers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerPost"
+      responses:
+        201:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customer:
+                    type: object
+                    $ref: "#/components/schemas/Customer"
+        400:
+          description: ERROR (EXTENSION) - Missing fields in request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        404:
+          description: ERROR (EXTENSION) - Customer with that id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /screens:
+    post:
+      summary: Create a screen
+      description: As an extension, include the ability to create screenings for a movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the screen.
+      tags:
+        - screens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScreenPost"
+      responses:
+        201:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  screen:
+                    type: object
+                    $ref: "#/components/schemas/Screen"
+        400:
+          description: ERROR (EXTENSION) - Missing fields in request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        409:
+          description: ERROR (EXTENSION) - A screen with the provided number already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /tickets:
+    post:
+      summary: EXTENSION Create a ticket
+      description: The response should include the data for the customer, contact details, movie, screening and screen
+      tags:
+        - tickets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketPost"
+      responses:
+        201:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket:
+                    type: object
+                    $ref: "#/components/schemas/TicketPostResponse"
+        400:
+          description: ERROR (EXTENSION) - Missing fields in request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        404:
+          description: ERROR (EXTENSION) - A customer or screening does not exist with the provided id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+components:
+  schemas:
+    Movie: 
+      type: object
+      properties:
+        id: 
+          type: integer
+        title:
+          type: string
+        runtimeMins:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        screenings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Screening'
+    MoviePost: 
+      type: object
+      properties:
+        title:
+          type: string
+        runtimeMins:
+          type: integer
+        screenings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningPost'
+    Screening: 
+      type: object
+      properties:
+        id:
+          type: integer
+        movieId:
+          type: integer
+        screenId:
+          type: integer
+        startsAt:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    ScreeningPost: 
+      type: object
+      properties:
+        movieId:
+          type: integer
+        screenId:
+          type: integer
+        startsAt:
+          type: string
+    Customer: 
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        contact:
+          type: object
+          $ref: '#/components/schemas/Contact'
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+    CustomerPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        contact:
+          type: object
+          $ref: '#/components/schemas/ContactPost'
+    Contact: 
+      type: object
+      properties:
+        id:
+          type: integer
+        customerId:
+          type: integer
+        phone:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    ContactPost: 
+      type: object
+      properties:
+        phone:
+          type: string
+        email:
+          type: string
+    Screen: 
+      type: object
+      properties:
+        id:
+          type: integer
+        number:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        screenings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Screening'
+    ScreenPost: 
+      type: object
+      properties:
+        number:
+          type: integer
+        screenings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningPost'
+    Ticket: 
+      type: object
+      properties:
+        id:
+          type: integer
+        screeningId:
+          type: integer
+        customerId:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    TicketPost: 
+      type: object
+      properties:
+        screeningId:
+          type: integer
+        customerId:
+          type: integer
+    TicketPostResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        screening:
+          type: object
+          $ref: '#/components/schemas/Screening'
+        customer:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            createdAt:
+              type: string
+            updatedAt:
+              type: string
+            contact:
+              type: object
+              $ref: '#/components/schemas/Contact'
+        screen:
+          type: object
+          properties:
+            id:
+              type: integer
+            number:
+              type: integer
+            createdAt:
+              type: string
+            updatedAt:
+              type: string
+        movie:
+          type: object
+          properties:
+            id: 
+              type: integer
+            title:
+              type: string
+            runtimeMins:
+              type: integer
+            createdAt:
+              type: string
+            updatedAt:
+              type: string
