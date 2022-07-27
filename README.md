@@ -28,7 +28,13 @@ The full database schema and seed file for this exercise has already been implem
 ## Instructions
 
 - Run the app with `npm start`
-- Work through each file in the `requirements` directory in numerical order
+- Work through each route detailed in the [API Spec](https://boolean-uk.github.io/database-cinema-booking-api/). Leave any extensions until the end.
+
+## Extensions to the Extensions
+
+- Change your movie list GET route to only respond with movies that have a future screening time
+- Add the ability for customers to leave reviews on movies
+    - This will require a new entity in your diagram, schema file and seed file. Remember the `npx prisma generate`, `npx prisma migrate dev --create-only --skip-seed --name reviews` and `npx prisma migrate reset` commands from an earlier exercise!
 
 ## Testing your work
 
