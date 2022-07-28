@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "test": "npx jest -i test/api/routes",
-    "test:ext": "npx jest -i test/api/extensions"
+    "test:ext": "npx jest -i test/api/extensions",
+    "test:main": "npx jest -i test/api/main"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
