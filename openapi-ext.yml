@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Cinema Booking API
+  title: Cinema Booking API - Extension Criteria
   version: 0.0.1
 servers:
   - url: http://localhost:4040
@@ -11,16 +11,16 @@ paths:
   /movies:
     get:
       summary: Retrieve a list of movies
-      description: The screenings related to them should be included in the response data. As an extension, allow for the runtimeLt and runtimeGt parameters to filter the results; both of these should be able to be used together and by themselves.
+      description: Allow for the runtimeLt and runtimeGt parameters to filter the results; both of these should be able to be used together and by themselves.
       parameters:
         - name: runtimeLt
           in: query
-          description: EXTENSION Only retrieve movies with a runtime less than the provided value
+          description: Only retrieve movies with a runtime less than the provided value
           schema:
             type: integer
         - name: runtimeGt
           in: query
-          description: EXTENSION Only retrieve movies with a runtime greater than the provided value
+          description: Only retrieve movies with a runtime greater than the provided value
           schema:
             type: integer
       tags:
@@ -39,7 +39,7 @@ paths:
                       $ref: '#/components/schemas/Movie'
     post:
       summary: Create a movie
-      description: As an extension, include the ability to create screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the movie.
+      description: Include the ability to create screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the movie.
       tags:
         - movies
       requestBody:
@@ -60,7 +60,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Movie"
         400:
-          description: ERROR (EXTENSION) - Missing fields in request body
+          description: ERROR - Missing fields in request body
           content:
             application/json:
               schema:
@@ -69,7 +69,7 @@ paths:
                   error:
                     type: string
         409:
-          description: ERROR (EXTENSION) - A movie with the provided title already exists
+          description: ERROR - A movie with the provided title already exists
           content:
             application/json:
               schema:
@@ -80,7 +80,7 @@ paths:
   /movies/{id}:
     get:
       summary: Retrieve a movie by ID
-      description: The screenings related to it should be included in the response body. As an extension, allow either an ID or a title to be provided.
+      description: Allow either an ID or a title to be provided.
       tags:
         - movies
       responses:
@@ -95,7 +95,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Movie"
         404:
-          description: ERROR (EXTENSION) - Movie with that id does not exist
+          description: ERROR - Movie with that id or title does not exist
           content:
             application/json:
               schema:
@@ -105,7 +105,7 @@ paths:
                     type: string
     put:
       summary: Update a movie
-      description: As an extension, include the ability to update screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just update the movie.
+      description: Include the ability to update screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just update the movie.
       tags:
         - movies
       requestBody:
@@ -126,7 +126,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Movie"
         400:
-          description: ERROR (EXTENSION) - Missing fields in request body
+          description: ERROR - Missing fields in request body
           content:
             application/json:
               schema:
@@ -135,7 +135,16 @@ paths:
                   error:
                     type: string
         404:
-          description: ERROR (EXTENSION) - Movie with that id does not exist
+          description: ERROR - Movie with that id does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        409:
+          description: ERROR - Movie with that title already exists
           content:
             application/json:
               schema:
@@ -146,7 +155,7 @@ paths:
   /customers/{id}:
     put:
       summary: Update a customer
-      description: As an extension, include the ability to update the contact data for the customer if the request body has a contact property. If that property doesn't exist in the request body, just update the customer.
+      description: Include the ability to update the contact data for the customer if the request body has a contact property. If that property doesn't exist in the request body, just update the customer.
       tags:
         - customers
       requestBody:
@@ -167,7 +176,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Customer"
         400:
-          description: ERROR (EXTENSION) - Missing fields in request body
+          description: ERROR - Missing fields in request body
           content:
             application/json:
               schema:
@@ -176,7 +185,7 @@ paths:
                   error:
                     type: string
         404:
-          description: ERROR (EXTENSION) - Customer with that id does not exist
+          description: ERROR - Customer with that id does not exist
           content:
             application/json:
               schema:
@@ -187,7 +196,7 @@ paths:
   /screens:
     post:
       summary: Create a screen
-      description: As an extension, include the ability to create screenings for a movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the screen.
+      description: Include the ability to create screenings for a movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the screen.
       tags:
         - screens
       requestBody:
@@ -208,7 +217,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Screen"
         400:
-          description: ERROR (EXTENSION) - Missing fields in request body
+          description: ERROR - Missing fields in request body
           content:
             application/json:
               schema:
@@ -217,7 +226,7 @@ paths:
                   error:
                     type: string
         409:
-          description: ERROR (EXTENSION) - A screen with the provided number already exists
+          description: ERROR - A screen with the provided number already exists
           content:
             application/json:
               schema:
@@ -227,7 +236,7 @@ paths:
                     type: string
   /tickets:
     post:
-      summary: EXTENSION Create a ticket
+      summary: Create a ticket
       description: The response should include the data for the customer, contact details, movie, screening and screen
       tags:
         - tickets
@@ -249,7 +258,7 @@ paths:
                     type: object
                     $ref: "#/components/schemas/TicketPostResponse"
         400:
-          description: ERROR (EXTENSION) - Missing fields in request body
+          description: ERROR - Missing fields in request body
           content:
             application/json:
               schema:
@@ -258,7 +267,7 @@ paths:
                   error:
                     type: string
         404:
-          description: ERROR (EXTENSION) - A customer or screening does not exist with the provided id
+          description: ERROR - A customer or screening does not exist with the provided id
           content:
             application/json:
               schema:
