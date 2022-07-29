@@ -28,7 +28,11 @@ The full database schema and seed file for this exercise has already been implem
 ## Instructions
 
 - Run the app with `npm start`
-- Work through each route detailed in the [API Spec](https://boolean-uk.github.io/database-cinema-booking-api/). Leave any extensions until the end.
+- Work through each route detailed in the [API Spec](https://boolean-uk.github.io/database-cinema-booking-api/).
+
+## Extensions
+
+- Work through each route detailed in the [extended API Spec](https://boolean-uk.github.io/database-cinema-booking-api/extensions). This will require making changes to your existing routes, creating error responses for certain situations, and introducing a new route.
 
 ## Extensions to the Extensions
 
