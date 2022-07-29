@@ -36,7 +36,7 @@ const createCustomer = async (req, res) => {
             }
         })
 
-        res.json({ data: createdCustomer })
+        res.status(201).json({ customer: createdCustomer })
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
             if (e.code === "P2002") {
