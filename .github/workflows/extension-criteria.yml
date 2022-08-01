@@ -5,7 +5,7 @@ name: Extension Criteria
 
 on:
   pull_request:
-    branches: [ "ci" ]
+    branches: [ "main" ]
 
 jobs:
   build:
