@@ -20,11 +20,11 @@ describe("Customer Endpoint", () => {
                 .send(request)
 
             expect(response.status).toEqual(200)
-            expect(response.body.data).not.toEqual(undefined)
-            expect(response.body.data.name).toEqual(request.name)
-            expect(response.body.data.contact).not.toEqual(undefined)
-            expect(response.body.data.contact.phone).toEqual("789")
-            expect(response.body.data.contact.email).toEqual("jane@test.com")
+            expect(response.body.customer).not.toEqual(undefined)
+            expect(response.body.customer.name).toEqual(request.name)
+            expect(response.body.customer.contact).not.toEqual(undefined)
+            expect(response.body.customer.contact.phone).toEqual("789")
+            expect(response.body.customer.contact.email).toEqual("jane@test.com")
         })
 
         it('will return 404 if the customer is not found', async () => {
