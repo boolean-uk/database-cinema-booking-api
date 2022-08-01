@@ -45,4 +45,4 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npx prisma migrate reset --force --skip-seed
-    - run: npm run test:ext
+    - run: npx jest --bail -i test/api/extensions
