@@ -42,7 +42,11 @@ The full database schema and seed file for this exercise has already been implem
 
 ## Testing your work
 
-So far, you may have been using `curl` to test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
+- Run the test suite with `npm test`
+- Run the extension test suite with `npm run test:ext`
+    - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide
+
+So far, you may have been using `curl` to manually test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
 
 - [Insomnia](https://insomnia.rest/download) (recommended)
 - [Postman](https://www.postman.com/)
