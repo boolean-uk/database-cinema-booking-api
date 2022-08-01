@@ -10,7 +10,7 @@ const createMovie = async (req, res) => {
 
   const createdMovie = await prisma.movie.create({
     data: { title, runtimeMins },
-    include: {screenings: true}
+    // include: {screenings: true}
   });
 
   return res.status(201).json({ movie: createdMovie });
