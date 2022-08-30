@@ -1,5 +1,5 @@
-const { Prisma } = require('@prisma/client');
-const prisma = require('../utils/prisma');
+const model = require('../models/customers');
+const { SUCCESS } = require('../utils/vars');
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body;
@@ -10,66 +10,45 @@ const createCustomer = async (req, res) => {
     });
   }
 
-  try {
-    /**
-     * This will create a Customer AND create a new Contact, then automatically relate them with each other
-     * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
-     */
-    const createdCustomer = await prisma.customer.create({
-      data: {
-        name,
-        contact: {
-          create: {
-            phone,
-            email,
-          },
-        },
-      },
-      // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-      // This is like doing RETURNING in SQL
-      include: {
-        contact: true,
-      },
-    });
+  const [status, dbRes] = await model.createCustomer(name, phone, email);
 
-    res.status(201).json({ customer: createdCustomer });
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === 'P2002') {
-        return res
-          .status(409)
-          .json({ error: 'A customer with the provided email already exists' });
-      }
-    }
-
-    res.status(500).json({ error: e.message });
+  if (status === SUCCESS) {
+    return res.status(201).json({ customer: dbRes });
   }
+
+  if (dbRes === 'P2002') {
+    return res
+      .status(409)
+      .json({ error: 'A customer with the provided email already exists' });
+  }
+
+  res.status(500).json({ error: 'Something went wrong' });
 };
 
 const updateCustomer = async (req, res) => {
   const { name } = req.body;
 
   if (!name) {
-    res.status(400).json({ error: 'Missing body' });
+    res.status(400).json({ error: 'ng body' });
   }
 
   const customerId = parseInt(req.params.id);
 
-  const customer = await prisma.customer.update({
-    where: {
-      id: customerId,
-    },
-    data: {
-      name,
-    },
-    include: {
-      contact: true,
-    },
-  });
+  const [status, dbRes] = await model.updateCustomer(customerId, name);
 
-  res.status(201).json({
-    customer,
-  });
+  if (status === SUCCESS) {
+    return res.status(201).json({
+      customer: dbRes,
+    });
+  }
+
+  if (dbRes === 'P2025') {
+    return res
+      .status(404)
+      .json({ error: 'Customer with that id does not exist' });
+  }
+
+  res.status(500).json({ error: 'Something went wrong' });
 };
 
 module.exports = {

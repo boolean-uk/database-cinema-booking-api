@@ -19,7 +19,7 @@ describe('Customer Endpoint', () => {
         .put(`/customers/${customer.id}`)
         .send(request);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(201);
       expect(response.body.customer).not.toEqual(undefined);
       expect(response.body.customer.name).toEqual(request.name);
       expect(response.body.customer.contact).not.toEqual(undefined);

@@ -1,4 +1,4 @@
-const prisma = require("../../src/utils/prisma")
+const prisma = require('../../src/utils/prisma');
 
 const createCustomer = async (name, phone, email) => {
   return await prisma.customer.create({
@@ -11,9 +11,9 @@ const createCustomer = async (name, phone, email) => {
         },
       },
     },
-  })
-}
+  });
+};
 
 module.exports = {
-    createCustomer
-}
+  createCustomer,
+};
