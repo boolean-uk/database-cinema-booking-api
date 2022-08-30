@@ -28,17 +28,17 @@ const getMovie = async (req, res) => {
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
-  // if (!title || !runtimeMins) {
-  //     return res.status(400).json({
-  //         error: "Missing fields in request body"
-  //     })
-  // }
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
 
   try {
     const createdMovie = await prisma.movie.create({
       data: {
-        title: "BEAST",
-        runtimeMins: 93,
+        title: req.body.title,
+        runtimeMins: req.body.runtimeMins,
       },
 
       include: {
@@ -60,8 +60,28 @@ const createMovie = async (req, res) => {
   }
 };
 
+const updateMovie = async (req, res) => {
+  const movie = await prisma.movie.update({
+    where: {
+      id: Number(req.params.id),
+    },
+
+    data: {
+      title: req.body.title,
+      runtimeMins: req.body.runtimeMins,
+    },
+
+    include: {
+      screenings: true,
+    },
+  });
+
+  res.status(201).json({ movie: movie });
+};
+
 module.exports = {
   getMovies,
   createMovie,
   getMovie,
+  updateMovie,
 };
