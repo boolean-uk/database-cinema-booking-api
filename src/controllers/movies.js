@@ -36,7 +36,9 @@ const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.status(400).json({ error: 'Missing body' });
+    return res
+      .status(400)
+      .json({ error: 'Missing fields in the request body' });
   }
 
   const [status, dbRes] = await models.createMovie(title, runtimeMins);
@@ -48,7 +50,7 @@ const createMovie = async (req, res) => {
   if (dbRes === 'P2002') {
     return res
       .status(409)
-      .json({ error: 'Movie with that title already exists' });
+      .json({ error: 'A movie with the provided title already exists' });
   }
 
   res.status(500).json({ error: 'Something went wrong' });
@@ -57,8 +59,10 @@ const createMovie = async (req, res) => {
 const updateMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
-  if (!title || !runtimeMins) {
-    return res.status(400).json({ error: 'Missing body' });
+  if (!title && !runtimeMins) {
+    return res
+      .status(400)
+      .json({ error: 'Missing fields in the request body' });
   }
 
   const movieId = parseInt(req.params.id);
@@ -76,7 +80,7 @@ const updateMovie = async (req, res) => {
   if (dbRes === 'P2002') {
     return res
       .status(409)
-      .json({ error: 'Movie with that title already exists' });
+      .json({ error: 'A movie with the provided title already exists' });
   }
 
   res.status(500).json({ error: 'Something went wrong' });

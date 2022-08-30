@@ -42,9 +42,6 @@ const getMovieById = async (movieId, title) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return [FAILED, error.code];
     }
-    if (error instanceof Prisma.error) {
-      console.log('hi');
-    }
   }
 };
 
