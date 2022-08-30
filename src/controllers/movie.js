@@ -1,11 +1,21 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
-const getMovie = async (req, res) => {
+// GET read all movies (including screenings)
+const getMovies = async (req, res) => {
   // res.json({ msg: `I'm all hooked up` });
-  
-};
+  const movies = await prisma.movie.findMany(
+    {include: {screenings: true}}
+    );
+  res.json({movies: movies});
+}; 
+
+// GET read a movie by id
+
+// POST create a movie
+
+// PUT update a movie
 
 module.exports = {
-  getMovie,
+  getMovies,
 };
