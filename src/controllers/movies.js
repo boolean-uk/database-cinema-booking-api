@@ -15,7 +15,7 @@ const getAllMovies = async (req, res) => {
 
 const getMovieById = async (req, res) => {
   const movieId = parseInt(req.params.id);
-  const movieTitle = parseInt(req.params.title);
+  const movieTitle = req.params.title;
 
   const [status, dbRes] = await models.getMovieById(movieId, movieTitle);
 
@@ -69,7 +69,7 @@ const updateMovie = async (req, res) => {
     return res.status(201).json({ movie: dbRes });
   }
 
-  if (dbRes === 'P2001') {
+  if (dbRes === 'P2025') {
     return res.status(404).json({ error: 'Movie with that id does not exist' });
   }
 

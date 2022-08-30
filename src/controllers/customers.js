@@ -27,14 +27,21 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   const { name } = req.body;
+  const phone = req.body.contact?.phone ?? undefined;
+  const email = req.body.contact?.email ?? undefined;
 
   if (!name) {
-    res.status(400).json({ error: 'ng body' });
+    return res.status(400).json({ error: 'Missing fields in request body' });
   }
 
   const customerId = parseInt(req.params.id);
 
-  const [status, dbRes] = await model.updateCustomer(customerId, name);
+  const [status, dbRes] = await model.updateCustomer(
+    customerId,
+    name,
+    phone,
+    email
+  );
 
   if (status === SUCCESS) {
     return res.status(201).json({
@@ -42,7 +49,7 @@ const updateCustomer = async (req, res) => {
     });
   }
 
-  if (dbRes === 'P2025') {
+  if (dbRes === 'P2016') {
     return res
       .status(404)
       .json({ error: 'Customer with that id does not exist' });

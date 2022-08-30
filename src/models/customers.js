@@ -28,7 +28,7 @@ const createCustomer = async (name, phone, email) => {
   }
 };
 
-const updateCustomer = async (id, name) => {
+const updateCustomer = async (id, name, phone, email) => {
   try {
     const customer = await prisma.customer.update({
       where: {
@@ -36,11 +36,20 @@ const updateCustomer = async (id, name) => {
       },
       data: {
         name,
+        contact: {
+          update: {
+            phone,
+            email,
+          },
+        },
       },
+
       include: {
         contact: true,
       },
     });
+
+    console.log(customer);
     return [SUCCESS, customer];
   } catch (err) {
     console.error(err);

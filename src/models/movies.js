@@ -21,7 +21,7 @@ const getAllMovies = async () => {
 
 const getMovieById = async (movieId, title) => {
   const id = movieId ?? title;
-
+  console.log(id);
   try {
     const movie = await prisma.movie.findUnique({
       where: {
@@ -32,11 +32,18 @@ const getMovieById = async (movieId, title) => {
       },
     });
 
+    if (movie === null) {
+      return [FAILED, 'P2001'];
+    }
+
     return [SUCCESS, movie];
   } catch (error) {
     console.error(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return [FAILED, error.code];
+    }
+    if (error instanceof Prisma.error) {
+      console.log('hi');
     }
   }
 };
