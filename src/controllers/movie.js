@@ -2,7 +2,11 @@ const { Prisma } = require("@prisma/client")
 const prisma = require('../utils/prisma')
 
 const getAllMovies = async (req, res) => {
-    const allMovies = await prisma.movie.findMany()
+    const allMovies = await prisma.movie.findMany({
+        include: {
+            screenings: true
+        }
+    })
 
     res.json({
         movies: allMovies
@@ -15,11 +19,24 @@ const createMovie = async (req, res) => {
         runtimeMins
     } = req.body
 
-    if (!title || !runtimeMins) {
+    if (!title || !(runtimeMins >= 0)) {
         return res.status(400).json({
             error: "Missing fields in request body"
         })
     }
+
+    const createdMovie = await prisma.movie.create({
+        data: {
+            title,
+            runtimeMins,
+            screenings: {
+                connect: {id: 1}
+            }
+        },
+        include: { 
+            screenings: true
+        }
+    })
 
     // try {
     //     /**
