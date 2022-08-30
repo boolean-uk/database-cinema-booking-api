@@ -47,7 +47,7 @@ describe('Screens Endpoint', () => {
       expect(response.body.screen.screenings.length).toEqual(3);
     });
 
-    it('will return 400 status', async () => {
+    it('will return 400 status if there are missing fields in the request body', async () => {
       const request = {};
 
       const response = await supertest(app).post('/screens').send(request);
@@ -56,7 +56,7 @@ describe('Screens Endpoint', () => {
       expect(response.body.error).toEqual('Missing fields in request body');
     });
 
-    it('will return 409 status', async () => {
+    it('will return 409 status if screen number already exists', async () => {
       await createScreen(1);
       const request = { number: 1 };
 
