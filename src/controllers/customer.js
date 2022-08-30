@@ -57,6 +57,9 @@ const updateCustomerById = async (req, res) => {
             },
             data: {
                 name: req.body.name
+            },
+            include: {
+                contact: true,
             }
         })
         res.status(201).json({ customer: updatedCustomer })

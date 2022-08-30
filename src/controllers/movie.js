@@ -4,7 +4,11 @@ const prisma = require('../utils/prisma')
 // Get all movies
 const getAllMovies = async (req, res) => {
     try {
-        const allMovies = await prisma.movie.findMany()
+        const allMovies = await prisma.movie.findMany({
+            include: {
+                screenings: true,
+            }
+        })
         res.status(200).json({ movies: allMovies })
     } catch (err) {
         res.status(404).json({ error: err })
@@ -18,9 +22,12 @@ const createMovie = async (req, res) => {
             data: {
                 title: req.body.title,
                 runtimeMins: req.body.runtimeMins
+            },
+            include: {
+                screenings: true,
             }
         })
-        res.status(201).json({ movies: createdMovie })
+        res.status(201).json({ movie: createdMovie })
     } catch (err) {
         res.status(404).json({ error: err })
     }
@@ -32,6 +39,9 @@ const getMovieById = async (req, res) => {
         const uniqueMovie = await prisma.movie.findUnique({
             where: {
                 id: +req.params.id
+            },
+            include: {
+                screenings: true,
             }
         })
         res.status(200).json({ movie: uniqueMovie })
@@ -50,6 +60,9 @@ const updateMovieById = async (req, res) => {
             data: {
                 title: req.body.title,
                 runtimeMins: req.body.runtimeMins
+            },
+            include: {
+                screenings: true,
             }
         })
         res.status(201).json({ movie: updatedMovie })
