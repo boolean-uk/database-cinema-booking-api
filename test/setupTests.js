@@ -1,4 +1,4 @@
-const prisma = require("../src/utils/prisma")
+const prisma = require('../src/utils/prisma');
 
 const deleteTables = () => {
   const deleteTables = [
@@ -9,14 +9,13 @@ const deleteTables = () => {
     prisma.contact.deleteMany(),
     prisma.customer.deleteMany(),
   ];
-  return prisma.$transaction(deleteTables)
-}
-
+  return prisma.$transaction(deleteTables);
+};
 
 global.afterEach(() => {
-  return deleteTables()
-})
+  return deleteTables();
+});
 
 global.afterAll(() => {
-  return prisma.$disconnect()
-})
+  return prisma.$disconnect();
+});

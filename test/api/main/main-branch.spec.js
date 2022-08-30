@@ -1,50 +1,52 @@
-const supertest = require("supertest")
-const app = require("../../../src/server.js")
-const { createCustomer } = require("../../helpers/createCustomer.js")
+const supertest = require('supertest');
+const app = require('../../../src/server.js');
+const { createCustomer } = require('../../helpers/createCustomer.js');
 
-describe("Customer Endpoint", () => {
-    describe("POST /customers/register", () => {
-        it("will create a new customer", async () => {
-            const request = {
-                name: "john",
-                phone: "123456",
-                email: "john@test.com",
-            }
+describe('Customer Endpoint', () => {
+  describe('POST /customers/register', () => {
+    it('will create a new customer', async () => {
+      const request = {
+        name: 'john',
+        phone: '123456',
+        email: 'john@test.com',
+      };
 
-            const response = await supertest(app)
-                .post("/customers/register")
-                .send(request)
+      const response = await supertest(app)
+        .post('/customers/register')
+        .send(request);
 
-            expect(response.status).toEqual(201)
-            expect(response.body.customer).not.toEqual(undefined)
-            expect(response.body.customer.id).not.toEqual(undefined)
-            expect(response.body.customer.name).toEqual(request.name)
-            expect(response.body.customer.contact.phone).toEqual(request.phone)
-            expect(response.body.customer.contact.email).toEqual(request.email)
-        })
+      expect(response.status).toEqual(201);
+      expect(response.body.customer).not.toEqual(undefined);
+      expect(response.body.customer.id).not.toEqual(undefined);
+      expect(response.body.customer.name).toEqual(request.name);
+      expect(response.body.customer.contact.phone).toEqual(request.phone);
+      expect(response.body.customer.contact.email).toEqual(request.email);
+    });
 
-        it("will return 400 if one of the required fields is missing", async () => {
-            const response = await supertest(app).post("/customers/register").send({})
+    it('will return 400 if one of the required fields is missing', async () => {
+      const response = await supertest(app)
+        .post('/customers/register')
+        .send({});
 
-            expect(response.status).toEqual(400)
-            expect(response.body).toHaveProperty('error')
-        })
+      expect(response.status).toEqual(400);
+      expect(response.body).toHaveProperty('error');
+    });
 
-        it("will return 409 when attemping to register a customer with an in-use email address", async () => {
-            const request = {
-                name: "john",
-                phone: "123456",
-                email: "john@test.com",
-            }
+    it('will return 409 when attemping to register a customer with an in-use email address', async () => {
+      const request = {
+        name: 'john',
+        phone: '123456',
+        email: 'john@test.com',
+      };
 
-            await createCustomer(request.name, request.phone, request.email)
+      await createCustomer(request.name, request.phone, request.email);
 
-            const response = await supertest(app)
-                .post("/customers/register")
-                .send(request)
+      const response = await supertest(app)
+        .post('/customers/register')
+        .send(request);
 
-            expect(response.status).toEqual(409)
-            expect(response.body).toHaveProperty('error')
-        })
-    })
-})
+      expect(response.status).toEqual(409);
+      expect(response.body).toHaveProperty('error');
+    });
+  });
+});
