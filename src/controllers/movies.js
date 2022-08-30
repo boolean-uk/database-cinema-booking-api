@@ -22,4 +22,28 @@ const createMovie = async (req, res) => {
   res.status(201).json({ movie: createdMovie });
 };
 
-module.exports = { getMovies, createMovie };
+const getMovieByID = async (req, res) => {
+  const idToFind = parseInt(req.params.id);
+  const movie = await prisma.movie.findUnique({ where: { id: idToFind } });
+  if (!movie) {
+    res.status(400).json({ error: "movie not found" });
+  }
+
+  res.status(200).json({ movie: movie });
+};
+
+const updateMovie = async (req, res) => {
+  const { title, runtimeMins } = req.body;
+
+  if (!title && !runtimeMins) {
+    return res.status(400).json({ error: "missing entry" });
+  }
+  const idToFind = parseInt(req.params.id);
+  const movie = await prisma.movie.update({
+    where: { id: idToFind },
+    data: { title, runtimeMins },
+  });
+  res.status(200).json({ movie: movie });
+};
+
+module.exports = { getMovies, createMovie, getMovieByID, updateMovie };
