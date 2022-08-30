@@ -11,11 +11,25 @@ const getMovies = async (req, res) => {
 }; 
 
 // GET read a movie by id
+const getMovieById = async (req, res) => {
+  const movieId = Number(req.params.id)
+  const movie = await prisma.movie.findUnique({
+    where: {id: movieId},
+    include: {screenings: true}
+  });
+  res.json({movie: movie});
+}
+
+// const user = await prisma.user.findUnique({
+//   where: {
+//     id: 99,
+//   },
+// })
 
 // POST create a movie
 
 // PUT update a movie
 
 module.exports = {
-  getMovies,
+  getMovies, getMovieById
 };
