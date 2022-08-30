@@ -31,7 +31,7 @@ const createCustomer = async (req, res) => {
             },
             // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
             // This is like doing RETURNING in SQL
-            include: { 
+            include: {
                 contact: true
             }
         })
@@ -43,11 +43,28 @@ const createCustomer = async (req, res) => {
                 return res.status(409).json({ error: "A customer with the provided email already exists" })
             }
         }
-        
+
         res.status(500).json({ error: e.message })
     }
 }
 
+// Update customer by id
+const updateCustomerById = async (req, res) => {
+    try {
+        const updatedCustomer = await prisma.customer.update({
+            where: {
+                id: +req.params.id
+            },
+            data: {
+                name: req.body.name
+            }
+        })
+        res.status(201).json({ customer: updatedCustomer })
+    } catch (err) {
+        res.status(404).json({ error: err })
+    }
+}
+
 module.exports = {
-    createCustomer
+    createCustomer, updateCustomerById
 }
