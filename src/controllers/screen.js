@@ -8,7 +8,7 @@ const createScreen = async (req, res) => {
     },
   });
 
-  res.json({ screen });
+  res.status(201).json({ screen });
 };
 
 module.exports = { createScreen };

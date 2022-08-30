@@ -59,7 +59,7 @@ const updateCustomer = async (req, res) => {
     },
   });
 
-  res.json({ customer });
+  res.status(201).json({ customer });
 };
 
 module.exports = {
