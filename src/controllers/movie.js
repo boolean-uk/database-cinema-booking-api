@@ -5,7 +5,7 @@ const getErorCode = (e, res) => {
         if (e.code === "P2002") {
             return res.status(409).json({ error: "A movie with the provided field already exists" })
         } else if (e.code === "P2025") {
-            return res.status(400).json({ error: "A movie with the provided id does not exists!" })
+            return res.status(404).json({ error: "A movie with the provided id does not exists!" })
         }
     }
     res.status(500).json({ error: e.code + " " + e.message })
