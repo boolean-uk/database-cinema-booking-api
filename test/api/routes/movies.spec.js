@@ -11,7 +11,7 @@ describe("Movies Endpoint", () => {
             await createMovie('Scream', 113, screen)
 
             const response = await supertest(app).get('/movies')
-
+ 
             expect(response.status).toEqual(200)
             expect(response.body.movies).not.toEqual(undefined)
             expect(response.body.movies.length).toEqual(2)

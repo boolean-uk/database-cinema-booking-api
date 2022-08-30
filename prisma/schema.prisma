@@ -11,10 +11,9 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-// https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
 model Customer {
   id          Int       @id @default(autoincrement())
-  name        String
+  name        String    
   contact     Contact?
   tickets     Ticket[]
   createdAt   DateTime  @default(now())
@@ -24,7 +23,7 @@ model Customer {
 model Contact {
   id          Int       @id @default(autoincrement())
   customer    Customer  @relation(fields: [customerId], references: [id])
-  customerId  Int
+  customerId  Int @unique
   phone       String
   email       String    @unique
   createdAt   DateTime  @default(now())

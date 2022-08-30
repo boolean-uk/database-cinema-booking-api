@@ -1,5 +1,15 @@
 const { Prisma } = require("@prisma/client")
 const prisma = require('../utils/prisma')
+const getErorCode = (e,res)=>{
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+            return res.status(409).json({ error: "A customer with the provided email already exists" })
+        }else if(e.code === "P2025"){
+            return res.status(400).json({ error: "A customer with the provided id does not exists!" })
+        }
+    }
+    res.status(500).json({ error: e.code + " " + e.message })
+}
 
 const createCustomer = async (req, res) => {
     const {
@@ -15,39 +25,68 @@ const createCustomer = async (req, res) => {
     }
 
     try {
-        /**
-         * This will create a Customer AND create a new Contact, then automatically relate them with each other
-         * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
-         */
         const createdCustomer = await prisma.customer.create({
             data: {
                 name,
                 contact: {
                     create: {
                         phone,
-                        email
+                        email 
                     }
                 }
             },
-            // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-            // This is like doing RETURNING in SQL
-            include: { 
+            include: {
                 contact: true
             }
         })
 
         res.status(201).json({ customer: createdCustomer })
-    } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-            if (e.code === "P2002") {
-                return res.status(409).json({ error: "A customer with the provided email already exists" })
-            }
-        }
-        
-        res.status(500).json({ error: e.message })
+    } catch (error) {
+        return getErorCode(error,res);
     }
 }
-
+const getCustomerById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const customer = await prisma.customer.findUnique({
+            where: {
+                id: Number(id)
+            },
+            include: { contact: true }
+        });
+        res.status(200).json({ customer: customer });
+    } catch (error) {
+        console.log({ error });
+    }
+}
+const getAllCustomers = async (req, res) => {
+    try{
+      const customers = await prisma.customer.findMany({
+        include: { contact: true }
+      })
+      res.status(200).json({ customers });
+    }catch (error) {
+        console.log({ error});
+    }
+}
+const updateCustomerById = async(req, res) => {
+    const { id } = req.params;
+    const {name} = req.body;
+    if(!name) return res.status(404).json({ error:"Missing fields in request body"});
+    try{
+        const updatedCustomer = await prisma.customer.update({
+            where: { id: Number(id) },
+            data: { name:name},
+            include:{ contact: true}
+        })
+        return res.status(201).json({customer:updatedCustomer})
+    }catch (error) {
+        return getErorCode(error,res);
+    }
+}
 module.exports = {
-    createCustomer
+    createCustomer,
+    getCustomerById,
+    getAllCustomers,
+    updateCustomerById
 }
