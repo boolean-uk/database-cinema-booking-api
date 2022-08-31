@@ -64,9 +64,10 @@ const getMovieById = async (req, res) => {
 
 // Update a movie
 const updateMovie = async (req, res) => {
+
     try {
         //console.log(+req.params.id)
-        const updateMovieById = await prisma.movie.update({
+        const updatedMovie = await prisma.movie.update({
             where: {
                 id: +req.params.id
             },
@@ -78,7 +79,7 @@ const updateMovie = async (req, res) => {
                 screenings: true,
             }
         })
-        res.status(201).json( {movies: updateMovieById} )
+        res.status(201).json( {movie: updatedMovie} )
     }  catch (err) {
         res.status(404).json({ error: err })
     }
