@@ -27,6 +27,27 @@ describe('Movies Endpoint', () => {
       expect(movie1.screenings).not.toEqual(undefined);
       expect(movie1.screenings.length).toEqual(1);
     });
+
+    it('will retrieve a list of movies with filters', async () => {
+      const screen = await createScreen(2);
+      await createMovie('Movie 1', 120, screen);
+      await createMovie('Movie 2', 113, screen);
+      await createMovie('Mad Max 123', 130, screen);
+
+      const response = await supertest(app).get(
+        '/movies?runtimeLt=125&runtimeGt=115'
+      );
+
+      expect(response.status).toEqual(200);
+      expect(response.body.movies).not.toEqual(undefined);
+      expect(response.body.movies.length).toEqual(1);
+
+      const movie = response.body.movies[0];
+      expect(movie.title).toEqual('Movie 1');
+      expect(movie.runtimeMins).toEqual(120);
+      expect(movie.screenings).not.toEqual(undefined);
+      expect(movie.screenings.length).toEqual(1);
+    });
   });
 
   describe('POST /movies', () => {
@@ -44,6 +65,29 @@ describe('Movies Endpoint', () => {
       expect(response.body.movie.runtimeMins).toEqual(110);
       expect(response.body.movie.screenings).not.toEqual(undefined);
       expect(response.body.movie.screenings.length).toEqual(0);
+    });
+
+    it('will create a movie with screening', async () => {
+      const screen = await createScreen(12341);
+      const request = {
+        title: 'Top Gun 2',
+        runtimeMins: 110,
+        screenings: [
+          {
+            screenId: screen.id,
+            startsAt: '2022-09-10T12:30:34.987Z',
+          },
+        ],
+      };
+
+      const response = await supertest(app).post('/movies').send(request);
+
+      expect(response.status).toEqual(201);
+      expect(response.body.movie).not.toEqual(undefined);
+      expect(response.body.movie.title).toEqual('Top Gun 2');
+      expect(response.body.movie.runtimeMins).toEqual(110);
+      expect(response.body.movie.screenings).not.toEqual(undefined);
+      expect(response.body.movie.screenings.length).toEqual(1);
     });
 
     it('will return 400 if there are missing fields in the request body', async () => {
@@ -80,6 +124,20 @@ describe('Movies Endpoint', () => {
       expect(response.status).toEqual(200);
       expect(response.body.movie).not.toEqual(undefined);
       expect(response.body.movie.title).toEqual('Dodgeball');
+      expect(response.body.movie.runtimeMins).toEqual(120);
+      expect(response.body.movie.screenings).not.toEqual(undefined);
+      expect(response.body.movie.screenings.length).toEqual(1);
+    });
+
+    it('will get a movie by title', async () => {
+      const screen = await createScreen(4);
+      const created = await createMovie('Dodgeball 1221', 120, screen);
+      console.log('created', created);
+      const response = await supertest(app).get(`/movies/${created.title}`);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.movie).not.toEqual(undefined);
+      expect(response.body.movie.title).toEqual('Dodgeball 1221');
       expect(response.body.movie.runtimeMins).toEqual(120);
       expect(response.body.movie.screenings).not.toEqual(undefined);
       expect(response.body.movie.screenings.length).toEqual(1);
