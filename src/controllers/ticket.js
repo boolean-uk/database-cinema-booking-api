@@ -15,7 +15,14 @@ const createTicket = async (req, res) => {
 
   try {
     const ticket = await prisma.ticket.create({
-      data: { screeningId, customerId },
+      data: {
+        screening: {
+          connect: { id: screeningId },
+        },
+        customer: {
+          connect: { id: customerId },
+        },
+      },
       include: {
         screening: true,
         customer: true,
@@ -24,8 +31,8 @@ const createTicket = async (req, res) => {
 
     const thisScreen = await findScreenById(ticket.screening.screenId);
     const thisMovie = await findMovieById(ticket.screening.movieId);
-    console.log("thisScreen", thisScreen);
-    console.log("thisMovie", thisMovie);
+    // console.log("thisScreen", thisScreen);
+    // console.log("thisMovie", thisMovie);
     ticket.screen = thisScreen;
     ticket.movie = thisMovie;
 
