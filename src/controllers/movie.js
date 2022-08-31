@@ -4,6 +4,8 @@ const prisma = require("../utils/prisma");
 // GET read all movies (including screenings)
 const getMovies = async (req, res) => {
   // res.json({ msg: `I'm all hooked up` });
+  const rq = req.query 
+
   const movies = await prisma.movie.findMany({
     include: { screenings: true },
   });

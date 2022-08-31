@@ -46,6 +46,41 @@ const createCustomer = async (req, res) => {
   }
 };
 
+// PUT update a customer
+const updateCustomer = async (req, res) => {
+  const customerId = Number(req.params.id);
+  const { name } = req.body;
+
+  // if (!name) {
+  //   return res.status(400).json({
+  //     error: "Missing fields in request body",
+  //   });
+  // }
+
+  try {
+  const updatedCustomer = await prisma.customer.update({
+    where: {
+      id: customerId,
+    },
+    data: {
+      name,
+    },
+      include: {contact: true}
+  });
+  res.status(201).json({ customer: updatedCustomer });
+} catch (e) {
+  if (e instanceof Prisma.PrismaClientKnownRequestError) {
+    if (e.code === "P2002") {
+      return res
+        .status(409)
+        .json({ error: "A customer with the provided email already exists" });
+    }
+  }
+  res.status(500).json({ error: e.message });
+}
+}
+
 module.exports = {
   createCustomer,
+  updateCustomer
 };
