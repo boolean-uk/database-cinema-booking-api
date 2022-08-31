@@ -1,5 +1,10 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
+const {
+  checkFields,
+  errorMessages,
+  buildCustomerUpdateData,
+} = require("./utils");
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body;
@@ -47,19 +52,33 @@ const createCustomer = async (req, res) => {
 };
 
 const updateCustomer = async (req, res) => {
-  const customer = await prisma.customer.update({
-    where: {
-      id: Number(req.params.id),
-    },
-    data: {
-      name: req.body.name,
-    },
-    include: {
-      contact: true,
-    },
-  });
+  const { name } = req.body;
+  if (checkFields([name])) {
+    return res.status(400).json({ error: errorMessages.missingField });
+  }
 
-  res.status(201).json({ customer });
+  try {
+    const customer = await prisma.customer.update({
+      where: {
+        id: Number(req.params.id),
+      },
+      data: buildCustomerUpdateData(req.body),
+      include: {
+        contact: true,
+        tickets: true,
+      },
+    });
+
+    res.status(201).json({ customer });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2025") {
+        return res.status(404).json({ error: errorMessages.customerNotExists });
+      }
+    }
+    console.log(err);
+    res.json({ error: err });
+  }
 };
 
 module.exports = {

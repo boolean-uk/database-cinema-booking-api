@@ -5,7 +5,9 @@ const prisma = require("../utils/prisma");
 const {
   buildRuntimeClause,
   errorMessages,
-  buildMovieData,
+  buildCreateMovieData,
+  checkFields,
+  updateMovieScreenings,
 } = require("./utils");
 
 const getAllMovies = async (req, res) => {
@@ -19,7 +21,7 @@ const getAllMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
-  if (!title || !runtimeMins) {
+  if (checkFields([title, runtimeMins])) {
     return res.status(400).json({ error: errorMessages.missingField });
   }
 
@@ -34,7 +36,7 @@ const createMovie = async (req, res) => {
 
   try {
     const movie = await prisma.movie.create({
-      data: buildMovieData(req.body),
+      data: buildCreateMovieData(req.body),
       include: {
         screenings: true,
       },
@@ -74,21 +76,28 @@ const getMovieById = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
+  const id = Number(req.params.id);
   const { title, runtimeMins, screenings } = req.body;
-  if (!title || !runtimeMins) {
+
+  if (checkFields([title, runtimeMins])) {
     return res.status(400).json({ error: errorMessages.missingField });
   }
 
   try {
+    if (screenings) {
+      await updateMovieScreenings(screenings, id);
+    }
+
     const movie = await prisma.movie.update({
       where: {
-        id: Number(req.params.id),
+        id,
       },
-      data: buildMovieData(req.body),
+      data: { title, runtimeMins },
       include: {
         screenings: true,
       },
     });
+
     res.status(201).json({ movie });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
