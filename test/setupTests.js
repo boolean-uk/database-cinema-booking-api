@@ -12,7 +12,7 @@ const deleteTables = () => {
   return prisma.$transaction(deleteTables);
 };
 
-global.afterEach(() => {
+global.beforeEach(() => {
   return deleteTables();
 });
 

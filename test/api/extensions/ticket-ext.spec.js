@@ -7,12 +7,12 @@ const { createScreen } = require('../../helpers/createScreen.js');
 describe('Tickets Endpoint', () => {
   describe('POST /tickets', () => {
     it('will create a new screen', async () => {
-      const { screenId } = await createScreen(100);
+      const createdScreen = await createScreen(Math.ceil(Math.random()) * 1000);
 
-      const createScreening = await createMovie(
+      const createdScreening = await createMovie(
         'Max Max 201203',
         140,
-        screenId
+        createdScreen
       );
 
       const createdCustomer = await createCustomer(
@@ -22,19 +22,17 @@ describe('Tickets Endpoint', () => {
       );
 
       const request = {
-        screeningId: createScreening.id,
+        screeningId: createdScreening.screenings[0].id,
         customerId: createdCustomer.id,
       };
-
-      console.log(request);
 
       const response = await supertest(app).post('/tickets').send(request);
 
       expect(response.status).toEqual(201);
-      expect(response.body).toHaveProperty('screening');
-      expect(response.body).toHaveProperty('customer');
-      expect(response.body).toHaveProperty('screen');
-      expect(response.body).toHaveProperty('movie');
+      expect(response.body.ticket).toHaveProperty('screening');
+      expect(response.body.ticket).toHaveProperty('customer');
+      expect(response.body.ticket).toHaveProperty('screen');
+      expect(response.body.ticket).toHaveProperty('movie');
     });
 
     it('will return 400 status if there are missing fields in the request body', async () => {
