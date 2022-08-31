@@ -2,18 +2,75 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
-  const movies = await prisma.movie.findMany({
-    include: {
-      screenings: true,
-    },
-  });
+  console.log('get movies');
 
-  res.status(200).json({
-    movies,
-  });
+  if (!req.query.runtimeLt && !req.query.runtimeGt) {
+    const movies = await prisma.movie.findMany({
+      include: {
+        screenings: true,
+      },
+    });
+  
+    res.status(200).json({
+      movies,
+    });
+  }
+
+  if (req.query.runtimeLt) {
+    const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          lt: Number(req.query.runtimeLt)
+        }
+      }
+    })
+
+    res.status(200).json({
+      movies,
+    });
+  }
+
+  if (req.query.runtimeGt) {
+    const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          gt: Number(req.query.runtimeGt)
+        }
+      }
+    })
+
+    res.status(200).json({
+      movies,
+    });
+  }
+
+  if (req.query.runtimeLt && req.query.runtimeGt) {
+    // + try
+    const movies = await prisma.movie.findMany({
+      where: {
+        AND: [
+          {
+            runtimeMins: {
+              lt: req.query.runtimeLt
+            }
+          },
+          {
+            runtimeMins: {
+              gt: req.query.runtimeGt
+            }
+          }
+        ]
+      }
+    })
+
+    res.status(200).json({
+      movies,
+    });
+  }
 };
 
 const createNewMovie = async (req, res) => {
+  console.log("CREATING");
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
@@ -21,7 +78,8 @@ const createNewMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
-
+  // if (title === "" && runtimeMins === "") {
+  // }
   try {
     const createdMovie = await prisma.movie.create({
       data: {
@@ -63,7 +121,7 @@ const getMovieById = async (req, res) => {
 
 const updateMovie = async (req, res) => {
   const movieId = parseInt(req.params.id);
-  const { title, runtimeMins } = req.body
+  const { title, runtimeMins } = req.body;
 
   if (!movieId) {
     return res.status(400).json({
@@ -84,7 +142,7 @@ const updateMovie = async (req, res) => {
     },
   });
   res.status(201).json({
-    foundMovie
+    foundMovie,
   });
 };
 
