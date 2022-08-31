@@ -20,6 +20,45 @@ const getAllScreen = async (req, res) => {
         return getErorCode(error, res)
     }
 }
+const updateWithRelationValues = (req) => {
+    const { number, screenings } = req.body;
+    if (screenings) {
+        const { movieId, screenId, startAt } = screenings;
+        return {
+            number,
+            screenings: {
+                update:
+                {
+                    movieId: Number(movieId),
+                    screenId: Number(screenId),
+                    startsAt: new Date(),
+                }
+            }
+        }
+    }
+    return req.body;
+}
+const createWithRelationValues = (req) => {
+    const { number, screenings } = req.body;
+    if (screenings) {
+        const mappedScreen = screenings.map((screen) => {
+            const { movieId, screenId, startsAt } = screen;
+           console.log({screen});
+            return {
+                movieId: Number(movieId),
+                startsAt: new Date()
+            }
+        })
+        return {
+            number,
+            screenings: {
+                create: mappedScreen,
+            }
+        }
+    }
+
+    return req.body;
+}
 const createScreen = async (req, res) => {
     const { number } = req.body;
     if (!number) {
@@ -27,17 +66,15 @@ const createScreen = async (req, res) => {
             error: "Missing fields in request body"
         })
     }
-    try{
+    try {
         const createScreen = await prisma.screen.create({
-            data:{
-                number
-            },
-            include:{screenings:true}
+            data: createWithRelationValues(req),
+            include: { screenings: true }
         });
-        
-        res.status(201).json({screen:createScreen})
-    }catch(error){
-       console.log({error});
+
+        res.status(201).json({ screen: createScreen })
+    } catch (error) {
+        console.log({ error });
     }
 }
 const getScreenById = async (req, res) => {
@@ -47,11 +84,11 @@ const getScreenById = async (req, res) => {
             where: {
                 id: Number(id)
             },
-            include:{screenings:true}
+            include: { screenings: true }
         });
-        res.status(200).json({screen});
+        res.status(200).json({ screen });
     } catch (error) {
-        return getErorCode(error,res);
+        return getErorCode(error, res);
     }
 }
 module.exports = {

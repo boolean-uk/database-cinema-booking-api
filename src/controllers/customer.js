@@ -11,6 +11,14 @@ const getErorCode = (e, res) => {
     res.status(500).json({ error: e.code + " " + e.message })
 }
 
+const updateWithRelationValues = (req) => {
+    const { name, contact } = req.body;
+    if (contact) {
+        const {phone, email } = contact;
+        return { name, contact:{update: { phone,email} }}
+    }
+    return req.body;
+}
 const createCustomer = async (req, res) => {
     const {
         name,
@@ -69,14 +77,6 @@ const getAllCustomers = async (req, res) => {
     } catch (error) {
         console.log({ error });
     }
-}
-const updateWithRelationValues = (req) => {
-    const { name, contact } = req.body;
-    if (contact) {
-        const {phone, email } = contact;
-        return { name, contact:{update: { phone,email} }}
-    }
-    return req.body;
 }
 const updateCustomerById = async (req, res) => {
     const { id } = req.params;
