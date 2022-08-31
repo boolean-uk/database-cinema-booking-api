@@ -2,7 +2,7 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
-  console.log('get movies');
+  console.log("get movies");
 
   if (!req.query.runtimeLt && !req.query.runtimeGt) {
     const movies = await prisma.movie.findMany({
@@ -10,7 +10,7 @@ const getAllMovies = async (req, res) => {
         screenings: true,
       },
     });
-  
+
     res.status(200).json({
       movies,
     });
@@ -20,10 +20,10 @@ const getAllMovies = async (req, res) => {
     const movies = await prisma.movie.findMany({
       where: {
         runtimeMins: {
-          lt: Number(req.query.runtimeLt)
-        }
-      }
-    })
+          lt: Number(req.query.runtimeLt),
+        },
+      },
+    });
 
     res.status(200).json({
       movies,
@@ -34,10 +34,10 @@ const getAllMovies = async (req, res) => {
     const movies = await prisma.movie.findMany({
       where: {
         runtimeMins: {
-          gt: Number(req.query.runtimeGt)
-        }
-      }
-    })
+          gt: Number(req.query.runtimeGt),
+        },
+      },
+    });
 
     res.status(200).json({
       movies,
@@ -51,17 +51,17 @@ const getAllMovies = async (req, res) => {
         AND: [
           {
             runtimeMins: {
-              lt: req.query.runtimeLt
-            }
+              lt: req.query.runtimeLt,
+            },
           },
           {
             runtimeMins: {
-              gt: req.query.runtimeGt
-            }
-          }
-        ]
-      }
-    })
+              gt: req.query.runtimeGt,
+            },
+          },
+        ],
+      },
+    });
 
     res.status(200).json({
       movies,
@@ -78,23 +78,33 @@ const createNewMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
-  // if (title === "" && runtimeMins === "") {
-  // }
+
   try {
-    const createdMovie = await prisma.movie.create({
-      data: {
-        title,
-        runtimeMins,
-      },
-    });
-    res.status(201).json({ movie: createdMovie });
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
+    console.log('req', req.body.title);
+    const foundMovie = await prisma.movie.findFirst({
+      where: {
+        title: req.body.title
+      }
+    }) 
+    console.log('found', foundMovie);
+    if (foundMovie === null) {
+      const createdMovie = await prisma.movie.create({
+        data: {
+          title,
+          runtimeMins,
+        },
+      });
+      res.status(201).json({ movie: createdMovie });
+    } else if (foundMovie !== null) {
+        return res.status(409).json({ error: "This Movie Already Exists" });
+    }
+
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2002") {
         return res.status(409).json({ error: "This Movie Already Exists" });
       }
     }
-    res.status(500).json({ error: e.message });
   }
 };
 
