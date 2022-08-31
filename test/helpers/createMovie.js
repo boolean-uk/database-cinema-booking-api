@@ -24,7 +24,34 @@ const createMovie = async (title, runtimeMins, screen = null) => {
 
     return await prisma.movie.create(movieData)
 }
+const createMovieWithScreenings = async (title, runtimeMins, screenings) => {
+    const mappedScreen = await screenings.map((screen) => {
+        const { movieId, screenId, startsAt } = screen;
+        console.log({ screen });
+        return {
+            startsAt: new Date(startsAt),
+            screen: {
+                connect: {
+                    id: Number(screenId)
+                }
+            }
+        }
+    });
+
+    return await prisma.movie.create({
+        data: {
+            title,
+            runtimeMins: Number(runtimeMins),
+            screenings: {
+                create: mappedScreen,
+            }},
+            include: { screenings: true }
+        
+    });
+   
+}
 
 module.exports = {
-    createMovie
+    createMovie,
+    createMovieWithScreenings
 }

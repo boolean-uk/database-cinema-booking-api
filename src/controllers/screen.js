@@ -20,24 +20,6 @@ const getAllScreen = async (req, res) => {
         return getErorCode(error, res)
     }
 }
-const updateWithRelationValues = (req) => {
-    const { number, screenings } = req.body;
-    if (screenings) {
-        const { movieId, screenId, startsAt } = screenings;
-        return {
-            number,
-            screenings: {
-                update:
-                {
-                    movieId: Number(movieId),
-                    screenId: Number(screenId),
-                    startsAt: new Date(startsAt),
-                }
-            }
-        }
-    }
-    return req.body;
-}
 const createWithRelationValues = (req) => {
     const { number, screenings } = req.body;
     if (screenings) {
@@ -69,6 +51,7 @@ const createScreen = async (req, res) => {
         return res.status(400).json({
             error: "Missing fields in request body"
         })
+        
     }
     try {
         const createScreen = await prisma.screen.create({
