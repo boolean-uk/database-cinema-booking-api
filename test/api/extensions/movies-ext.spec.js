@@ -111,7 +111,7 @@ describe('Movies Endpoint', () => {
       expect(response.body.movie.screenings.length).toEqual(1)
     })
     // Wanted to test the 400 status but Prisma was giving me sintax error because a field was missing!
-
+    
     // it('will have a status of 400 if there are missing fields in the body', async () => {
     //   const screen = await createScreen(1)
     //   const request = {

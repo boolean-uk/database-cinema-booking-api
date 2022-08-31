@@ -75,17 +75,21 @@ const createMovie = async (req, res) => {
 
   if (movie) res.status(409).json({ error: "A movie with the provided title already exist"})
   else {
-    let screenings = req.body.screenings
 
-    const adjustedScreenings = screenings.map(screening => {
-      
-      // console.log('screening before', screening)
-      let date = screening.startsAt
-      // console.log('my date',date)
-      screening.startsAt = new Date(date)
-      // console.log(screening)
-      return screening
-    })
+    let screenings = req.body.screenings
+    let adjustedScreenings
+
+    if (screenings) {
+      adjustedScreenings = screenings.map(screening => {
+        
+        // console.log('screening before', screening)
+        let date = screening.startsAt
+        // console.log('my date',date)
+        screening.startsAt = new Date(date)
+        // console.log(screening)
+        return screening
+      })
+    }
 
     // console.log(adjustedScreenings)
 
@@ -112,29 +116,39 @@ const createMovie = async (req, res) => {
 }
 
 const getByID = async (req, res) => {
-  let param
-  let movie
-  let whereCondition = {}
+  
+  // let whereCondition = {}
 
-  param = Number(req.params.id)
+  const param = req.params.id
 
-  if (param) {
-    whereCondition.id = param
-  } else {
-    param = req.params.id
-    whereCondition.title = param
-  }
+  // if (param) {
+  //   whereCondition.id = param
+  // } else {
+  //   param = req.params.id
+  //   whereCondition.title = param
+  // }
   // console.log('my condition', whereCondition)
 
-  movie = await prisma.movie.findMany({
-    where: whereCondition,
+  const movie = await prisma.movie.findMany({
+    where: param ? {
+      id: Number(param)
+    } : {
+      title: param
+    },
     include: {
       screenings: true
     }
   })
 
+  // movie = await prisma.movie.findMany({
+  //   where: whereCondition,
+  //   include: {
+  //     screenings: true
+  //   }
+  // })
+
   if(!movie[0]) res.status(404).json({ error: "Movie with that Id or title does not exist" })
-  else res.json({ movie })
+  else res.json({ movie: movie[0] })
 }
 
 const updateMovie = async (req, res) => {
