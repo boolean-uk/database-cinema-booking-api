@@ -12,10 +12,21 @@ const {
 
 const getAllMovies = async (req, res) => {
   console.log("Queries: ", req.query);
-  const base = { include: { screenings: true } };
-  const query = buildRuntimeClause(req.query, base);
 
-  const movies = await prisma.movie.findMany(query);
+  const movies = await prisma.movie.findMany({
+    where: {
+      runtimeMins: buildRuntimeClause(req.query),
+      screenings: {
+        some: {
+          startsAt: {
+            gte: new Date(),
+          },
+        },
+      },
+    },
+    include: { screenings: true },
+  });
+
   res.status(200).json({ movies });
 };
 

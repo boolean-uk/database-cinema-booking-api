@@ -10,39 +10,22 @@ const errorMessages = {
     "A customer or screening does not exist with the provided id",
 };
 
-const buildRuntimeClause = (queries, base) => {
+const buildRuntimeClause = (queries) => {
   const { runtimeMinsLt, runtimeMinsGt } = queries;
 
   if (runtimeMinsLt && runtimeMinsGt) {
     return {
-      where: {
-        runtimeMins: {
-          gt: Number(runtimeMinsGt),
-          lt: Number(runtimeMinsLt),
-        },
-      },
-      ...base,
+      gt: Number(runtimeMinsGt),
+      lt: Number(runtimeMinsLt),
     };
   } else if (runtimeMinsLt) {
     return {
-      where: {
-        runtimeMins: {
-          lt: Number(runtimeMinsLt),
-        },
-      },
-      ...base,
+      lt: Number(runtimeMinsLt),
     };
   } else if (runtimeMinsGt) {
     return {
-      where: {
-        runtimeMins: {
-          gt: Number(runtimeMinsGt),
-        },
-      },
-      ...base,
+      gt: Number(runtimeMinsGt),
     };
-  } else {
-    return base;
   }
 };
 
