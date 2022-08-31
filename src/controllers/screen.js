@@ -6,11 +6,19 @@ const createScreen = async (req, res) => {
         number
     } = req.body
 
-    if (!number) {
+    if (!(number >= 0)) {
         return res.status(400).json({
             error: "Missing fields in request body"
         })
     }
+
+    const createdScreen = await prisma.screen.create({
+        data: {
+            number
+        }
+    })
+
+    res.status(201).json({ screen: createdScreen })
 
     // try {
     //     /**

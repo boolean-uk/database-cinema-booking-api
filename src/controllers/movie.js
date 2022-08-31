@@ -30,13 +30,17 @@ const createMovie = async (req, res) => {
             title,
             runtimeMins,
             screenings: {
-                connect: {id: 1}
-            }
+                // create: [
+                //     {startsAt: '2022-08-31T18:30:00+02:00'}
+                // ],
+            },
         },
         include: { 
             screenings: true
         }
     })
+
+    res.status(201).json({ movie: createdMovie })
 
     // try {
     //     /**
@@ -72,7 +76,51 @@ const createMovie = async (req, res) => {
     // }
 }
 
+const getMovieById =  async (req, res) => {
+    const {id} = req.params
+    const idAsNumber = Number(id)
+
+    const movieById = await prisma.movie.findUnique({
+        where: {
+            id: idAsNumber,
+        },
+        include: {
+            screenings: true
+        }
+    })
+
+    res.json({
+        movie: movieById
+    })
+}
+
+const updateAMovie = async (req, res) => {
+    const {id} = req.params
+    const idAsNumber = Number(id)
+
+    const {title, runtimeMins} = req.body
+
+    const updateMovie = await prisma.movie.update({
+        where: {
+            id: idAsNumber,
+        },
+        data: {
+            title,
+            runtimeMins
+        },
+        include: {
+            screenings: true
+        }
+    })
+
+    res.status(201).json({
+        movie: updateMovie
+    })
+}
+
 module.exports = {
     createMovie,
-    getAllMovies
+    getAllMovies,
+    getMovieById,
+    updateAMovie
 }
