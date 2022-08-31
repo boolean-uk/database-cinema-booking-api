@@ -23,7 +23,7 @@ const getAllScreen = async (req, res) => {
 const updateWithRelationValues = (req) => {
     const { number, screenings } = req.body;
     if (screenings) {
-        const { movieId, screenId, startAt } = screenings;
+        const { movieId, screenId, startsAt } = screenings;
         return {
             number,
             screenings: {
@@ -31,7 +31,7 @@ const updateWithRelationValues = (req) => {
                 {
                     movieId: Number(movieId),
                     screenId: Number(screenId),
-                    startsAt: new Date(),
+                    startsAt: new Date(startsAt),
                 }
             }
         }
@@ -42,11 +42,15 @@ const createWithRelationValues = (req) => {
     const { number, screenings } = req.body;
     if (screenings) {
         const mappedScreen = screenings.map((screen) => {
-            const { movieId, screenId, startsAt } = screen;
+            const { movieId ,screenId,startsAt } = screen;
            console.log({screen});
             return {
-                movieId: Number(movieId),
-                startsAt: new Date()
+                startsAt: new Date(startsAt),
+                movie: {
+                    connect: {
+                        id: Number(movieId)
+                    }
+                }
             }
         })
         return {
