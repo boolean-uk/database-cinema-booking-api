@@ -4,27 +4,18 @@ const prisma = require('../utils/prisma')
 // Get all movies
 const getAllMovies = async (req, res) => {
     try {
-        if (Object.keys(req.query)[0] === "runtimeLt") {
-            const allMovies = await prisma.movie.findMany({
-                where: {
-                    AND: [{ runtimeMins: { lte: +req.query.runtimeLt } }]
-                },
-                include: {
-                    screenings: true,
-                }
-            })
-            res.status(200).json({ movies: allMovies })
-        } else if (Object.keys(req.query)[0] === "runtimeGt") {
-            const allMovies = await prisma.movie.findMany({
-                where: {
-                    AND: [{ runtimeMins: { gte: +req.query.runtimeGt } }]
-                },
-                include: {
-                    screenings: true,
-                }
-            })
-            res.status(200).json({ movies: allMovies })
-        }
+        const allMovies = await prisma.movie.findMany({
+            where: {
+                AND: [Object.keys(req.query)[0] === "runtimeLt" ?
+                    { runtimeMins: { lte: +req.query.runtimeLt } } :
+                    { runtimeMins: { gte: +req.query.runtimeGt } }
+                ]
+            },
+            include: {
+                screenings: true,
+            }
+        })
+        res.status(200).json({ movies: allMovies })
     } catch (err) {
         res.status(404).json({ error: err })
     }
