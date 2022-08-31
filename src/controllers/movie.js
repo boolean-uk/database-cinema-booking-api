@@ -80,7 +80,6 @@ const updateMovie = async (req, res) => {
         })
         res.status(201).json( {movies: updateMovieById} )
     }  catch (err) {
-        //console.log( err )
         res.status(404).json({ error: err })
     }
 }
