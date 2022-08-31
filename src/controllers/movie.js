@@ -1,7 +1,12 @@
 const { Prisma } = require("@prisma/client");
 const { request } = require("express");
+const { screening } = require("../utils/prisma");
 const prisma = require("../utils/prisma");
-const { buildRuntimeClause, errorMessages } = require("./utils");
+const {
+  buildRuntimeClause,
+  errorMessages,
+  buildMovieData,
+} = require("./utils");
 
 const getAllMovies = async (req, res) => {
   console.log("Queries: ", req.query);
@@ -14,7 +19,6 @@ const getAllMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
-
   if (!title || !runtimeMins) {
     return res.status(400).json({ error: errorMessages.missingField });
   }
@@ -27,46 +31,15 @@ const createMovie = async (req, res) => {
   // if (found) {
   //   return res.status(409).json({ error: errorMessages.movieExists });
   // }
-  const screenings = [
-    {
-      // movieId: 17,
-      screenId: 1,
-      startsAt: new Date(),
-    },
-  ];
-  let movieData = { title, runtimeMins };
-  if (screenings) {
-    movieData = { ...movieData, screenings: { create: screenings } };
-  }
 
   try {
-    const createdMovie = await prisma.movie.create({
-      data: movieData,
+    const movie = await prisma.movie.create({
+      data: buildMovieData(req.body),
       include: {
         screenings: true,
       },
     });
-
-    // if (screenings) {
-    //   await prisma.screening.create({
-    //     data: {
-    //       movieId: createdMovie.id,
-    //       screenId: 1,
-    //       startsAt: new Date(),
-    //     },
-    //   });
-    // }
-
-    // const movie = await prisma.movie.findUnique({
-    //   where: {
-    //     id: createdMovie.id,
-    //   },
-    //   include: {
-    //     screenings: true,
-    //   },
-    // });
-
-    res.status(201).json({ movie: createdMovie });
+    res.status(201).json({ movie });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === "P2002") {
@@ -79,33 +52,55 @@ const createMovie = async (req, res) => {
 };
 
 const getMovieById = async (req, res) => {
+  console.log(req.params);
+  let whereClause;
+  const id = Number(req.params.id);
+  if (id) {
+    whereClause = { id };
+  } else {
+    whereClause = { title: req.params.id };
+  }
+
   const movie = await prisma.movie.findUnique({
-    where: {
-      id: Number(req.params.id),
-    },
+    where: whereClause,
     include: {
       screenings: true,
     },
   });
-  res.json({ movie: movie });
+  if (movie) {
+    return res.status(200).json({ movie });
+  }
+  return res.status(404).json({ error: errorMessages.movieNotExists });
 };
 
 const updateMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body;
-  const movie = await prisma.movie.update({
-    where: {
-      id: Number(req.params.id),
-    },
-    data: {
-      title,
-      runtimeMins,
-    },
-    include: {
-      screenings: true,
-    },
-  });
+  const { title, runtimeMins, screenings } = req.body;
+  if (!title || !runtimeMins) {
+    return res.status(400).json({ error: errorMessages.missingField });
+  }
 
-  res.status(201).json({ movie });
+  try {
+    const movie = await prisma.movie.update({
+      where: {
+        id: Number(req.params.id),
+      },
+      data: buildMovieData(req.body),
+      include: {
+        screenings: true,
+      },
+    });
+    res.status(201).json({ movie });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2002") {
+        return res.status(409).json({ error: errorMessages.movieExists });
+      } else if (err.code === "P2025") {
+        return res.status(404).json({ error: errorMessages.movieNotExists });
+      }
+    }
+    console.log("Error: " + err);
+    return res.json({ error: err });
+  }
 };
 
 module.exports = { getAllMovies, createMovie, getMovieById, updateMovie };
