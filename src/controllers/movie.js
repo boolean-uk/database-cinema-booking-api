@@ -2,45 +2,125 @@ const { Prisma } = require("@prisma/client")
 const prisma = require('../utils/prisma')
 
 const getAllMovies = async (req, res) => {
-    const allMovies = await prisma.movie.findMany({
-        include: {
-            screenings: true
-        }
-    })
+    const {runtimeLt, runtimeGt} = req.query
 
-    res.json({
-        movies: allMovies
-    })
+    const runtimeLtNumber = Number(runtimeLt)
+    const runtimeGtNumber = Number(runtimeGt)
+
+    if(runtimeLtNumber && runtimeGtNumber) {
+        const allMovies = await prisma.movie.findMany({
+            where: {
+                AND: [
+                    {           
+                        runtimeMins: {
+                            lt: runtimeLtNumber
+                        },
+                    },
+                    {
+                        runtimeMins: {
+                            gt: runtimeGtNumber
+                        }
+                    }
+                ]
+            },
+            include: {
+                screenings: true
+            }
+        })
+        res.json({
+            movies: allMovies
+        })
+    }
+
+    else if(runtimeLtNumber) {
+        const allMovies = await prisma.movie.findMany({
+            where: {
+                runtimeMins: {
+                    lt: runtimeLtNumber,
+                }
+            },
+            include: {
+                screenings: true
+            }
+        })
+        res.json({
+            movies: allMovies
+        })
+    }
+
+    else if(runtimeGtNumber) {
+        const allMovies = await prisma.movie.findMany({
+            where: {
+                runtimeMins: {
+                    gt: runtimeGtNumber,
+                }
+            },
+            include: {
+                screenings: true
+            }
+        })
+        res.json({
+            movies: allMovies
+        })
+    }
+
+    else {
+        const allMovies = await prisma.movie.findMany({
+            include: {
+                screenings: true
+            }
+        })
+        res.json({
+            movies: allMovies
+        })
+    }
 }
 
 const createMovie = async (req, res) => {
     const {
         title,
-        runtimeMins
+        runtimeMins,
+        screenings
     } = req.body
 
-    if (!title || !(runtimeMins >= 0)) {
+    const allMovies = await prisma.movie.findMany()
+
+    const movieWithSameTitle = allMovies.find(movie => movie.title = title)
+
+    if(movieWithSameTitle) {
+        return res.status(409).json({
+            error: "A movie with the provided title already exists"
+        })
+    }
+
+    else if (!title || !(runtimeMins >= 0)) {
         return res.status(400).json({
             error: "Missing fields in request body"
         })
     }
 
-    const createdMovie = await prisma.movie.create({
-        data: {
-            title,
-            runtimeMins,
-            screenings: {
-                // create: [
-                //     {startsAt: '2022-08-31T18:30:00+02:00'}
-                // ],
-            },
-        },
-        include: { 
-            screenings: true
-        }
-    })
 
-    res.status(201).json({ movie: createdMovie })
+
+    else {
+        const createdMovie = await prisma.movie.create({
+            data: {
+                title,
+                runtimeMins,
+                screenings: {
+                    // create: [
+                    //     {startsAt: '2022-08-31T18:30:00+02:00'}
+                    // ],
+                },
+            },
+            include: { 
+                screenings: true
+            }
+        })
+    
+        res.status(201).json({ movie: createdMovie })
+    }
+
+
 
     // try {
     //     /**
