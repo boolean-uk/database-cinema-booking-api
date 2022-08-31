@@ -2,7 +2,7 @@ const models = require('../models/movies');
 const { SUCCESS } = require('../utils/vars');
 
 const getAllMovies = async (req, res) => {
-  const [status, dbRes] = await models.getAllMovies();
+  const [status, dbRes] = await models.getAllMovies(req.query);
 
   if (status === SUCCESS) {
     return res.status(200).json({
@@ -14,8 +14,8 @@ const getAllMovies = async (req, res) => {
 };
 
 const getMovieById = async (req, res) => {
-  const movieId = parseInt(req.params.id);
-  const movieTitle = req.params.title;
+  const movieId = parseInt(req.params.id) || undefined;
+  const movieTitle = isNaN(parseInt(req.params.id)) ? req.params.id : undefined;
 
   const [status, dbRes] = await models.getMovieById(movieId, movieTitle);
 
@@ -33,7 +33,7 @@ const getMovieById = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body;
+  const { title, runtimeMins, screenings } = req.body;
 
   if (!title || !runtimeMins) {
     return res
@@ -41,7 +41,11 @@ const createMovie = async (req, res) => {
       .json({ error: 'Missing fields in the request body' });
   }
 
-  const [status, dbRes] = await models.createMovie(title, runtimeMins);
+  const [status, dbRes] = await models.createMovie(
+    title,
+    runtimeMins,
+    screenings
+  );
 
   if (status === SUCCESS) {
     return res.status(201).json({ movie: dbRes });

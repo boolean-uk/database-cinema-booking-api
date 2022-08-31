@@ -2,9 +2,15 @@ const { Prisma } = require('@prisma/client');
 const prisma = require('../utils/prisma');
 const { SUCCESS, FAILED } = require('../utils/vars');
 
-const getAllMovies = async () => {
+const getAllMovies = async query => {
   try {
     const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          lt: parseInt(query.runtimeLt) || undefined,
+          gt: parseInt(query.runtimeGt) || undefined,
+        },
+      },
       include: {
         screenings: true,
       },
@@ -19,13 +25,12 @@ const getAllMovies = async () => {
   }
 };
 
-const getMovieById = async (movieId, title) => {
-  const id = movieId ?? title;
-  console.log(id);
+const getMovieById = async (id, title) => {
   try {
     const movie = await prisma.movie.findUnique({
       where: {
         id,
+        title,
       },
       include: {
         screenings: true,
@@ -45,12 +50,17 @@ const getMovieById = async (movieId, title) => {
   }
 };
 
-const createMovie = async (title, runtimeMins) => {
+const createMovie = async (title, runtimeMins, screeningsInfo = []) => {
+  console.log('1', screeningsInfo);
+  console.log('2', [...screeningsInfo]);
   try {
     const movie = await prisma.movie.create({
       data: {
         title,
         runtimeMins,
+        screenings: {
+          create: [...screeningsInfo],
+        },
       },
       include: {
         screenings: true,
