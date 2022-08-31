@@ -4,69 +4,67 @@ const { createCustomer } = require("../../helpers/createCustomer.js")
 const { createMovie } = require("../../helpers/createMovie.js")
 
 describe("Customer Endpoint", () => {
-    // describe("POST /movies", () => {
-    //     it('will return 400 if there are missing fields in the body request', async () => {
-    //         // const customer = await createMovie("Pulp Fiction", 165)
-
-    //         const request = { title: "", runtimeMins: 0 }
-
-    //         const response = await supertest(app)
-    //             .post(`/movies`)
-    //             .send(request)
-
-    //         expect(response.status).toEqual(400)
-    //         expect(response.body).toHaveProperty('error')
-    //     })
-    // })
-
-    describe("PUT /customers/:id", () => {
-        it("can update a customers contact info when a contact property exists on the request body", async () => {
-            const customer = await createCustomer("John", "123456", "john@test.com")
-
-            const request = {
-                name: "Jane",
-                contact: {
-                    phone: "789",
-                    email: "jane@test.com"
-                }
-            }
+    describe("POST /movies", () => {
+        it('will return 400 if there are missing fields in the body request', async () => {
+            const request = { title: "", runtimeMins: 0 }
 
             const response = await supertest(app)
-                .put(`/customers/${customer.id}`)
-                .send(request)
-
-            expect(response.status).toEqual(200)
-            expect(response.body.customer).not.toEqual(undefined)
-            expect(response.body.customer.name).toEqual(request.name)
-            expect(response.body.customer.contact).not.toEqual(undefined)
-            expect(response.body.customer.contact.phone).toEqual("789")
-            expect(response.body.customer.contact.email).toEqual("jane@test.com")
-        })
-
-        it('will return 404 if the customer is not found', async () => {
-            const request = {
-                name: "Jane",
-            }
-
-            const response = await supertest(app)
-                .put(`/customers/10000`)
-                .send(request)
-
-            expect(response.status).toEqual(404)
-            expect(response.body).toHaveProperty('error')
-        })
-
-        it("will return 400 when there are missing fields in the request body", async () => {
-            const customer = await createCustomer("John", "123456", "john@test.com")
-
-            const request = {}
-
-            const response = await supertest(app)
-                .put(`/customers/${customer.id}`)
+                .post(`/movies`)
                 .send(request)
 
             expect(response.status).toEqual(400)
             expect(response.body).toHaveProperty('error')
         })
     })
+
+    // describe("PUT /customers/:id", () => {
+    //     it("can update a customers contact info when a contact property exists on the request body", async () => {
+    //         const customer = await createCustomer("John", "123456", "john@test.com")
+
+    //         const request = {
+    //             name: "Jane",
+    //             contact: {
+    //                 phone: "789",
+    //                 email: "jane@test.com"
+    //             }
+    //         }
+
+    //         const response = await supertest(app)
+    //             .put(`/customers/${customer.id}`)
+    //             .send(request)
+
+    //         expect(response.status).toEqual(200)
+    //         expect(response.body.customer).not.toEqual(undefined)
+    //         expect(response.body.customer.name).toEqual(request.name)
+    //         expect(response.body.customer.contact).not.toEqual(undefined)
+    //         expect(response.body.customer.contact.phone).toEqual("789")
+    //         expect(response.body.customer.contact.email).toEqual("jane@test.com")
+    //     })
+
+    //     it('will return 404 if the customer is not found', async () => {
+    //         const request = {
+    //             name: "Jane",
+    //         }
+
+    //         const response = await supertest(app)
+    //             .put(`/customers/10000`)
+    //             .send(request)
+
+    //         expect(response.status).toEqual(404)
+    //         expect(response.body).toHaveProperty('error')
+    //     })
+
+    //     it("will return 400 when there are missing fields in the request body", async () => {
+    //         const customer = await createCustomer("John", "123456", "john@test.com")
+
+    //         const request = {}
+
+    //         const response = await supertest(app)
+    //             .put(`/customers/${customer.id}`)
+    //             .send(request)
+
+    //         expect(response.status).toEqual(400)
+    //         expect(response.body).toHaveProperty('error')
+    //     })
+    // })
 })
