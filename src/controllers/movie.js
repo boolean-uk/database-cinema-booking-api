@@ -67,6 +67,7 @@ const getMovieById = async (req, res) => {
                 screenings: true,
             }
         })
+        if (uniqueMovie === null) throw "Movie with that ID does not exist"
         res.status(200).json({ movie: uniqueMovie })
     } catch (err) {
         res.status(404).json({ error: err })
