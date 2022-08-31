@@ -1,6 +1,6 @@
 const prisma = require("../src/utils/prisma")
 
-const deleteTables = () => {
+const deleteTables = async () => {
   const deleteTables = [
     prisma.ticket.deleteMany(),
     prisma.screening.deleteMany(),
@@ -9,14 +9,14 @@ const deleteTables = () => {
     prisma.contact.deleteMany(),
     prisma.customer.deleteMany(),
   ];
-  return prisma.$transaction(deleteTables)
+  return await prisma.$transaction(deleteTables)
 }
 
 
-global.afterEach(() => {
-  return deleteTables()
+global.beforeEach(async () => {
+  return await deleteTables()
 })
 
-global.afterAll(() => {
-  return prisma.$disconnect()
+global.afterAll(async () => {
+  return await prisma.$disconnect()
 })
