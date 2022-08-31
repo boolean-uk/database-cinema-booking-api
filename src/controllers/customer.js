@@ -1,13 +1,37 @@
 const { Prisma } = require("@prisma/client")
 const prisma = require('../utils/prisma')
 
+// const getCustomers = async (req, res) => {
+//     try {
+//         const allCustomers = await prisma.customer.findMany({
+//             // data: {
+//             //     name: req.body.name,
+//             // },
+//             // contact: {
+//             //     phone: req.body.phone,
+//             //     eamil: req.body.email,
+//             // },
+//             include: {
+//                 contact: true,
+//                 ticket: true
+//             }
+//         })
+//         res.status(200).json({
+//             customers: allCustomers
+//         })
+//     } catch (err) {
+//         res.status(404).json({ error: err })
+//     }
+// }
+
 const createCustomer = async (req, res) => {
+    
     const {
         name,
         phone,
         email
     } = req.body
-
+    
     if (!name || !phone || !email) {
         return res.status(400).json({
             error: "Missing fields in request body"
@@ -48,6 +72,30 @@ const createCustomer = async (req, res) => {
     }
 }
 
+const updateCustomer = async (req, res) => {
+    // console.log("hi")
+    try {
+        const updateCustomerById = await prisma.customer.update({
+            where: {
+                id: +req.params.id
+            },
+            data: {
+                name: req.body.name
+            },
+            include: {
+                contact: true,
+            }
+        })
+        res.status(201).json( {customer: updateCustomerById} )
+    }  catch (err) {
+        //console.log( err )
+        res.status(404).json({ error: err })
+    }
+}
+    
+
 module.exports = {
-    createCustomer
+    //getCustomers,
+    createCustomer,
+    updateCustomer
 }
