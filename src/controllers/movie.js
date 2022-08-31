@@ -59,8 +59,11 @@ const createMovie = async (req, res) => {
 
 const getMovieById = async (req, res) => {
     try {
+        // console.log(isNaN(+req.params.id))
         const uniqueMovie = await prisma.movie.findUnique({
-            where: {
+            where: isNaN(+req.params.id) ? {
+                title: req.params.id
+            } : {
                 id: +req.params.id
             },
             include: {
@@ -71,6 +74,7 @@ const getMovieById = async (req, res) => {
         res.status(200).json({ movie: uniqueMovie })
     } catch (err) {
         res.status(404).json({ error: err })
+        console.log(err)
     }
 }
 
