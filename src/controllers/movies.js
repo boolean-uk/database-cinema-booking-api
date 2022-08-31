@@ -26,38 +26,18 @@ const getMovie = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body;
+  const createdMovie = await prisma.movie.create({
+    data: {
+      title: req.body.title,
+      runtimeMins: req.body.runtimeMins,
+    },
 
-  if (!title || !runtimeMins) {
-    return res.status(400).json({
-      error: "Missing fields in request body",
-    });
-  }
+    include: {
+      screenings: true,
+    },
+  });
 
-  try {
-    const createdMovie = await prisma.movie.create({
-      data: {
-        title: req.body.title,
-        runtimeMins: req.body.runtimeMins,
-      },
-
-      include: {
-        screenings: true,
-      },
-    });
-
-    res.status(201).json({ movie: createdMovie });
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        return res
-          .status(409)
-          .json({ error: "A movie with the provided title already exists" });
-      }
-    }
-
-    res.status(500).json({ error: e.message });
-  }
+  res.status(201).json({ movie: createdMovie });
 };
 
 const updateMovie = async (req, res) => {
