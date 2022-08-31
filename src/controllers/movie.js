@@ -48,7 +48,7 @@ const createMovie = async (req, res) => {
 
     } catch (err) {
         if (err === 400) {
-            res.status(404).json({ error: "Missing fields in request body" })
+            res.status(400).json({ error: "Missing fields in request body" })
         } else if (err === 409) {
             res.status(409).json({ error: "A movie with the provided title already exists" })
         } else {
@@ -59,7 +59,6 @@ const createMovie = async (req, res) => {
 
 const getMovieById = async (req, res) => {
     try {
-        // console.log(isNaN(+req.params.id))
         const uniqueMovie = await prisma.movie.findUnique({
             where: isNaN(+req.params.id) ? {
                 title: req.params.id
@@ -80,6 +79,13 @@ const getMovieById = async (req, res) => {
 
 const updateMovieById = async (req, res) => {
     try {
+        const alreadyExists = await prisma.movie.findMany({ where: { title: req.body.title } })
+        const uniqueMovie = await prisma.movie.findUnique({ where: { id: +req.params.id } })
+
+        if (req.body.title === "" || req.body.runtimeMins === 0) throw 400
+        if (uniqueMovie === null) throw 404
+        if (alreadyExists.length !== 0) throw 409
+
         const updatedMovie = await prisma.movie.update({
             where: {
                 id: +req.params.id
@@ -92,9 +98,19 @@ const updateMovieById = async (req, res) => {
                 screenings: true,
             }
         })
+
         res.status(201).json({ movie: updatedMovie })
+
     } catch (err) {
-        res.status(404).json({ error: err })
+        if (err === 400) {
+            res.status(400).json({ error: "Missing fields in request body" })
+        } else if (err === 404) {
+            res.status(404).json({ error: "Movie with that ID does not exist" })
+        } else if (err === 409) {
+            res.status(409).json({ error: "Movie with the provided title already exists" })
+        } else {
+            res.status(404).json({ error: err })
+        }
     }
 }
 
