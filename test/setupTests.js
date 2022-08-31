@@ -12,6 +12,10 @@ const deleteTables = () => {
   return prisma.$transaction(deleteTables)
 }
 
+// added to adress the tests issue where if you start with a non empty DB the first time you running the tests the first test (GET /movies) fails.
+global.beforeAll(() => {
+  return deleteTables()
+})
 
 global.afterEach(() => {
   return deleteTables()
