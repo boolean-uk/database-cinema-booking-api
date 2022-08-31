@@ -1,8 +1,24 @@
 const supertest = require("supertest")
 const app = require("../../../src/server.js")
 const { createCustomer } = require("../../helpers/createCustomer.js")
+const { createMovie } = require("../../helpers/createMovie.js")
 
 describe("Customer Endpoint", () => {
+    // describe("POST /movies", () => {
+    //     it('will return 400 if there are missing fields in the body request', async () => {
+    //         // const customer = await createMovie("Pulp Fiction", 165)
+
+    //         const request = { title: "", runtimeMins: 0 }
+
+    //         const response = await supertest(app)
+    //             .post(`/movies`)
+    //             .send(request)
+
+    //         expect(response.status).toEqual(400)
+    //         expect(response.body).toHaveProperty('error')
+    //     })
+    // })
+
     describe("PUT /customers/:id", () => {
         it("can update a customers contact info when a contact property exists on the request body", async () => {
             const customer = await createCustomer("John", "123456", "john@test.com")
