@@ -4,14 +4,55 @@ const prisma = require("../utils/prisma");
 // GET read all movies (including screenings)
 const getMovies = async (req, res) => {
   // res.json({ msg: `I'm all hooked up` });
-  const rq = req.query 
+  // const includeScreenings = { include: { screenings: true } };
+  const { runtimeLt, runtimeGt } = req.query;
 
-  const movies = await prisma.movie.findMany({
-    include: { screenings: true },
-  });
-  res.json({ movies: movies });
-};
-
+  if (runtimeLt && runtimeGt) {
+    // const includeScreenings = { include: { screenings: true } };
+    const movies = await prisma.movie.findMany({
+      where: {
+        AND: [
+          {runtimeMins: {lt: Number(runtimeLt),},},
+          {runtimeMins: {gt: Number(runtimeGt),},},
+        ],
+      },
+      include: {screenings: true,},
+    });
+      res.status(200).json({
+        movies: movies,
+      });
+  } else if (runtimeLt) {
+      const movies = await prisma.movie.findMany({
+        where: {
+          runtimeMins: {lt: Number(runtimeLt),},
+        },
+        include: {screenings: true,},
+      });
+      res.status(200).json({
+        movies: movies
+      });
+    } else if(runtimeGt) {
+      const movies = await prisma.movie.findMany({
+        where: {
+          runtimeMins: {gt: Number(runtimeGt),},
+        },
+        include: {screenings: true,},
+      });
+      res.status(200).json({
+        movies: movies
+      });
+    } else {
+      const movies = await prisma.movie.findMany({
+        include: {
+          screenings: true,
+        },
+      });
+      res.status(200).json({
+        movies,
+      });
+    }
+  }
+  
 // GET read a movie by id
 const getMovieById = async (req, res) => {
   const movieId = Number(req.params.id);
@@ -23,6 +64,9 @@ const getMovieById = async (req, res) => {
 };
 
 // POST create a movie
+// - Include the ability to create screenings for the movie if the request body has a screenings property. If that property doesn't exist in the request body, just create the movie. ()
+// - 404 Missing field in request body (x)
+// - 409 A movie with the provided title already exists (x)
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
@@ -31,6 +75,10 @@ const createMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
+
+if ("screenings" in createMovie); {
+  // allowing adding of values to screenings
+} else {
 
   try {
     const createdMovie = await prisma.movie.create({
@@ -51,6 +99,7 @@ const createMovie = async (req, res) => {
           .json({ error: "A movie with the provided title already exists" });
       }
     }
+  }
     res.status(500).json({ error: e.message });
   }
 };
