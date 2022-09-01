@@ -75,11 +75,6 @@ const createMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
-
-if ("screenings" in createMovie); {
-  // allowing adding of values to screenings
-} else {
-
   try {
     const createdMovie = await prisma.movie.create({
       data: {
