@@ -23,28 +23,33 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
-
-  console.log(req.body, title, runtimeMins);
-
+  let includeScreenings
   if (!title || !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
     });
   }
 
+  if (screenings) {
+    includeScreenings = {
+      createMany: {
+        data: screenings.map(({ screenId, startsAt }) => ({
+          screenId,
+          startsAt: new Date(startsAt),
+        })),
+      },
+    }
+  }
+
   try {
+
+
+    
     const createdMovie = await prisma.movie.create({
       data: {
         title: title,
         runtimeMins: runtimeMins,
-        screenings: screenings ? {
-          createMany: {
-            data: screenings.map(({ screenId, startsAt }) => ({
-              screenId,
-              startsAt: new Date(startsAt),
-            })),
-          },
-        } : undefined
+        screenings: screenings ? includeScreenings : undefined
       },
       include: { screenings: true },
     });
