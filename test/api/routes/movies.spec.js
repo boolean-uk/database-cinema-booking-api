@@ -55,7 +55,7 @@ describe("Movies Endpoint", () => {
             const created = await createMovie('Dodgeball', 120, screen)
 
             const response = await supertest(app).get(`/movies/${created.id}`)
-
+            console.log(response.body)
             expect(response.status).toEqual(200)
             expect(response.body.movie).not.toEqual(undefined)
             expect(response.body.movie.title).toEqual('Dodgeball')

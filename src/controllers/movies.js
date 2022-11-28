@@ -79,7 +79,7 @@ const getMovieById = async (req, res) => {
   }
 
   try {
-    const movie = await prisma.movie.findMany({
+    const movie = await prisma.movie.findFirst({
       where: {
         OR: [
           {
