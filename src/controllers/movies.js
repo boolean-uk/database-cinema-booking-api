@@ -2,8 +2,15 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getMovies = async (req, res) => {
+  const { runtimeLt, runtimeGt } = req.query;
   try {
     const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          lt: runtimeLt ? Number(runtimeLt) : undefined,
+          gt: runtimeGt ? Number(runtimeGt) : undefined,
+        },
+      },
       include: {
         screenings: true,
       },
@@ -15,7 +22,9 @@ const getMovies = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body;
+  const { title, runtimeMins, screenings } = req.body;
+
+  console.log(req.body, title, runtimeMins);
 
   if (!title || !runtimeMins) {
     return res.status(400).json({
@@ -25,12 +34,31 @@ const createMovie = async (req, res) => {
 
   try {
     const createdMovie = await prisma.movie.create({
-      data: { title: title, runtimeMins: runtimeMins },
+      data: {
+        title: title,
+        runtimeMins: runtimeMins,
+        screenings: screenings ? {
+          createMany: {
+            data: screenings.map(({ screenId, startsAt }) => ({
+              screenId,
+              startsAt: new Date(startsAt),
+            })),
+          },
+        } : undefined
+      },
       include: { screenings: true },
     });
 
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res
+          .status(409)
+          .json({ error: "A movie with the provided title already exists" });
+      }
+    }
+    console.error(e.message);
     res.status(500).json({ error: e.message });
   }
 };
