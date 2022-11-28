@@ -56,6 +56,7 @@ const createMovie = async (req, res) => {
 
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
+    console.log(e.message);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return res
@@ -63,7 +64,7 @@ const createMovie = async (req, res) => {
           .json({ error: "A movie with the provided title already exists" });
       }
     }
-    console.error(e.message);
+    console.log(e.message);
     res.status(500).json({ error: e.message });
   }
 };
