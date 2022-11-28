@@ -90,7 +90,7 @@ describe("Movies Endpoint", () => {
         runtimeMins: 110,
         screenings: [
           { screenId: screen.id, startsAt: Date.now() },
-          { screenId: screen.id, startsAt: Date.now() }
+          { screenId: screen.id, startsAt: Date.now() },
         ],
       };
 
@@ -98,8 +98,7 @@ describe("Movies Endpoint", () => {
         title: "Top Gun: Maverick",
         screenings: [
           { screenId: screen.id, startsAt: Date.now() },
-          { screenId: screen.id, startsAt: Date.now() }
-  
+          { screenId: screen.id, startsAt: Date.now() },
         ],
       };
 
@@ -115,7 +114,7 @@ describe("Movies Endpoint", () => {
       const duplicateTitleResponse = await supertest(app)
         .post("/movies")
         .send(duplicateTitleRequest);
-        
+
       expect(response.status).toEqual(201);
       expect(response.body.movie).not.toEqual(undefined);
       expect(response.body.movie.title).toEqual("Top Gun");
@@ -126,6 +125,30 @@ describe("Movies Endpoint", () => {
       expect(missingBodyResponse.status).toEqual(400);
 
       expect(duplicateTitleResponse.status).toEqual(409);
+    });
+  });
+
+  describe("GET /movies/:id", () => {
+    it("will get a movie by id or title", async () => {
+      const screen = await createScreen(1);
+      const created = await createMovie("Dodgeball", 120, screen);
+
+      const responseWithId = await supertest(app).get(`/movies/${created.id}`);
+      const responseWithTitle = await supertest(app).get(`/movies/${created.title}`);
+
+      expect(responseWithId.status).toEqual(200);
+      expect(responseWithId.body.movie).not.toEqual(undefined);
+      expect(responseWithId.body.movie.title).toEqual("Dodgeball");
+      expect(responseWithId.body.movie.runtimeMins).toEqual(120);
+      expect(responseWithId.body.movie.screenings).not.toEqual(undefined);
+      expect(responseWithId.body.movie.screenings.length).toEqual(1);
+
+      expect(responseWithTitle.status).toEqual(200);
+      expect(responseWithTitle.body.movie).not.toEqual(undefined);
+      expect(responseWithTitle.body.movie.title).toEqual("Dodgeball");
+      expect(responseWithTitle.body.movie.runtimeMins).toEqual(120);
+      expect(responseWithTitle.body.movie.screenings).not.toEqual(undefined);
+      expect(responseWithTitle.body.movie.screenings.length).toEqual(1);
     });
   });
 });

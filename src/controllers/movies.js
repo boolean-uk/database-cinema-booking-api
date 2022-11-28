@@ -23,7 +23,7 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
-  let includeScreenings
+  let includeScreenings;
   if (!title || !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
@@ -38,18 +38,15 @@ const createMovie = async (req, res) => {
           startsAt: new Date(startsAt),
         })),
       },
-    }
+    };
   }
 
   try {
-
-
-    
     const createdMovie = await prisma.movie.create({
       data: {
         title: title,
         runtimeMins: runtimeMins,
-        screenings: screenings ? includeScreenings : undefined
+        screenings: screenings ? includeScreenings : undefined,
       },
       include: { screenings: true },
     });
@@ -70,14 +67,49 @@ const createMovie = async (req, res) => {
 };
 
 const getMovieById = async (req, res) => {
-  const movieId = Number(req.params.id);
+  const queryParam = req.params.id.replace("%", " ");
+  let id
+  let title
+  if (isNaN(Number(queryParam))) {
+    id = 9999;
+    title = queryParam
+  } else {
+    id = Number(queryParam);
+    title = 'Not a real movie, help me with this functionality!!!'
+  }
+
   try {
-    const movie = await prisma.movie.findUnique({
-      where: { id: movieId },
+    const movie = await prisma.movie.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              equals: title,
+            },
+          },
+          {
+            id: {
+              equals: id,
+            },
+          }
+        ],
+      },
       include: { screenings: true },
     });
+    if (movie.length === 0) {
+      return res.status(404).json({error: "A movie with the provided title or id does not exist"});
+    }
     res.json({ movie: movie });
   } catch (e) {
+    console.log(e);
+    if (e instanceof Prisma.PrismaClientValidationError) {
+      if (e.code === "P2001") { // This does not work
+        return res
+          .status(404)
+          .json({ error: "A movie with the provided title or id does not exist" });
+      }
+    }
+    console.log(e.message);
     res.status(500).json({ error: e.message });
   }
 };
