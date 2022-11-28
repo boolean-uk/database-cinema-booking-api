@@ -18,6 +18,8 @@ const customerRouter = require('./routers/customer');
 app.use('/customers', customerRouter);
 const moviesRouter = require('./routers/movies');
 app.use('/movies', moviesRouter);
+const screensRouter = require('./routers/screens');
+app.use('/screens', screensRouter);
 
 
 module.exports = app

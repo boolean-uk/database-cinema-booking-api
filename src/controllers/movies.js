@@ -16,7 +16,6 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
-  console.log(title, runtimeMins);
 
   if (!title || !runtimeMins) {
     return res.status(400).json({
@@ -50,31 +49,31 @@ const getMovieById = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-    const movieId = Number(req.params.id);
-    const { title, runtimeMins } = req.body;
-  
-    if (!title || !runtimeMins) {
-      return res.status(400).json({
-        error: "Missing fields in request body",
-      });
-    }
-  
-    try {
-      const updatedMovie = await prisma.movie.update({
-        where: { id: movieId },
-        data: { title: title, runtimeMins: runtimeMins },
-        include: { screenings: true },
-      });
-  
-      res.status(201).json({ movie: updatedMovie });
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  };
+  const movieId = Number(req.params.id);
+  const { title, runtimeMins } = req.body;
+
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  try {
+    const updatedMovie = await prisma.movie.update({
+      where: { id: movieId },
+      data: { title: title, runtimeMins: runtimeMins },
+      include: { screenings: true },
+    });
+
+    res.status(201).json({ movie: updatedMovie });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
 
 module.exports = {
   getMovies,
   createMovie,
   getMovieById,
-  updateMovie
+  updateMovie,
 };
