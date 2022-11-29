@@ -105,7 +105,7 @@ const updateMovie = async (req, res) => {
       include: { screenings: true },
     });
 
-    console.log(updatedMovie.screenings.filter(() => ))
+    // console.log(updatedMovie.screenings.filter(() => ))
 
   screenings?.forEach(async screening => {
     await prisma.screening.update({
