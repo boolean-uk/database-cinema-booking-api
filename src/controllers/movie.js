@@ -11,11 +11,12 @@ const createMovie = async (req, res) => {
     try {
         const createdMovie = await prisma.movie.create({
             data: {
-                title, runtimeMins, screenings: {
-                    create: [screenings],
-                },
+                title: req.body.title,
+                runtimeMins: req.body.runtimeMins,
             },
-            include: { screenings: true },
+            include: {
+                screenings: true,
+            },
         })
 
         res.status(201).json({ movie: createdMovie })
@@ -24,24 +25,42 @@ const createMovie = async (req, res) => {
     }
 }
 
-// const getAllMovies = async (req, res) => {
-//     const movies = await prisma.movie.
-//         res.status(200).json({ movies })
-// }
+const getAllMovies = async (req, res) => {
+    const movies = await prisma.movie.findMany(
 
-// const getMovieById = async (req, res) => {
-//     const id = Number(req.params.id)
+    )
+    res.json({ movies })
+}
 
-//     return res.status(200).json({ movie })
-// }
+const getMovieById = async (req, res) => {
+    const id = Number(req.params.id)
+    const movie = await prisma.movie.findUnique({
+        where: {
+            id: id,
+        }
+    })
+    console.log("get movieby id")
+    return res.status(200).json({ movie })
+}
 
-// const updateMovie = async (req, res) => {
-//     const id = Number(req.params.id)
-//     const { title, runtimeMins, screenings } = req.body
+const updateMovie = async (req, res) => {
+    const id = Number(req.params.id)
+    const movie = await prisma.movie.update({
+        where: {
+            id: id,
+        },
+        data: {
+            title: req.body.title,
+            runtimeMins: req.body.runtimeMins,
+        },
+        include: {
+            screenings: true,
+        },
+    })
+    console.log("updateMovie")
+    res.status(201).json({ movie })
+}
 
-//     res.status(201).json({ movie })
-// }
 
 
-
-module.exports = { createScreen }
+module.exports = { createMovie, getAllMovies, getMovieById, updateMovie }

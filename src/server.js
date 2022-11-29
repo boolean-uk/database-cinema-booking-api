@@ -18,6 +18,12 @@ const customerRouter = require('./routers/customer');
 const { Prisma } = require('@prisma/client');
 app.use('/customers', customerRouter);
 
+const movieRouter = require('./routers/movies')
+app.use('/movies', movieRouter);
+
+const screenRouter = require('./routers/screens')
+app.use('/screens', screenRouter);
+
 app.use((e, req, res, next) => {
     if (e instanceof Prisma.PrismaClientKnownRequestError){
         
