@@ -4,6 +4,6 @@ const {
 } = require('../controllers/screens');
 const router = express.Router();
 
-router.post("/register", createScreen);
+router.post("/", createScreen);
 
 module.exports = router;

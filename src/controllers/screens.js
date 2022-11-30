@@ -11,7 +11,7 @@ const createScreen = async (req, res) => {
     }
 
     try {
-        const createdScreens = await prisma.screens.create({
+        const createdScreens = await prisma.screen.create({
             data: { number: number }
         })
         res.status(201).json({ screen: createdScreens })
