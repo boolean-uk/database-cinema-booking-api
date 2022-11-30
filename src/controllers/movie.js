@@ -26,8 +26,16 @@ const createMovie = async (req, res) => {
 }
 
 const getAllMovies = async (req, res) => {
-    const movies = await prisma.movie.findMany(
-
+    const movies = await prisma.movie.findMany({
+        where: {
+            NOT: {
+                screenings: {}
+            }
+        },
+        include: {
+            screenings: true,
+        },
+    }
     )
     res.json({ movies })
 }
@@ -37,10 +45,13 @@ const getMovieById = async (req, res) => {
     const movie = await prisma.movie.findUnique({
         where: {
             id: id,
-        }
+        },
+        include: {
+            screenings: true,
+        },
     })
     console.log("get movieby id")
-    return res.status(200).json({ movie })
+    return res.json({ movie })
 }
 
 const updateMovie = async (req, res) => {
