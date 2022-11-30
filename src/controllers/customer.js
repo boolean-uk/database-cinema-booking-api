@@ -56,7 +56,7 @@ const updateCustomer = async (req, res) => {
       where: {
         id: customerId,
       },
-      data: { name: name, phone: phone, email: email },
+      data: { name, phone, email },
       include: { contact: true }
     });
   

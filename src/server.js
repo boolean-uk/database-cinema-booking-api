@@ -1,6 +1,7 @@
 const express = require('express');
-const app = express();
 require('express-async-errors');
+const app = express();
+
 const cors = require('cors');
 const morgan = require('morgan');
 

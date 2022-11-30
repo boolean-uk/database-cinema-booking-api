@@ -50,7 +50,6 @@ const getMovieById = async (req, res) => {
             screenings: true,
         },
     })
-    console.log("get movieby id")
     return res.json({ movie })
 }
 
@@ -68,7 +67,6 @@ const updateMovie = async (req, res) => {
             screenings: true,
         },
     })
-    console.log("updateMovie")
     res.status(201).json({ movie })
 }
 
