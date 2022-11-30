@@ -35,30 +35,18 @@ app.use((e, req, res, next) => {
         .status(409)
         .json({ error: "A customer with the provided email already exists" });
     }
-  }
-  if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2013") {
-      return res
-        .status(400)
-        .json({ error: "Missing fields in request body" });
+      return res.status(400).json({ error: "Missing fields in request body" });
     }
-  }
-  if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2001") {
-      return res
-        .status(404)
-        .json({ error: "Customer with that id does not exist" });
+      return res.status(404).json({ error: "That thing does not exist" });
+    }
+    if (e.code === "P2016") {
+      return res.status(404).json({ error: "That thing does not exist" });
     }
   }
-  // if (e instanceof Prisma.PrismaClientKnownRequestError) {
-  //   if (e.code === "P2016") {
-  //     return res
-  //       .status(404)
-  //       .json({ error: "Customer with that id does not exist" });
-  //   }
-  // }
-  console.log(e)
-  res.status(500).json({ error: 'Oooooops' });
+
+  res.status(500).json({ error: "Oooooops" });
 });
 
 module.exports = app;

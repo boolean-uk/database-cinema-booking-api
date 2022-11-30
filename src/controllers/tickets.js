@@ -26,12 +26,7 @@ const createTicket = async (req, res) => {
           contact: true,
         },
       },
-      // screening: {
-      //   select: {
-      //     screen: true,
-      //     movie: true,
-      //   },
-      // },
+  
     },
   });
 

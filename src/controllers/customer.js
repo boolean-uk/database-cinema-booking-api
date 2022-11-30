@@ -37,30 +37,51 @@ const createCustomer = async (req, res) => {
 const updateCustomer = async (req, res) => {
   const { id } = req.params;
   const { name, contact } = req.body;
-  const { phone, email } = contact;
-
   if (!name) {
     return res.status(400).json({
       error: "Missing fields in request body",
     });
   }
-  const customer = await prisma.customer.update({
+
+  let customer;
+
+  if (contact) {
+  console.log(req.body);
+
+    const { phone, email } = contact;
+    customer = await prisma.customer.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name,
+        contact: {
+          update: {
+            phone,
+            email,
+          },
+        },
+      },
+      include: {
+        contact: true,
+      },
+    });
+  res.status(201).json({ customer: customer });
+  return 
+  }
+
+  customer = await prisma.customer.update({
     where: {
       id: Number(id),
     },
     data: {
       name,
-      contact: {
-        update: {
-          phone,
-          email,
-        },
-      },
     },
     include: {
       contact: true,
     },
   });
+
   res.status(201).json({ customer: customer });
 };
 
