@@ -52,7 +52,6 @@ const createMovie = async (req, res) => {
 };
 
 const getMovieById = async (req, res) => {
-  console.log(req.params.id);
   let id;
   let title;
   if (isNaN(Number(req.params.id))) {
@@ -89,37 +88,21 @@ const getMovieById = async (req, res) => {
 const updateMovie = async (req, res) => {
   const movieId = Number(req.params.id);
   const { title, runtimeMins, screenings } = req.body;
-  console.log(req.body)
 
   if (!title || !runtimeMins) {
     throw new MissingFieldsError();
   }
-
 
   const updatedMovie = await prisma.movie.update({
     where: { id: movieId },
     data: {
       title: title,
       runtimeMins: runtimeMins,
-      },
-      include: { screenings: true },
-    });
+    },
+    include: { screenings: true },
+  });
 
-    // console.log(updatedMovie.screenings.filter(() => ))
 
-  screenings?.forEach(async screening => {
-    await prisma.screening.update({
-      where: {
-        movieId: movieId,
-
-      },
-      data: {
-        screenId: screening.screenId,
-        startsAt: new Date(screening.startsAt)
-      }
-    })
-  })
-  
   res.status(201).json({ movie: updatedMovie });
 };
 

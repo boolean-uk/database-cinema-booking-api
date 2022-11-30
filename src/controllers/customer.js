@@ -7,7 +7,6 @@ const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body;
 
   if (!name || !phone || !email) {
-    console.log('in here')
     throw new MissingFieldsError()
   }
 

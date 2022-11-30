@@ -37,7 +37,6 @@ app.use((e, req, res, next) => {
         }
     }
     if (e instanceof Prisma.PrismaClientValidationError) {
-        console.log(e)
         return res.status(400).json({ error: "Invalid Data" })
     }
     if (e instanceof MissingFieldsError) {
