@@ -1,9 +1,9 @@
 const express = require('express')
-const {addScreen} = require ("../controllers/screens")
+const { addScreen } = require ("../controllers/screens")
 
 const router = express.Router()
 
-router.post(("/", addScreen))
+router.post("/", addScreen)
 
 
 
