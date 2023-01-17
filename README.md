@@ -38,13 +38,13 @@ The full database schema and seed file for this exercise has already been implem
 
 - Change your movie list GET route to only respond with movies that have a future screening time
 - Add the ability for customers to leave reviews on movies
-    - This will require a new entity in your diagram, schema file and seed file. Remember the `npx prisma generate`, `npx prisma migrate dev --create-only --skip-seed --name reviews` and `npx prisma migrate reset` commands from an earlier exercise!
+  - This will require a new entity in your diagram, schema file and seed file. Remember the `npx prisma generate`, `npx prisma migrate dev --create-only --skip-seed --name reviews` and `npx prisma migrate reset` commands from an earlier exercise!
 
 ## Testing your work
 
 - Run the test suite with `npm test`
 - Run the extension test suite with `npm run test:ext`
-    - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide
+  - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide
 
 So far, you may have been using `curl` to manually test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
 
