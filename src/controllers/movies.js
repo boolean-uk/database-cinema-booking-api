@@ -8,6 +8,18 @@ const getAllMovies = async (req, res) => {
   } catch (error) {}
 };
 
+const getMovie = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const movie = await prisma.movie.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.json({ movie });
+  } catch (error) {}
+};
+
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
 
@@ -45,6 +57,31 @@ const createMovie = async (req, res) => {
   }
 };
 
-module.exports = { getAllMovies, createMovie };
+const updateMovie = async (req, res) => {
+  const { id } = req.params;
+  const { title, runtimeMins } = req.body;
 
-console.log(new Date());
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+  
+  try {
+    const movie = await prisma.movie.update({
+      data: {
+        title,
+        runtimeMins,
+      },
+      where: {
+        id: Number(id),
+      },
+      include: {
+        screenings,
+      },
+    });
+    res.status(201).json({ movie });
+  } catch (error) {}
+};
+
+module.exports = { getAllMovies, createMovie, getMovie, updateMovie };
