@@ -2,52 +2,82 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const createCustomer = async (req, res) => {
-	const { name, phone, email } = req.body;
+  const { name, phone, email } = req.body;
 
-	if (!name || !phone || !email) {
-		return res.status(400).json({
-			error: "Missing fields in request body",
-		});
-	}
+  if (!name || !phone || !email) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
 
-	try {
-		/**
-		 * This will create a Customer AND create a new Contact, then automatically relate them with each other
-		 * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
-		 */
-		const createdCustomer = await prisma.customer.create({
-			data: {
-				name,
-				contact: {
-					create: {
-						phone,
-						email,
-					},
-				},
-			},
-			// We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-			// This is like doing RETURNING in SQL
-			include: {
-				contact: true,
-			},
-		});
+  try {
+    /**
+     * This will create a Customer AND create a new Contact, then automatically relate them with each other
+     * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
+     */
+    const createdCustomer = await prisma.customer.create({
+      data: {
+        name,
+        contact: {
+          create: {
+            phone,
+            email,
+          },
+        },
+      },
+      // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
+      // This is like doing RETURNING in SQL
+      include: {
+        contact: true,
+      },
+    });
 
-		res.status(201).json({ customer: createdCustomer });
-	} catch (e) {
-		if (e instanceof Prisma.PrismaClientKnownRequestError) {
-			if (e.code === "P2002") {
-				return res.status(409).json({
-					error:
-						"A customer with the provided email already exists/there's an issue with the emissions system in your diesel engine",
-				});
-			}
-		}
+    res.status(201).json({ customer: createdCustomer });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(409).json({
+          error:
+            "A customer with the provided email already exists/there's an issue with the emissions system in your diesel engine",
+        });
+      }
+    }
 
-		res.status(500).json({ error: e.message });
-	}
+    res.status(500).json({ error: e.message });
+  }
+};
+
+const updateCustomer = async (req, res) => {
+  const id = Number(req.params.id);
+  const { name } = req.body;
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Given ID is not a number",
+    });
+  }
+  if (!name) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  try {
+    const updateCustomerByID = await prisma.customer.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+      },
+    });
+    res.json({ data: updateCustomerByID });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = {
-	createCustomer,
-	updateCustomer,
+  createCustomer,
+  updateCustomer,
 };
