@@ -36,9 +36,10 @@ const createCustomer = async (req, res) => {
 	} catch (e) {
 		if (e instanceof Prisma.PrismaClientKnownRequestError) {
 			if (e.code === "P2002") {
-				return res
-					.status(409)
-					.json({ error: "A customer with the provided email already exists" });
+				return res.status(409).json({
+					error:
+						"A customer with the provided email already exists/there's an issue with the emissions system in your diesel engine",
+				});
 			}
 		}
 
@@ -48,4 +49,5 @@ const createCustomer = async (req, res) => {
 
 module.exports = {
 	createCustomer,
+	updateCustomer,
 };

@@ -58,8 +58,42 @@ const getByID = async (req, res) => {
 	}
 };
 
+const updateByID = async (req, res) => {
+	const id = Number(req.params.id);
+	const { title, runtimeMins } = req.body;
+
+	// Error handling for if a number isn't given
+	if (!id) {
+		return res.status(400).json({
+			error: "Given ID is not a number",
+		});
+	}
+
+	if (!title || !runtimeMins) {
+		return res.status(400).json({
+			error: "Missing fields in request body",
+		});
+	}
+
+	try {
+		const updateMovieByID = await prisma.movie.update({
+			where: {
+				id: id,
+			},
+			data: {
+				title,
+				runtimeMins,
+			},
+		});
+		res.json({ data: updateMovieByID });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
 module.exports = {
 	getMovie,
 	createMovie,
 	getByID,
+	updateByID,
 };
