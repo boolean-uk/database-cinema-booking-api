@@ -6,6 +6,39 @@ const getMovies = async (req, res) => {
   res.status(200).json({ movies: getAllMovies });
 };
 
+const createMovie = async (req, res) => {
+  const { title, runtimeMins } = req.body;
+
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  const createdMovie = await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+      screenings: {
+        create: {
+          screen: {
+            connect: {
+              id: 1,
+            },
+          },
+          startsAt: "2023-01-17T12:10:22.547Z",
+        },
+      },
+    },
+    include: {
+      screenings: true,
+    },
+  });
+
+  res.status(201).json({ movie: createdMovie });
+};
+
 module.exports = {
   getMovies,
+  createMovie,
 };
