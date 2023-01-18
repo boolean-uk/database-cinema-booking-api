@@ -48,6 +48,44 @@ const createCustomer = async (req, res) => {
     }
 }
 
+
+const updateCustomer = async (req, res) => {
+    const {name, email, phone } = req.body;
+    const {id} = req.params;
+
+    try {
+        const updatedCustomer = await prisma.customer.update({
+            data: {
+                name,
+                contact: {
+                    update: {
+                        email,
+                        phone
+                    }
+                }
+            },
+            where: {
+                id: Number.parseInt(id)
+            },
+            include: {
+                contact: true
+            }
+        })
+
+        res.status(201).json({customer: updatedCustomer})
+    }
+    catch (e){
+
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === "P2002") {
+                return res.status(409).json({ error: "A customer with the provided email already exists" })
+            }
+        }
+        
+        res.status(500).json({ error: e.message })
+    }
+}
 module.exports = {
-    createCustomer
+    createCustomer,
+    updateCustomer
 }

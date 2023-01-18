@@ -24,7 +24,11 @@ model Customer {
 model Contact {
   id          Int       @id @default(autoincrement())
   customer    Customer  @relation(fields: [customerId], references: [id])
+<<<<<<< HEAD
   customerId  Int @unique
+=======
+  customerId  Int       @unique
+>>>>>>> 46c7d21bc191e558276527d59e5aff49dc0f33a4
   phone       String
   email       String    @unique
   createdAt   DateTime  @default(now())
