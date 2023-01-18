@@ -8,8 +8,8 @@ const getAllMovies = async (req, res) => {
       select: {
         title: true,
         runtimeMins: true,
-        screenings: true
-      }
+        screenings: true,
+      },
     });
     res.json({ movies });
   } catch (error) {}
@@ -28,7 +28,7 @@ const getMovie = async (req, res) => {
         id: Number(id),
       },
     });
-    res.json({ movie: {...movie, screenings } });
+    res.json({ movie: { ...movie, screenings } });
   } catch (error) {}
 };
 
