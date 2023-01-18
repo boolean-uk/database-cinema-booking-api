@@ -3,7 +3,69 @@ const { screening } = require("../utils/prisma");
 const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
+  const { runtimeLt, runtimeGt } = req.query;
+
   try {
+    if (runtimeGt && runtimeLt) {
+      const movies = await prisma.movie.findMany({
+        select: {
+          title: true,
+          runtimeMins: true,
+          screenings: true,
+        },
+        where: {
+          AND: [
+            {
+              runtimeMins: {
+                gte: Number(runtimeGt),
+              },
+            },
+            {
+              runtimeMins: {
+                lte: Number(runtimeLt),
+              },
+            },
+          ],
+        },
+      });
+      res.json({ movies });
+      return;
+    }
+
+    if (runtimeLt) {
+      const movies = await prisma.movie.findMany({
+        select: {
+          title: true,
+          runtimeMins: true,
+          screenings: true,
+        },
+        where: {
+          runtimeMins: {
+            lte: Number(runtimeLt),
+          },
+        },
+      });
+      res.json({ movies });
+      return;
+    }
+
+    if (runtimeGt) {
+      const movies = await prisma.movie.findMany({
+        select: {
+          title: true,
+          runtimeMins: true,
+          screenings: true,
+        },
+        where: {
+          runtimeMins: {
+            gte: Number(runtimeGt),
+          },
+        },
+      });
+      res.json({ movies });
+      return;
+    }
+
     const movies = await prisma.movie.findMany({
       select: {
         title: true,
