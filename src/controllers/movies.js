@@ -1,4 +1,5 @@
 const { Prisma } = require('@prisma/client')
+const { where } = require('mongoose/lib/model')
 const { ticket } = require('../utils/prisma')
 const prisma = require('../utils/prisma')
 
@@ -10,18 +11,10 @@ const getMovies = async (req, res) => {
     res.status(201).json({movies: movies})
 }
   
-// title       String
-//   runtimeMins Int
-//   createdAt   DateTime    @default(now())
-//   updatedAt
 const createMovie = async (req, res) => {
     const {
         title,
-        runtimeMins,
-        screenId,
-        startsAt,
-        customerId 
-
+        runtimeMins
     } = req.body
 
     if (!title || !runtimeMins) {
@@ -41,7 +34,39 @@ const createMovie = async (req, res) => {
     res.status(201).json({ movie: createdMovie })
     
 }
+
+const getAMovie = async (req, res) => {
+    const { id } = req.params;
+    
+    const movie = await prisma.movie.findUnique({
+        where: {
+            id: Number.parseInt(id)
+        }
+    })
+
+    res.status(201).json({movie: movie}) 
+}
+
+
+const updateAMovie = async (req, res) => {
+    const { title, runtimeMins } = req.body
+    const {id} = req.params;
+
+    const updatedMovie = await prisma.movie.update({
+        data:{
+            title,
+            runtimeMins: Number.parseInt(runtimeMins)
+        },
+        where: {
+            id: Number.parseInt(id)
+        }
+    })
+
+    res.status(201).json({movie: updatedMovie})
+}
 module.exports = {
   getMovies,
-  createMovie
+  createMovie,
+  getAMovie,
+  updateAMovie
 }
