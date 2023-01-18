@@ -1,3 +1,4 @@
+const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getMovies = async (req, res) => {
@@ -21,6 +22,7 @@ const getMovieById = async (req, res) => {
   res.status(200).json({ movie: getByMovie });
 };
 
+
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
@@ -29,6 +31,8 @@ const createMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
+
+  try{
 
   const createdMovie = await prisma.movie.create({
     data: {
@@ -46,6 +50,18 @@ const createMovie = async (req, res) => {
   });
 
   res.status(201).json({ movie: createdMovie });
+} catch (e) {
+
+  if (e instanceof Prisma.PrismaClientKnownRequestError) {
+    if (e.code === "P2002") {
+      return res
+        .status(409)
+        .json({ error: "A movie with the provided email already exists" });
+    }
+  }
+
+  res.status(500).json({ error: e.message });
+}
 };
 
 const updateMovieById = async (req, res) => {
