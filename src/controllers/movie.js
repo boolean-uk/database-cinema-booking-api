@@ -20,11 +20,13 @@ const createMovie = async (req, res) => {
 	}
 
 	if (!screenings) {
-		screenings = {
-			movieId: 1,
-			screenId: 1,
-			startsAt: "2023-01-20T15:43:26.102Z",
-		};
+		screenings = [
+			{
+				movieId: 1,
+				screenId: 1,
+				startsAt: "2023-01-20T15:43:26.102Z",
+			},
+		];
 	}
 
 	try {
@@ -40,7 +42,7 @@ const createMovie = async (req, res) => {
 								id: 1,
 							},
 						},
-						startsAt: screenings.startsAt,
+						startsAt: screenings[0].startsAt,
 					},
 				},
 			},
@@ -54,20 +56,6 @@ const createMovie = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
-
-// data = {
-// 	title: "My Left Foot",
-// 	runtimeMins: 103,
-// 	screenings: {
-// 		create: [
-// 			{
-// 				movieId: 1,
-// 				screenId: 1,
-// 				startsAt: "2023-01-18T11:19:17.825Z",
-// 			},
-// 		],
-// 	},
-// };
 
 const getByID = async (req, res) => {
 	const id = Number(req.params.id);
