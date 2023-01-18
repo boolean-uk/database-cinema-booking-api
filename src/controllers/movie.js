@@ -11,20 +11,7 @@ const getMovie = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-	const { title, runtimeMins, screenings } = req.body;
-
-	const data = { title, runtimeMins };
-
-	if (screenings) {
-		console.log(screenings);
-		console.log(new Date());
-		data.screenings = {
-			create: screenings.map((screening) => ({
-				...screening,
-				// startsAt: new Date(screening.startsAt),
-			})),
-		};
-	}
+	let { title, runtimeMins, screenings } = req.body;
 
 	if (!title || !runtimeMins) {
 		return res.status(400).json({
@@ -32,12 +19,36 @@ const createMovie = async (req, res) => {
 		});
 	}
 
+	// if (!screenings) {
+	// 	screenings = [
+	// 		{
+	// 			movieId: 1,
+	// 			screenId: 1,
+	// 			startsAt: "2023-01-20T15:43:26.102Z",
+	// 		},
+	// 	];
+	// }
+
 	try {
+		console.log(screenings);
 		const createdMovie = await prisma.movie.create({
-			data,
-			include: {
-				screenings: true,
+			data: {
+				title: title,
+				runtimeMins: runtimeMins,
+				screenings: {
+					create: {
+						screen: {
+							connect: {
+								id: 1,
+							},
+						},
+						startsAt: screenings[0].startsAt,
+					},
+				},
 			},
+			// include: {
+			// 	screenings,
+			// },
 		});
 
 		res.status(201).json({ movie: createdMovie });
@@ -45,6 +56,20 @@ const createMovie = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
+
+// data = {
+// 	title: "My Left Foot",
+// 	runtimeMins: 103,
+// 	screenings: {
+// 		create: [
+// 			{
+// 				movieId: 1,
+// 				screenId: 1,
+// 				startsAt: "2023-01-18T11:19:17.825Z",
+// 			},
+// 		],
+// 	},
+// };
 
 const getByID = async (req, res) => {
 	const id = Number(req.params.id);
