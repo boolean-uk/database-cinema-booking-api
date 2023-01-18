@@ -1,33 +1,47 @@
 const { Prisma } = require('@prisma/client')
+const { ticket } = require('../utils/prisma')
 const prisma = require('../utils/prisma')
 
-// create get movie function
-// const getMovies = async (req, res) => {
-//   {
-//     movies: [
-//       {
-//         id: 0,
-//         title: 'string',
-//         runtimeMins: 0,
-//         createdAt: 'string',
-//         updatedAt: 'string',
-//         screenings: [
-//           {
-//             id: 0,
-//             movieId: 0,
-//             screenId: 0,
-//             startsAt: 'string',
-//             createdAt: 'string',
-//             updatedAt: 'string'
-//           }
-//         ]
-//       }
-//     ]
-//   }
-// }
-// import in routers
-//
+// get all movies function
+const getMovies = async (req, res) => {
+    
+    const movies = await prisma.movie.findMany()
 
-// module.exports = {
-//   getMovie
-// }
+    res.status(201).json({movies: movies})
+}
+  
+// title       String
+//   runtimeMins Int
+//   createdAt   DateTime    @default(now())
+//   updatedAt
+const createMovie = async (req, res) => {
+    const {
+        title,
+        runtimeMins,
+        screenId,
+        startsAt,
+        customerId 
+
+    } = req.body
+
+    if (!title || !runtimeMins) {
+        return res.status(400).json({
+            error: "Missing fields in request body"
+        })
+    }
+
+    
+    const createdMovie = await prisma.movie.create({
+        data: {
+            title,
+            runtimeMins: Number.parseInt(runtimeMins)    
+            }
+        })
+
+    res.status(201).json({ movie: createdMovie })
+    
+}
+module.exports = {
+  getMovies,
+  createMovie
+}
