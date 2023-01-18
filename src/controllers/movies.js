@@ -4,7 +4,6 @@ const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
   const { runtimeLt, runtimeGt } = req.query;
-
   try {
     if (runtimeGt && runtimeLt) {
       const movies = await prisma.movie.findMany({
