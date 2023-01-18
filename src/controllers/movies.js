@@ -90,6 +90,11 @@ const getMovie = async (req, res) => {
         id: Number(id),
       },
     });
+    if (!movie) {
+      res.status(404).json({
+        error: "Movie with that id or title does not exist",
+      });
+    }
     res.json({ movie: { ...movie, screenings } });
   } catch (error) {}
 };
@@ -100,6 +105,16 @@ const createMovie = async (req, res) => {
   if (!title || !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
+    });
+  }
+  const foundMovie = await prisma.movie.findFirst({
+    where: {
+      title: title,
+    },
+  });
+  if (foundMovie) {
+    return res.status(409).json({
+      error: "A movie with the provided title already exists",
     });
   }
 
@@ -140,9 +155,17 @@ const updateMovie = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
-
+  const foundMovie = await prisma.movie.findFirst({
+    where: {
+      id: Number(id),
+    },
+  });
+  if (!foundMovie) {
+    res.status(404).json({
+      error: "Movie with that id does not exist",
+    });
+  }
   try {
-    console.log("updating");
     const movie = await prisma.movie.update({
       data: {
         title,
@@ -158,6 +181,16 @@ const updateMovie = async (req, res) => {
         screenings,
       },
     });
+    const foundMovie = await prisma.movie.findFirst({
+      where: {
+        title: movie.title,
+      },
+    });
+    if (foundMovie) {
+      return res.status(409).json({
+        error: "A movie with the provided title already exists",
+      });
+    }
     res.status(201).json({ movie });
   } catch (error) {
     console.log(error);
