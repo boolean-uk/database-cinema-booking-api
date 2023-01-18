@@ -1,6 +1,7 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
+// Get all movies
 const getMovies = async (req, res) => {
   try {
     const movies = await prisma.movie.findMany({
@@ -14,6 +15,7 @@ const getMovies = async (req, res) => {
   }
 };
 
+// Create a movie
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
@@ -41,6 +43,7 @@ const createMovie = async (req, res) => {
   }
 };
 
+// Get a movie by ID
 const getMoviesById = async (req, res) => {
   const movieid = Number(req.params.id);
   try {
@@ -54,8 +57,34 @@ const getMoviesById = async (req, res) => {
   }
 };
 
+// Update a movie
+const updateMovie = async (req, res) => {
+  const movieId = Number(req.params.id);
+  const { title, runtimeMins } = req.body;
+
+  if (!title || !runtimeMins) {
+    return res.json(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+  try {
+    const updatedMovie = await prisma.movie.update({
+      data: {
+        title: title,
+        runtimeMins: runtimeMins,
+      },
+      where: { id: movieId },
+      include: { screenings: true },
+    });
+    res.status(201).json({ movie: updatedMovie });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 module.exports = {
   createMovie,
   getMovies,
   getMoviesById,
+  updateMovie,
 };
