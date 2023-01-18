@@ -46,6 +46,29 @@ const createCustomer = async (req, res) => {
   }
 };
 
+const updateCustomer = async (req, res) => {
+  const { name } = req.body;
+  const customerId = Number(req.params.id);
+  if (!name) {
+    return res.status(400).json({
+      error: "Missing name in request body",
+    });
+  }
+  try {
+    const updatedCustomer = await prisma.customer.update({
+      data: {
+        name: name,
+      },
+      where: { id: customerId },
+      include: { contact: true },
+    });
+    res.status(201).json({ customer: updatedCustomer });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 module.exports = {
   createCustomer,
+  updateCustomer,
 };
