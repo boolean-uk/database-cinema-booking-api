@@ -1,4 +1,5 @@
 const { Prisma } = require("@prisma/client");
+const e = require("express");
 const prisma = require("../utils/prisma");
 
 const getMovies = async (req, res) => {
@@ -19,9 +20,14 @@ const getMovieById = async (req, res) => {
       screenings: true,
     },
   });
+  if (!getByMovie) {
+    res
+      .status(404)
+      .json({ error: `Movie with that id or title does not exist` });
+    return;
+  }
   res.status(200).json({ movie: getByMovie });
 };
-
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
@@ -32,36 +38,34 @@ const createMovie = async (req, res) => {
     });
   }
 
-  try{
-
-  const createdMovie = await prisma.movie.create({
-    data: {
-      title,
-      runtimeMins,
-      screenings: {
-        connect: {
-          id: 1,
+  try {
+    const createdMovie = await prisma.movie.create({
+      data: {
+        title,
+        runtimeMins,
+        screenings: {
+          connect: {
+            id: 1,
+          },
         },
       },
-    },
-    include: {
-      screenings: true,
-    },
-  });
+      include: {
+        screenings: true,
+      },
+    });
 
-  res.status(201).json({ movie: createdMovie });
-} catch (e) {
-
-  if (e instanceof Prisma.PrismaClientKnownRequestError) {
-    if (e.code === "P2002") {
-      return res
-        .status(409)
-        .json({ error: "A movie with the provided email already exists" });
+    res.status(201).json({ movie: createdMovie });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res
+          .status(409)
+          .json({ error: "A movie with the provided email already exists" });
+      }
     }
-  }
 
-  res.status(500).json({ error: e.message });
-}
+    res.status(500).json({ error: e.message });
+  }
 };
 
 const updateMovieById = async (req, res) => {

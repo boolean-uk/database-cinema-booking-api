@@ -14,7 +14,7 @@ describe("Movies Endpoint", () => {
       expect(response.status).toEqual(200);
       expect(response.body.movies).not.toEqual(undefined);
       expect(response.body.movies.length).toEqual(2);
-      //   console.log(response.body.movies);
+
       const [movie1, movie2] = response.body.movies;
       expect(movie1.title).toEqual("Dodgeball");
       expect(movie1.runtimeMins).toEqual(120);
