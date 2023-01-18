@@ -40,7 +40,22 @@ const createMovie = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
+const getMoviesById = async (req, res) => {
+  const movieid = Number(req.params.id);
+  try {
+    const movie = await prisma.movie.findUnique({
+      where: { id: movieid },
+      include: { screenings: true },
+    });
+    res.json({ movie: movie });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 module.exports = {
   createMovie,
   getMovies,
+  getMoviesById,
 };
