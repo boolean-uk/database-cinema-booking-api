@@ -19,18 +19,16 @@ const createMovie = async (req, res) => {
 		});
 	}
 
-	// if (!screenings) {
-	// 	screenings = [
-	// 		{
-	// 			movieId: 1,
-	// 			screenId: 1,
-	// 			startsAt: "2023-01-20T15:43:26.102Z",
-	// 		},
-	// 	];
-	// }
+	if (!screenings) {
+		screenings = {
+			movieId: 1,
+			screenId: 1,
+			startsAt: "2023-01-20T15:43:26.102Z",
+		};
+	}
 
 	try {
-		console.log(screenings);
+		console.log(req.body);
 		const createdMovie = await prisma.movie.create({
 			data: {
 				title: title,
@@ -42,13 +40,13 @@ const createMovie = async (req, res) => {
 								id: 1,
 							},
 						},
-						startsAt: screenings[0].startsAt,
+						startsAt: screenings.startsAt,
 					},
 				},
 			},
-			// include: {
-			// 	screenings,
-			// },
+			include: {
+				screenings: true,
+			},
 		});
 
 		res.status(201).json({ movie: createdMovie });
