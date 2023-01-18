@@ -30,6 +30,7 @@ const createMovie = async (req, res) => {
         title: title,
         runtimeMins: runtimeMins,
       },
+      include: { screenings: true },
     });
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
