@@ -21,10 +21,9 @@ const getMovieById = async (req, res) => {
     },
   });
   if (!getByMovie) {
-    res
+    return res
       .status(404)
       .json({ error: `Movie with that id or title does not exist` });
-    return;
   }
   res.status(200).json({ movie: getByMovie });
 };
@@ -72,20 +71,45 @@ const updateMovieById = async (req, res) => {
   const { id } = req.params;
   const { title, runtimeMins } = req.body;
 
-  const updatedMovie = await prisma.movie.update({
-    where: {
-      id: Number(id),
-    },
-    data: {
-      title,
-      runtimeMins,
-    },
-    include: {
-      screenings: true,
-    },
-  });
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
 
-  res.status(201).json({ movie: updatedMovie });
+  try {
+    console.log("giving back a res")
+    const updatedMovie = await prisma.movie.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        title,
+        runtimeMins,
+      },
+      include: {
+        screenings: true,
+      },
+    })
+     
+    if (!updatedMovie) {
+      console.log("giving back a 404 res")
+      return res.status(404).json({ error: `Movie with that id does not exist` });
+    }
+    console.log("giving back a 201 res")
+    res.status(201).json({ movie: updatedMovie });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res
+          .status(409)
+          .json({ error: "A movie with that title already exists" });
+      }
+    }
+
+    res.status(500).json({ error: e.message });
+
+  }
 };
 
 module.exports = {
