@@ -78,7 +78,7 @@ const updateMovieById = async (req, res) => {
   }
 
   try {
-    console.log("giving back a res")
+    console.log("giving back a res");
     const updatedMovie = await prisma.movie.update({
       where: {
         id: Number(id),
@@ -90,17 +90,24 @@ const updateMovieById = async (req, res) => {
       include: {
         screenings: true,
       },
-    })
-     
+    });
+    console.log("UDPATED MOVIE IS: ", updatedMovie);
     if (!updatedMovie) {
-      console.log("giving back a 404 res")
-      return res.status(404).json({ error: `Movie with that id does not exist` });
+      console.log("giving back a 404 res");
+      return res
+        .status(404)
+        .json({ error: `Movie with that id does not exist` });
     }
-    console.log("giving back a 201 res")
+    console.log("giving back a 201 res");
     res.status(201).json({ movie: updatedMovie });
   } catch (e) {
+    console.log("Catch called");
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
+      if ((e.code = "P2025")) {
+        return res
+          .status(404)
+          .json({ error: "Movie with that id does not exist" });
+      } else if (e.code === "P2002") {
         return res
           .status(409)
           .json({ error: "A movie with that title already exists" });
@@ -108,7 +115,6 @@ const updateMovieById = async (req, res) => {
     }
 
     res.status(500).json({ error: e.message });
-
   }
 };
 
