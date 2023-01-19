@@ -1,5 +1,4 @@
 const { Prisma } = require("@prisma/client");
-const e = require("express");
 const prisma = require("../utils/prisma");
 
 const getMovies = async (req, res) => {
