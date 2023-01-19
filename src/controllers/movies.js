@@ -100,6 +100,14 @@ const updateMovie = async (req, res) => {
   if (!foundMovie) {
     res.status(404).json({ error: "Movie with that id does not exist" });
   }
+  const movieFound = await prisma.movie.findFirst({
+    where: { title: title },
+  });
+  if (movieFound) {
+    return res
+      .status(409)
+      .json({ error: "A movie with the provided title already exists" });
+  }
   try {
     const updatedMovie = await prisma.movie.update({
       data: {
@@ -111,14 +119,6 @@ const updateMovie = async (req, res) => {
       include: { screenings },
     });
 
-    const movieFound = await prisma.movie.findFirst({
-      where: { title: movie.title },
-    });
-    if (movieFound) {
-      return res
-        .status(409)
-        .json({ error: "A movie with the provided title already exists" });
-    }
     res.status(201).json({ movie: updatedMovie });
   } catch (e) {
     res.status(500).json({ error: e.message });
