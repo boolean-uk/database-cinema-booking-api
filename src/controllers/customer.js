@@ -85,13 +85,8 @@ const updateCustomer = async (req, res) => {
         name,
         contact: {
           update: {
-            where: {
-              customerId: Number(id),
-            },
-            data: {
-              phone: contact.phone,
-              email: contact.email,
-            },
+            phone: contact.phone,
+            email: contact.email,
           },
         },
       },
@@ -107,9 +102,8 @@ const updateCustomer = async (req, res) => {
           .status(404)
           .json({ error: "Customer with that id does not exist" });
       }
-
-      res.status(500).json({ error: e.message });
     }
+    res.status(500).json({ error: e.message });
   }
 };
 
