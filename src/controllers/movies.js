@@ -70,15 +70,16 @@ const getAllMovies = async (req, res) => {
       select: {
         title: true,
         runtimeMins: true,
-        screenings: {
-          where: {
-            startsAt: {
-              gt: new Date(),
-            },
-          },
-        },
+        screenings: true,
+        // screenings: {
+        //   where: {
+        //     startsAt: {
+        //       gt: new Date(),
+        //     },
+        //   },
+        // },
       },
-      where: { screenings: { some: {} } },
+      // where: { screenings: { some: {} } },
     });
 
     res.json({ movies });
