@@ -77,6 +77,18 @@ const updateMovieById = async (req, res) => {
     });
   }
 
+  const titleExists = await prisma.movie.findFirst({
+    where: {
+      title: title
+    }
+
+  })
+
+  if (titleExists) {
+    return res.status(409).json({ error: "A movie with that title already exists" });
+
+  }
+
   try {
     const updatedMovie = await prisma.movie.update({
       where: {
@@ -90,7 +102,7 @@ const updateMovieById = async (req, res) => {
         screenings: true,
       },
     });
-  
+
     res.status(201).json({ movie: updatedMovie });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -98,21 +110,16 @@ const updateMovieById = async (req, res) => {
         return res
           .status(404)
           .json({ error: "Movie with that id does not exist" });
-      } else
-       if (e.code === "P2002") {
-        return res
-          .status(409)
-          .json({ error: "A movie with that title already exists" });
       }
+
+      res.status(500).json({ error: e.message });
     }
+  };
+}
 
-    res.status(500).json({ error: e.message });
-  }
-};
-
-module.exports = {
-  getMovies,
-  createMovie,
-  getMovieById,
-  updateMovieById,
-};
+  module.exports = {
+    getMovies,
+    createMovie,
+    getMovieById,
+    updateMovieById,
+  };
