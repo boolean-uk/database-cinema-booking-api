@@ -48,20 +48,69 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, contact } = req.body;
 
-  const updatedCustomer = await prisma.customer.update({
-    where: {
-      id: Number(id),
-    },
-    data: {
-      name,
-    },
-    include: {
-      contact: true,
-    },
-  });
-  res.status(201).json({ customer: updatedCustomer });
+  if (!name) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  try {
+    if (!contact) {
+      // Update without Contact
+      const updatedCustomer = await prisma.customer.update({
+        where: {
+          id: Number(id),
+        },
+        data: {
+          name,
+        },
+        include: {
+          contact: true,
+        },
+      });
+      res.status(201).json({ customer: updatedCustomer });
+      return;
+    }
+
+    // Update with Contact
+    console.log("updating with contact");
+    console.log("contact is:", contact);
+    const updatedCustomer = await prisma.customer.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name,
+        contact: {
+          update: {
+            where: {
+              customerId: Number(id),
+            },
+            data: {
+              phone: contact.phone,
+              email: contact.email,
+            },
+          },
+        },
+      },
+      include: {
+        contact: true,
+      },
+    });
+    res.status(201).json({ customer: updatedCustomer });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if ((e.code = "P2025")) {
+        return res
+          .status(404)
+          .json({ error: "Customer with that id does not exist" });
+      }
+
+      res.status(500).json({ error: e.message });
+    }
+  }
 };
 
 module.exports = {

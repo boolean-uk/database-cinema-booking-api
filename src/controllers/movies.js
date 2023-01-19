@@ -42,11 +42,6 @@ const createMovie = async (req, res) => {
       data: {
         title,
         runtimeMins,
-        screenings: {
-          connect: {
-            id: 1,
-          },
-        },
       },
       include: {
         screenings: true,
@@ -69,7 +64,7 @@ const createMovie = async (req, res) => {
 
 const updateMovieById = async (req, res) => {
   const { id } = req.params;
-  const { title, runtimeMins } = req.body;
+  const { title, runtimeMins, screenings } = req.body;
 
   if (!title || !runtimeMins) {
     return res.status(400).json({
@@ -79,14 +74,14 @@ const updateMovieById = async (req, res) => {
 
   const titleExists = await prisma.movie.findFirst({
     where: {
-      title: title
-    }
-
-  })
+      title: title,
+    },
+  });
 
   if (titleExists) {
-    return res.status(409).json({ error: "A movie with that title already exists" });
-
+    return res
+      .status(409)
+      .json({ error: "A movie with that title already exists" });
   }
 
   try {
@@ -114,12 +109,12 @@ const updateMovieById = async (req, res) => {
 
       res.status(500).json({ error: e.message });
     }
-  };
-}
+  }
+};
 
-  module.exports = {
-    getMovies,
-    createMovie,
-    getMovieById,
-    updateMovieById,
-  };
+module.exports = {
+  getMovies,
+  createMovie,
+  getMovieById,
+  updateMovieById,
+};
