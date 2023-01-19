@@ -8,6 +8,14 @@ const createScreen = async (req, res) => {
       error: "Missing fields in request body",
     });
   }
+  const foundScreen = await prisma.screen.findFirst({
+    where: { number: number },
+  });
+  if (foundScreen) {
+    return res
+      .status(409)
+      .json({ error: "A screen with the provided number already exists" });
+  }
   try {
     const createdScreen = await prisma.screen.create({
       data: { number: number },

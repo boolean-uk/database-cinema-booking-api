@@ -47,24 +47,41 @@ const createCustomer = async (req, res) => {
 };
 
 const updateCustomer = async (req, res) => {
-  const { name } = req.body;
+  const { name, contact } = req.body;
   const customerId = Number(req.params.id);
+  let phone, email;
+  if (contact) {
+    phone = contact.phone;
+    email = contact.email;
+  }
   if (!name) {
     return res.status(400).json({
-      error: "Missing name in request body",
+      error: "Missing fields in request body",
     });
+  }
+  const foundCustomer = await prisma.customer.findFirst({
+    where: { id: customerId },
+  });
+  if (!foundCustomer) {
+    res.status(404).json({ error: "Customer with that id does not exist" });
   }
   try {
     const updatedCustomer = await prisma.customer.update({
       data: {
         name: name,
+        contact: {
+          update: {
+            phone,
+            email,
+          },
+        },
       },
       where: { id: customerId },
       include: { contact: true },
     });
     res.status(201).json({ customer: updatedCustomer });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    // res.status(500).json({ error: e.message });
   }
 };
 
