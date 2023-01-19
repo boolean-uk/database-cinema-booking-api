@@ -17,9 +17,11 @@ const customerRouter = require("./routers/customer");
 const movieRouter = require("./routers/movies");
 const screenRouter = require("./routers/screens");
 const ticketRouter = require("./routers/tickets");
+const reviewRouter = require("./routers/reviews");
 app.use("/customers", customerRouter);
 app.use("/movies", movieRouter);
 app.use("/screens", screenRouter);
 app.use("/tickets", ticketRouter);
+app.use("/reviews", reviewRouter);
 
 module.exports = app;

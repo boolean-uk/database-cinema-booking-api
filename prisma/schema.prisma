@@ -78,5 +78,7 @@ model Review {
   movieId    Int
   customer   Customer @relation(fields: [customerId], references: [id])
   customerId Int
-  content    Int
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
