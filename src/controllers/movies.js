@@ -5,14 +5,6 @@ const prisma = require("../utils/prisma");
 const getAllMovies = async (req, res) => {
   const { runtimeLt, runtimeGt } = req.query;
 
-  const filteredScreenings = await prisma.screening.findMany({
-    where: {
-      startsAt: {
-        gt: new Date(),
-      },
-    },
-  });
-
   try {
     if (runtimeGt && runtimeLt) {
       const movies = await prisma.movie.findMany({
@@ -78,7 +70,6 @@ const getAllMovies = async (req, res) => {
       select: {
         title: true,
         runtimeMins: true,
-        // screenings: true,
         screenings: {
           where: {
             startsAt: {
@@ -87,11 +78,7 @@ const getAllMovies = async (req, res) => {
           },
         },
       },
-      // where: {
-      //   screenings: {
-      //     isEmpty: false,
-      //   },
-      // },
+      where: { screenings: { some: {} } },
     });
 
     res.json({ movies });
