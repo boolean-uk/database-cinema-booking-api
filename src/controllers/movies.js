@@ -1,24 +1,13 @@
 const { Prisma } = require("@prisma/client");
 const { movie } = require("../utils/prisma");
 const prisma = require("../utils/prisma");
-
+const { buildRuntimeClause } = require("./utils");
 // Get all movies
-const getMovies = async (req, res) => {
-  const { runtimeLt, runtimeGt } = req.body;
-  try {
-    const movies = await prisma.movie.findMany({
-      where: {
-        lt: runtimeLt ? Number(runtimeLt) : undefined,
-        gt: runtimeGt ? Number(runtimeGt) : undefined,
-      },
-      include: {
-        screenings: true,
-      },
-    });
-    res.json({ movies: movies });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+const getAllMovies = async (req, res) => {
+  const base = { include: { screenings: true } };
+  const query = buildRuntimeClause(req.query, base);
+  const movies = await prisma.movie.findMany(query);
+  res.json({ movies: movies });
 };
 
 // Create a movie
@@ -29,6 +18,16 @@ const createMovie = async (req, res) => {
     return res.status(400).json({
       error: "Missing fields in the request body",
     });
+  }
+  const foundMovie = await prisma.movie.findFirst({
+    where: {
+      title: title,
+    },
+  });
+  if (foundMovie) {
+    return res
+      .status(409)
+      .json({ error: " A movie with the provided title already exists" });
   }
   try {
     const createdMovie = await prisma.movie.create({
@@ -61,13 +60,9 @@ const createMovie = async (req, res) => {
 };
 
 // Get a movie by ID
-const getMoviesById = async (req, res) => {
+const getMovieById = async (req, res) => {
   const movieid = Number(req.params.id);
-  // const screenId = Number(req.params.id);
   try {
-    // const screenings = await prisma.screening.findMany({
-    //   where: { id: screenId },
-    // });
     const movie = await prisma.movie.findUnique({
       where: { id: movieid },
       include: { screenings: true },
@@ -90,7 +85,7 @@ const updateMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.json(400).json({
+    return res.status(400).json({
       error: "Missing fields in request body",
     });
   }
@@ -116,7 +111,7 @@ const updateMovie = async (req, res) => {
         screenings: { update: screenings },
       },
       where: { id: movieId },
-      include: { screenings },
+      include: { screenings: true },
     });
 
     res.status(201).json({ movie: updatedMovie });
@@ -127,7 +122,7 @@ const updateMovie = async (req, res) => {
 
 module.exports = {
   createMovie,
-  getMovies,
-  getMoviesById,
+  getAllMovies,
+  getMovieById,
   updateMovie,
 };

@@ -11,10 +11,6 @@ const createCustomer = async (req, res) => {
   }
 
   try {
-    /**
-     * This will create a Customer AND create a new Contact, then automatically relate them with each other
-     * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
-     */
     const createdCustomer = await prisma.customer.create({
       data: {
         name,
@@ -25,8 +21,6 @@ const createCustomer = async (req, res) => {
           },
         },
       },
-      // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-      // This is like doing RETURNING in SQL
       include: {
         contact: true,
       },
@@ -80,9 +74,7 @@ const updateCustomer = async (req, res) => {
       include: { contact: true },
     });
     res.status(201).json({ customer: updatedCustomer });
-  } catch (e) {
-    // res.status(500).json({ error: e.message });
-  }
+  } catch (e) {}
 };
 
 module.exports = {

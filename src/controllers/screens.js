@@ -1,6 +1,5 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
-
 const createScreen = async (req, res) => {
   const { number } = req.body;
   if (!number) {
@@ -26,5 +25,4 @@ const createScreen = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
-
 module.exports = { createScreen };
