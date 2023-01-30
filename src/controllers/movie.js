@@ -28,7 +28,6 @@ const createMovie = async (req, res) => {
 	let screeningsToCreate;
 
 	if (screenings) {
-		console.log(screenings);
 		const { screenId, startsAt } = screenings[0];
 		screeningsToCreate = {
 			create: {
@@ -43,7 +42,6 @@ const createMovie = async (req, res) => {
 	}
 
 	try {
-		console.log(req.body);
 		const createdMovie = await prisma.movie.create({
 			data: {
 				title: title,
