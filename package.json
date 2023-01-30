@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "test": "npx jest -i test/api/routes",
+    "tests": "npx jest -i test/api/routes/screens",
     "test:ext": "npx jest -i test/api/extensions",
     "test:main": "npx jest -i test/api/main"
   },
