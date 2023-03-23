@@ -28,7 +28,7 @@ The full database schema and seed file for this exercise has already been implem
 ## Instructions
 
 - Run the app with `npm start`
-- Work through each route detailed in the [API Spec](https://boolean-uk.github.io/database-cinema-booking-api/).
+- Work through each route detailed in the [API Spec](https://boolean-uk.github.io/database-cinema-booking-api/standard).
 
 ## Extensions
 
@@ -43,7 +43,7 @@ The full database schema and seed file for this exercise has already been implem
 ## Testing your work
 
 - Run the test suite with `npm test`
-- Run the extension test suite with `npm run test:ext`
+- Run the extension test suite with `npm run test-extensions`
     - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide
 
 So far, you may have been using `curl` to manually test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
