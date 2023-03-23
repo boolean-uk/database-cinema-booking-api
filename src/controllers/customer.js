@@ -48,7 +48,6 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
     const { name, contact } = req.body;
-    console.log(req.body);
     const id = Number(req.params.id);
     if (!name) {
         return res.status(400).json({
