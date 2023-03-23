@@ -47,7 +47,8 @@ const createCustomer = async (req, res) => {
 };
 
 const updateCustomer = async (req, res) => {
-    const { name } = req.body;
+    const { name, contact } = req.body;
+    console.log(req.body);
     const id = Number(req.params.id);
     if (!name) {
         return res.status(400).json({
@@ -55,18 +56,51 @@ const updateCustomer = async (req, res) => {
         });
     }
 
-    const updatedCustomer = await prisma.customer.update({
-        where: {
-            id: id,
-        },
-        data: {
-            name: name,
-        },
-        include: {
-            contact: true,
-        },
-    });
-    res.status(201).json({ customer: updatedCustomer });
+    try {
+        if (contact) {
+            const updatedCustomer = await prisma.customer.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    name: name,
+                    contact: {
+                        update: {
+                            phone: contact.phone,
+                            email: contact.email,
+                        },
+                    },
+                },
+                include: {
+                    contact: true,
+                },
+            });
+            return res.status(201).json({ customer: updatedCustomer });
+        } else {
+            const updatedCustomer = await prisma.customer.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    name: name,
+                },
+                include: {
+                    contact: true,
+                },
+            });
+            return res.status(201).json({ customer: updatedCustomer });
+        }
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === 'P2025') {
+                return res.status(404).json({
+                    error: 'Customer with that id does not exist',
+                });
+            }
+        }
+
+        res.status(500).json({ error: e.message });
+    }
 };
 
 module.exports = {
