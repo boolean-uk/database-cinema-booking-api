@@ -1,17 +1,13 @@
-const { Prisma } = require("@prisma/client")
-const prisma = require('../utils/prisma')
+const { Prisma } = require('@prisma/client');
+const prisma = require('../utils/prisma');
 
 const createCustomer = async (req, res) => {
-    const {
-        name,
-        phone,
-        email
-    } = req.body
+    const { name, phone, email } = req.body;
 
     if (!name || !phone || !email) {
         return res.status(400).json({
-            error: "Missing fields in request body"
-        })
+            error: 'Missing fields in request body',
+        });
     }
 
     try {
@@ -25,29 +21,55 @@ const createCustomer = async (req, res) => {
                 contact: {
                     create: {
                         phone,
-                        email
-                    }
-                }
+                        email,
+                    },
+                },
             },
             // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
             // This is like doing RETURNING in SQL
-            include: { 
-                contact: true
-            }
-        })
+            include: {
+                contact: true,
+            },
+        });
 
-        res.status(201).json({ customer: createdCustomer })
+        res.status(201).json({ customer: createdCustomer });
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
-            if (e.code === "P2002") {
-                return res.status(409).json({ error: "A customer with the provided email already exists" })
+            if (e.code === 'P2002') {
+                return res.status(409).json({
+                    error: 'A customer with the provided email already exists',
+                });
             }
         }
-        
-        res.status(500).json({ error: e.message })
+
+        res.status(500).json({ error: e.message });
     }
-}
+};
+
+const updateCustomer = async (req, res) => {
+    const { name } = req.body;
+    const id = Number(req.params.id);
+    if (!name) {
+        return res.status(400).json({
+            error: 'Missing fields in request body',
+        });
+    }
+
+    const updatedCustomer = await prisma.customer.update({
+        where: {
+            id: id,
+        },
+        data: {
+            name: name,
+        },
+        include: {
+            contact: true,
+        },
+    });
+    res.status(201).json({ customer: updatedCustomer });
+};
 
 module.exports = {
-    createCustomer
-}
+    createCustomer,
+    updateCustomer,
+};
