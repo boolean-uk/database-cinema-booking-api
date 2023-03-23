@@ -73,15 +73,23 @@ const updateCustomerByID = async (req, res) => {
     } else {
       const updatedCustomer = await prisma.customer.update({
         where: {
-          id: id,
+          id,
         },
         data: {
           name,
           contact: {
-            update: { phone, email },
+            update: {
+              phone: contact.phone,
+              email: contact.email,
+            },
           },
         },
+        include: {
+          contact: true,
+        },
       });
+
+      res.status(201).json({ customer: updatedCustomer });
     }
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

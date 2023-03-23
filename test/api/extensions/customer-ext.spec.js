@@ -4,7 +4,7 @@ const { createCustomer } = require("../../helpers/createCustomer.js");
 
 describe("Customer Endpoint", () => {
   describe("PUT /customers/:id", () => {
-    fit("can update a customers contact info when a contact property exists on the request body", async () => {
+    it("can update a customers contact info when a contact property exists on the request body", async () => {
       const customer = await createCustomer("John", "123456", "john@test.com");
 
       const request = {
