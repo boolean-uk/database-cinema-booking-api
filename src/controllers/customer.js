@@ -48,6 +48,31 @@ const createCustomer = async (req, res) => {
     }
 }
 
+const updateCustomer = async (req, res) => {
+   const customerId = Number(req.params.id) 
+   const updatedName = req.body.name
+   if(!updatedName || updatedName === " "){
+    res.status(400).json({error: "Missing input field"})
+   }
+   
+   const updatedCustomer = await prisma.customer.update({
+    where: {
+        id:customerId,
+    },
+    data: {
+        name:updatedName
+    },
+    include: {
+        contact:true
+       }
+   })
+  
+  
+   return res.status(201).json({customer: updatedCustomer})
+}
+
+
 module.exports = {
-    createCustomer
+    createCustomer,
+    updateCustomer
 }
