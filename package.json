@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npx nodemon ./src/index.js",
     "test": "npx jest -i test/api/routes",
-    "test-extensions": "npx jest -i test/api/extensions --forceExit",
+    "test-extensions": "npx jest -i test/api/extensions --forceExit"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
