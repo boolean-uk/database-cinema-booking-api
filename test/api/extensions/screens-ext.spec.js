@@ -4,8 +4,6 @@ const { createScreen } = require("../../helpers/createscreen.js");
 
 describe("Screens Endpoint", () => {
   describe("PUT /screens/:id", () => {
-    it("can update a screens contact info when a contact property exists on the request body", async () => {});
-
     it("will return 400 when there are missing fields in the request body", async () => {
       const response = await supertest(app).post(`/screens`).send({});
 

@@ -36,6 +36,21 @@ const createScreen = async (req, res) => {
   }
 };
 
+// const updatedScreen = await prisma.screen.update({
+//   where: {
+//     id: newScreen.id,
+//   },
+//   data: {
+//     screenings: {
+//       create: screenings,
+//     },
+//   },
+//   include: {
+//     screenings: true,
+//   },
+// });
+// res.status(201).json({ screen: updatedScreen });
+
 module.exports = {
   createScreen,
 };

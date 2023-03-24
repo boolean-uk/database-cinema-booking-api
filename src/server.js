@@ -22,4 +22,7 @@ app.use("/movies", movieRouter);
 const screensRouter = require("./routers/screens");
 app.use("/screens", screensRouter);
 
+const ticketRouter = require("./routers/tickets");
+app.use("/tickets", ticketRouter);
+
 module.exports = app;
