@@ -2,7 +2,7 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const createScreen = async (req, res) => {
-  const { number } = req.body;
+  const { number, screenings } = req.body;
 
   if (!number) {
     return res.status(400).json({
