@@ -31,7 +31,7 @@ const createCustomer = async (req, res) => {
             },
             // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
             // This is like doing RETURNING in SQL
-            include: { 
+            include: {
                 contact: true
             }
         })
@@ -43,33 +43,74 @@ const createCustomer = async (req, res) => {
                 return res.status(409).json({ error: "A customer with the provided email already exists" })
             }
         }
-        
+
         res.status(500).json({ error: e.message })
     }
 }
 
 const updateCustomer = async (req, res) => {
-   const customerId = Number(req.params.id) 
-   const updatedName = req.body.name
-   if(!updatedName || updatedName === " "){
-    res.status(400).json({error: "Missing input field"})
-   }
-   
-   const updatedCustomer = await prisma.customer.update({
-    where: {
-        id:customerId,
-    },
-    data: {
-        name:updatedName
-    },
-    include: {
-        contact:true
-       }
-   })
-  
-  
-   return res.status(201).json({customer: updatedCustomer})
-}
+    const customerId = Number(req.params.id)
+    const updatedName = req.body.name
+    const updatedContact = req.body.contact
+
+    if (!updatedName || updatedName === "") {
+      return   res.status(400).json({ error: "Missing input field" });
+    }
+
+    try {
+        if (!updatedContact) {
+            const updatedCustomer = await prisma.customer.update({
+                where: {
+                    id: customerId,
+                },
+                data: {
+                    name: updatedName
+                },
+                include: {
+                    contact: true
+                }
+            })
+            res.status(201).json({ customer: updatedCustomer })
+        } else {
+            const updatedCustomer = await prisma.customer.update({
+                where: {
+                    id: customerId,
+                },
+                data: {
+                    name: updatedName,
+                    contact: {
+                        update: {
+                            phone: updatedContact.phone,
+                            email: updatedContact.email
+                        }
+                    }
+                },
+                include: {
+                    contact: true
+                }
+            })
+            res.status(201).json({ customer: updatedCustomer })
+        }
+
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === "P2025") {
+                return res
+                    .status(404)
+                    .json({ error: `No user with id: ${customerId} found !` });
+            }
+        }
+        res.status(500).json({ error: e.message });
+    }
+};
+
+
+
+
+
+
+
+
 
 
 module.exports = {
