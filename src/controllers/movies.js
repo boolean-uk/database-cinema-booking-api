@@ -46,7 +46,7 @@ const createMovie = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-    const { title, runtimeMins } = req.body;
+    const { title, runtimeMins, screenings } = req.body;
     const id = Number(req.params.id);
 
     if (!title || !runtimeMins) {
@@ -54,21 +54,55 @@ const updateMovie = async (req, res) => {
             error: 'Missing fields in request body',
         });
     }
-
-    const updatedMovie = await prisma.movie.update({
-        where: {
-            id: id,
-        },
-        data: {
-            title: title,
-            runtimeMins: runtimeMins,
-        },
-        include: {
-            screenings: true,
-        },
-    });
-
-    res.status(201).json({ movie: updatedMovie });
+    try {
+        if (screenings) {
+            const updatedMovie = await prisma.movie.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    title: title,
+                    runtimeMins: runtimeMins,
+                    screenings: {
+                        create: screenings,
+                    },
+                },
+                include: {
+                    screenings: true,
+                },
+            });
+            console.log(updatedMovie);
+            return res.status(201).json({ movie: updatedMovie });
+        } else {
+            const updatedMovie = await prisma.movie.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    title: title,
+                    runtimeMins: runtimeMins,
+                },
+                include: {
+                    screenings: true,
+                },
+            });
+            return res.status(201).json({ movie: updatedMovie });
+        }
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === 'P2025') {
+                return res.status(404).json({
+                    error: 'Movie with that id does not exist',
+                });
+            }
+            if (e.code === 'P2002') {
+                return res.status(409).json({
+                    error: 'Movie with that title already exists',
+                });
+            }
+        }
+        res.status(500).json({ error: e.message });
+    }
 };
 
 module.exports = { getMovies, getMovieById, createMovie, updateMovie };
