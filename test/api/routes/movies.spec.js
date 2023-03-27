@@ -4,7 +4,7 @@ const { createMovie } = require('../../helpers/createMovie.js');
 const { createScreen } = require('../../helpers/createScreen.js');
 
 describe('Movies Endpoint', () => {
-    fdescribe('GET /movies', () => {
+    describe('GET /movies', () => {
         it('will retrieve a list of movies', async () => {
             const screen = await createScreen(1);
             await createMovie('Dodgeball', 120, screen);
@@ -29,7 +29,7 @@ describe('Movies Endpoint', () => {
         });
     });
 
-    fdescribe('POST /movies', () => {
+    describe('POST /movies', () => {
         it('will create a movie', async () => {
             const request = {
                 title: 'Top Gun',
@@ -47,7 +47,7 @@ describe('Movies Endpoint', () => {
         });
     });
 
-    fdescribe('GET /movies/:id', () => {
+    describe('GET /movies/:id', () => {
         it('will get a movie by id', async () => {
             const screen = await createScreen(1);
             const created = await createMovie('Dodgeball', 120, screen);
@@ -63,7 +63,7 @@ describe('Movies Endpoint', () => {
         });
     });
 
-    fdescribe('PUT /movies/:id', () => {
+    describe('PUT /movies/:id', () => {
         it('will update a movie by id', async () => {
             const screen = await createScreen(1);
             const created = await createMovie('Dodgeball', 120, screen);
