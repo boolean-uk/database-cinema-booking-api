@@ -1,57 +1,33 @@
 const supertest = require("supertest");
+const { createMovie } = require("../../../src/controllers/movies.js");
 const app = require("../../../src/server.js");
-//TODO: replace "customer" with "movies", add other tests, and edit other things
-const { createCustomer } = require("../../helpers/createCustomer.js");
 
-describe("Customer Endpoint", () => {
-  describe("PUT /customers/:id", () => {
-    it("can update a customers contact info when a contact property exists on the request body", async () => {
-      const customer = await createCustomer("John", "123456", "john@test.com");
+describe("Movie Endpoint", () => {
+  it("POST// will return a 400 error if there is a missing field to add a movie", async () => {
+    const request = {
+      title: "Top Gun",
+    };
 
-      const request = {
-        name: "Jane",
-        contact: {
-          phone: "789",
-          email: "jane@test.com",
-        },
-      };
+    const response = await supertest(app).post("/movies").send(request);
 
-      const response = await supertest(app)
-        .put(`/customers/${customer.id}`)
-        .send(request);
-
-      expect(response.status).toEqual(201);
-      expect(response.body.customer).not.toEqual(undefined);
-      expect(response.body.customer.name).toEqual(request.name);
-      expect(response.body.customer.contact).not.toEqual(undefined);
-      expect(response.body.customer.contact.phone).toEqual("789");
-      expect(response.body.customer.contact.email).toEqual("jane@test.com");
-    });
-
-    it("will return 404 if the customer is not found", async () => {
-      const request = {
-        name: "Jane",
-      };
-
-      const response = await supertest(app)
-        .put(`/customers/10000`)
-        .send(request);
-
-      expect(response.status).toEqual(404);
-      expect(response.body).toHaveProperty("error");
-    });
-
-    it("will return 400 when there are missing fields in the request body", async () => {
-      const customer = await createCustomer("John", "123456", "john@test.com");
-
-      const request = {};
-
-      const response = await supertest(app)
-        .put(`/customers/${customer.id}`)
-        .send(request);
-
-      expect(response.status).toEqual(400);
-      expect(response.body).toHaveProperty("error");
-    });
+    expect(response.status).toEqual(400);
+    expect(response.body).toHaveProperty("error");
   });
+
+it("POST// will return a 409 error if there is a movie with the same title", async () => {
+
+    const request = {
+      title: "Top Gun",
+      runtimeMins: 189,
+    };
+    
+    const setup = await supertest(app).post("/movies").send(request);
+    expect(setup.status).toEqual(201);
+
+    const response = await supertest(app).post("/movies").send(request);
+
+    expect(response.status).toEqual(409);
+    expect(response.body).toHaveProperty("error");
+  });
+  
 });
