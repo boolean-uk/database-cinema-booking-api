@@ -44,7 +44,7 @@ describe("Screens Endpoint", () => {
         ],
       };
       const response = await supertest(app).post("/screens").send(request);
-      console.log(response.body.error);
+
       expect(response.status).toEqual(201);
       expect(response.body.screen).toHaveProperty("screenings");
       expect(response.body.screen.screenings).not.toEqual(undefined);
