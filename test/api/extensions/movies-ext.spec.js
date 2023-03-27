@@ -81,8 +81,8 @@ describe("Movie Endpoint", () => {
   });
 
   it("GET// will return 404 if the movie is not found", async () => {
-      const response = await supertest(app).get("/movies/89898");
-    
+    const response = await supertest(app).get("/movies/89898");
+
     expect(response.status).toEqual(404);
     expect(response.body).toHaveProperty("error");
   });

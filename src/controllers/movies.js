@@ -53,7 +53,7 @@ const getMovieByID = async (req, res) => {
     },
   });
   if (!movie) {
-    return res.status(404).json({error: "movie with this id not found"});
+    return res.status(404).json({ error: "movie with this id not found" });
   }
   return res.status(200).json({ movie });
 };
