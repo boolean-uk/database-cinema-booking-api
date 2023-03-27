@@ -35,11 +35,11 @@ describe("Screens Endpoint", () => {
         screenings: [
           {
             movieId: movie1.id,
-            startsAt: "2022-06-11T18:30:00.000Z",
+            startsAt: "2025-06-11T18:30:00.000Z",
           },
           {
             movieId: movie1.id,
-            startsAt: "2022-06-11T20:30:00.000Z",
+            startsAt: "2025-06-11T20:30:00.000Z",
           },
         ],
       };

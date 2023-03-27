@@ -2,10 +2,24 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getMovies = async (req, res) => {
-  const min = Number(req.query.runtimeLt);
-  const max = Number(req.query.runtimeGt);
+  let min, max;
+  if (req.query.runtimeLt) {
+    min = Number(req.query.runtimeLt);
+  }
+  if (req.query.runtimeGt) {
+    max = Number(req.query.runtimeGt);
+  }
 
   const request = {
+    where: {
+      screenings: {
+        every: {
+          startsAt: {
+            gte: new Date(),
+          },
+        },
+      },
+    },
     include: {
       screenings: true,
     },

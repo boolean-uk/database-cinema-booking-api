@@ -63,8 +63,8 @@ describe("Moveis endpoint", () => {
         title: "The Matrix",
         runtimeMins: 120,
         screenings: [
-          { startsAt: "2022-06-11T20:30:00.000Z", screenId: screen.id },
-          { startsAt: "2022-06-12T20:30:00.000Z", screenId: screen.id },
+          { startsAt: "2025-06-11T20:30:00.000Z", screenId: screen.id },
+          { startsAt: "2025-06-12T20:30:00.000Z", screenId: screen.id },
         ],
       };
       const response = await supertest(app).post("/movies").send(request);
@@ -121,8 +121,8 @@ describe("Moveis endpoint", () => {
         title: "The Matrix",
         runtimeMins: 120,
         screenings: [
-          { startsAt: "2022-06-11T20:30:00.000Z", screenId: screen.id },
-          { startsAt: "2022-06-12T20:30:00.000Z", screenId: screen.id },
+          { startsAt: "2025-06-11T20:30:00.000Z", screenId: screen.id },
+          { startsAt: "2025-06-12T20:30:00.000Z", screenId: screen.id },
         ],
       };
       const response = await supertest(app)

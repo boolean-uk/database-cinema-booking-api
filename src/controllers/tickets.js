@@ -8,38 +8,6 @@ const createTicket = async (req, res) => {
   if (!screeningId || !customerId) {
     return res.status(400).json({ error: "Missing input field" });
   }
-  // Bad solution
-  //   try {
-  //     const customer = await prisma.customer.findUniqueOrThrow({
-  //       where: {
-  //         id: customerId,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-  //       if (e.code === "P2025") {
-  //         return res.status(404).json({
-  //           error: "A customer does not exist with provided id.",
-  //         });
-  //       }
-  //     }
-  //   }
-
-  //   try {
-  //     const screening = await prisma.screening.findUniqueOrThrow({
-  //       where: {
-  //         id: screeningId,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-  //       if (e.code === "P2025") {
-  //         return res.status(404).json({
-  //           error: "A screening does not exist with provided id.",
-  //         });
-  //       }
-  //     }
-  //   }
 
   const data = {
     data: {

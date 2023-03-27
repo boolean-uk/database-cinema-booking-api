@@ -17,6 +17,7 @@ model Customer {
   name        String
   contact     Contact?
   tickets     Ticket[]
+  reviews     Review[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -36,6 +37,7 @@ model Movie {
   screenings  Screening[]
   title       String      @unique
   runtimeMins Int
+  reviews     Review[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -68,4 +70,16 @@ model Ticket {
   customerId    Int
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Review {
+  id          Int       @id @default(autoincrement())
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  customerId  Int
+  movie       Movie     @relation(fields: [movieId], references: [id])
+  movieId     Int
+  review      String
+  rating      Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

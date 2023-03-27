@@ -7,6 +7,7 @@
     "start": "nodemon src/index.js",
     "test": "npx jest -i test/api/routes",
     "test:ext": "npx jest -i test/api/extensions",
+    "test:ext2": "npx jest -i test/api/ext2",
     "test:main": "npx jest -i test/api/main"
   },
   "prisma": {
