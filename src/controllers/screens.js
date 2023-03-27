@@ -2,20 +2,41 @@ const { Prisma } = require('@prisma/client');
 const prisma = require('../utils/prisma');
 
 const createScreen = async (req, res) => {
-    const { number } = req.body;
+    const { number, screenings } = req.body;
     if (!number) {
         return res.status(400).json({
             error: 'Missing fields in request body',
         });
     }
+    try {
+        const screen = await prisma.screen.create({
+            data: {
+                number,
+            },
+        });
 
-    const screen = await prisma.screen.create({
-        data: {
-            number,
-        },
-    });
-
-    res.status(201).json({ screen });
+        const updatedScreen = await prisma.screen.update({
+            where: {
+                id: screen.id,
+            },
+            data: {
+                screenings: {
+                    create: screenings,
+                },
+            },
+            include: {
+                screenings: true,
+            },
+        });
+        res.status(201).json({ screen: updatedScreen });
+    } catch (e) {
+        if (e.code === 'P2002') {
+            return res.status(409).json({
+                error: 'Screen with that number already exists',
+            });
+        }
+        res.status(500).json({ error: e.message });
+    }
 };
 
 // Michaels solution
