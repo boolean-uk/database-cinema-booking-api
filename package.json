@@ -4,11 +4,10 @@
   "description": "> API stands for Application Programming Interface, which is a set of definitions and protocols for building and integrating software. Simply put, they allow two pieces of software to communicate with each other through a pre-defined interface.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "npx nodemon ./src/index.js",
     "test": "npx jest -i test/api/routes",
-    "test:ext": "npx jest -i test/api/extensions",
-    "test:ext2": "npx jest -i test/api/ext2",
-    "test:main": "npx jest -i test/api/main"
+    "test-extensions": "npx jest -i test/api/extensions --forceExit"
+    "test-extensions2": "npx jest -i test/api/ext2 --forceExit"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
