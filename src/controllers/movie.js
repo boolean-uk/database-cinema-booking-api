@@ -34,6 +34,7 @@ const getMovieById = async (req, res) => {
       screenings: true,
     },
   });
+  res.status(200).json({ movie: movie });
 };
 
 const updateMovie = async (req, res) => {
