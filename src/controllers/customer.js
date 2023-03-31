@@ -60,6 +60,9 @@ const updateCustomer = async (req, res) => {
   const updatedCustomer = await prisma.customer.update({
     where: { id: Number(id) },
     data: { name: name },
+    include: {
+      contact: true,
+    },
   });
 
   res.status(201).json({ customer: updatedCustomer });
