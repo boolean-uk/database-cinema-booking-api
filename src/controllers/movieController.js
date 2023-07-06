@@ -39,7 +39,6 @@ const updateMovie = async (req, res) => {
   const id = Number(req.params.id);
   const { title, runtimeMins } = req.body;
   const movie_update = await updateMovieData(id, title, runtimeMins);
-  console.log("xxxxxxxxxxxx", movie_update);
   res.status(201).json({ movie: movie_update });
 };
 

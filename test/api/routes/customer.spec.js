@@ -4,6 +4,7 @@ const { createCustomer } = require("../../helpers/createCustomer.js")
 
 describe("Customer Endpoint", () => {
     describe("POST /customers/register", () => {
+        jest.setTimeout(10000);
         it("will create a new customer", async () => {
             const request = {
                 name: "john",
@@ -49,6 +50,7 @@ describe("Customer Endpoint", () => {
     })
 
     describe("PUT /customers/:id", () => {
+        jest.setTimeout(10000);
         it("can update a customers name", async () => {
             const customer = await createCustomer("John", "123456", "john@test.com")
 

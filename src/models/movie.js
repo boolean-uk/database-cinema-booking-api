@@ -6,7 +6,7 @@ const prisma = require("../utils/prisma");
 //   return {movies}
 // };
 
-const output = {
+const movie_screening = {
   select: {
     id: true,
     title: true,
@@ -27,7 +27,7 @@ const output = {
 };
 
 const getMoviesData = async () => {
-  const movies = await prisma.movie.findMany(output);
+  const movies = await prisma.movie.findMany(movie_screening);
   return { movies };
 };
 
@@ -36,7 +36,7 @@ const getMovieDataById = async (id) => {
     where: {
       id,
     },
-    select: output.select,
+    select: movie_screening.select,
   });
   return { movie };
 };
@@ -62,7 +62,7 @@ const updateMovieData = async (id, title, runtimeMins) => {
       title,
       runtimeMins,
     },
-    select: output.select,
+    select: movie_screening.select,
   });
   return update_movie;
 };
