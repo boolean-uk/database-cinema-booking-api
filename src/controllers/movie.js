@@ -81,23 +81,30 @@ const getMovieID = async (req, res) => {
 
   if (getMovieTitle) {
     res.json({ movie: getMovieTitle });
-  } else {
-    const getMovieID = await prisma.movie.findFirst({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        screenings: true,
-      },
-    });
-    if (getMovieID) {
-      res.json({ movie: getMovieID });
-    } else {
-      return res
-        .status(404)
-        .json({ error: "Movie with that id or title does not exist" });
-    }
   }
+
+  if (isNaN(Number(id))) {
+    return res
+      .status(404)
+      .json({ error: "Movie with that id or title does not exist" });
+  }
+
+  const getMovieByID = await prisma.movie.findFirst({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      screenings: true,
+    },
+  });
+
+  if (getMovieByID) {
+    return res.json({ movie: getMovieByID });
+  }
+
+  return res
+    .status(404)
+    .json({ error: "Movie with that id or title does not exist" });
 };
 
 const updateMovie = async (req, res) => {
@@ -111,19 +118,15 @@ const updateMovie = async (req, res) => {
     });
   }
 
-  const findMovie = await prisma.movie.findFirst({
+  const findMovie = await prisma.movie.findUnique({
     where: { id: id },
   });
 
-  if (!findMovie) {
-    return res.status(404).json({
-      error: "Movie with that id does not exist",
-    });
-  } else {
+  if (findMovie) {
     const findTitle = await prisma.movie.findFirst({
-      where: { title: title}
-    })
-    if(!findTitle){
+      where: { title: title },
+    });
+    if (!findTitle) {
       const updateMovie = await prisma.movie.update({
         where: {
           id: id,
@@ -136,18 +139,20 @@ const updateMovie = async (req, res) => {
           screenings: true,
         },
       });
-  
+
       res.status(201).json({ movie: updateMovie });
-    }
-    else {
+    } else {
       return res.status(409).json({
         error: "Movie with that title already exists",
       });
     }
-    
+   
+  } else {
+    return res.status(404).json({
+      error: "Movie with that id does not exist",
+    });
   }
 };
-
 module.exports = {
   getAllMovies,
   getMovieID,
