@@ -1,55 +1,94 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
-const getAllMovies = async () => {
-  const movies = await prisma.movie.findMany({
+const getAllMovies = async (minRuntime, maxRuntime) => {
+  
+  const request = {
     include: {
-      screenings: true
+      screenings: true,
+    },
+  };
+
+  if (minRuntime && maxRuntime) {
+    request.where = {
+      runtimeMins: {
+        gt: Number(minRuntime),
+        lt: Number(maxRuntime),
+      },
+    };
+  }
+
+  if (minRuntime && !maxRuntime) {
+    request.where = {
+      runtimeMins: {
+        gt: Number(minRuntime)
+      },
     }
-  })
-  return movies
-}
+  }
+
+  if (!minRuntime && maxRuntime) {
+    request.where = {
+      runtimeMins: {
+        lt: Number(maxRuntime)
+      }
+    }
+  }
+
+  const movies = await prisma.movie.findMany(request);
+  return movies;
+};
 
 const getMovieByID = async (id) => {
-  const movie = await prisma.movie.findUnique({
-    where: { id: Number(id)},
+  const movie = await prisma.movie.findUniqueOrThrow({
+    where: { id: Number(id) },
     include: {
-      screenings: true
-    }
-  })
-  return movie
-}
+      screenings: true,
+    },
+  });
+  return movie;
+};
+
+const getMovieByTitle = async (title) => {
+  const movie = await prisma.movie.findFirstOrThrow({
+    where: { title: title },
+    include: {
+      screenings: true,
+    },
+  });
+  return movie;
+};
 
 const createMovie = async (title, runtimeMins) => {
   const movie = await prisma.movie.create({
     data: {
       title,
-      runtimeMins
+      runtimeMins,
     },
     include: {
-      screenings: true
-    }
-  })
-  return movie
-}
+      screenings: true,
+    },
+  });
+  return movie;
+};
 
 const updateMovie = async (title, runtimeMins, id) => {
   const movie = await prisma.movie.update({
-    where: { id: Number(id)},
+    where: { id: Number(id) },
     data: {
       title: title,
-      runtimeMins: runtimeMins
+      runtimeMins: runtimeMins,
     },
     include: {
-      screenings: true
-    }
-  })
-  return movie
-}
+      screenings: true,
+    },
+  });
+  return movie;
+};
 
 module.exports = {
   getAllMovies,
   getMovieByID,
   createMovie,
-  updateMovie
-}
+  updateMovie,
+  getMovieByTitle
+};
