@@ -97,6 +97,8 @@ async function createScreenings(screens, movies) {
     }
 }
 
+
+
 seed()
     .catch(async e => {
         console.error(e);
