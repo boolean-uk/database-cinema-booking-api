@@ -6,9 +6,22 @@ async function getMoviesList() {
       screenings: true,
     },
   });
-  return { movie: foundMovies };
+  console.log("foundMovies", foundMovies);
+  return { foundMovies };
+}
+
+async function createNewMovie() {
+  const createdMovie = await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+    },
+  });
+  console.log("createdMovie", createdMovie);
+  return { movie: createdMovie };
 }
 
 module.exports = {
   getMoviesList,
+  createNewMovie
 };

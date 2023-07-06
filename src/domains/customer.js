@@ -1,12 +1,6 @@
-// The domain should just handle the query to the DB, and send back either the data or an error to the controller. The controller then sends the data/error back to the client.
-
-/**
- * This will create a Customer AND create a new Contact, then automatically relate them with each other
- * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
- */
 const prisma = require("../utils/prisma");
 
-async function createNewCustomer() {
+async function createNewCustomer(name, phone, email) {
   const createdCustomer = await prisma.customer.create({
     data: {
       name,
@@ -17,15 +11,14 @@ async function createNewCustomer() {
         },
       },
     },
-    // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-    // This is like doing RETURNING in SQL
     include: {
       contact: true,
     },
-  })
-  return { customer: createdCustomer}
+  });
+  console.log("createdCustomer", createdCustomer);
+  return { customer: createdCustomer };
 }
 
 module.exports = {
-  createNewCustomer
-}
+  createNewCustomer,
+};

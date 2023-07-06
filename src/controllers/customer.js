@@ -9,7 +9,7 @@ const createCustomer = async (req, res) => {
     });
   }
   try {
-    const createdCustomer = await createNewCustomer();
+    const createdCustomer = await createNewCustomer(name, phone, email);
     res.status(201).json({ customer: createdCustomer });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
