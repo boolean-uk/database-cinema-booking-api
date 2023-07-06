@@ -10,7 +10,7 @@ async function getMoviesList() {
   return { foundMovies };
 }
 
-async function createNewMovie() {
+async function createNewMovie(title, runtimeMins) {
   const createdMovie = await prisma.movie.create({
     data: {
       title,

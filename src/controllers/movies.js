@@ -14,7 +14,7 @@ const getMovies = async (req, res) => {
   }
 };
 
-const newMovie = async (req, res) => {
+const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
   if (!title || !runtimeMins) {
     return res.status(400).json({
@@ -22,7 +22,7 @@ const newMovie = async (req, res) => {
     });
   }
   try {
-    const createdMovie = await createNewMovie();
+    const createdMovie = await createNewMovie(title, runtimeMins);
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -36,5 +36,5 @@ const newMovie = async (req, res) => {
 
 module.exports = {
   getMovies,
-  newMovie,
+  createMovie,
 };
