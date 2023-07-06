@@ -4,6 +4,7 @@
  * This will create a Customer AND create a new Contact, then automatically relate them with each other
  * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
  */
+const prisma = require("../utils/prisma");
 
 async function createNewCustomer() {
   const createdCustomer = await prisma.customer.create({
