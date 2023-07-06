@@ -24,7 +24,7 @@ model Customer {
 model Contact {
   id          Int       @id @default(autoincrement())
   customer    Customer  @relation(fields: [customerId], references: [id])
-  customerId  Int
+  customerId  Int       @unique
   phone       String
   email       String    @unique
   createdAt   DateTime  @default(now())
