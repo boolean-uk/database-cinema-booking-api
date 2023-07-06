@@ -112,7 +112,7 @@ const updateMovie = async (req, res) => {
   id = Number(id);
   const { title, runtimeMins } = req.body;
 
-  if (!title || !runtimeMins) {
+  if (!title && !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
     });

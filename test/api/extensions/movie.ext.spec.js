@@ -71,7 +71,7 @@ describe("Movie Endpoint", () => {
         runtimeMins: 200,
       };
 
-      const response = await supertest(app).post(`/movies/`).send(request);
+      const response = await supertest(app).post(`/movies`).send(request);
 
       expect(response.status).toEqual(409);
       expect(response.body).toHaveProperty("error");
@@ -125,23 +125,23 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(404);
       expect(response.body).toHaveProperty("error");
     });
-  
-    // it("will return 409 when movie with that title already exists", async () => {
-    //   const screen = await createScreen(1);
-    //   await createMovie("Dodgeball", 120, screen);
-    //   await createMovie("Scream", 113, screen);
 
-    //   const request = {
-    //     title: "Scream",
-    //     runtimeMins: 113,
-    //   };
+    it("will return 409 when movie with that title already exists", async () => {
+      const screen = await createScreen(1);
+      const created = await createMovie("Dodgeball", 120, screen);
 
-    //   const response = await supertest(app)
-    //     .put(`/movies/1`)
-    //     .send(request);
+      const request = {
+        title: 'Dodgeball',
+        runtimeMins: 113
+    }
 
-    //   expect(response.status).toEqual(409);
-    //   expect(response.body).toHaveProperty("error");
-    // });
+
+    const response = await supertest(app)
+                .put(`/movies/${created.id}`)
+                .send(request)
+
+      expect(response.status).toEqual(409);
+      expect(response.body).toHaveProperty("error");
+    });
   });
 });
