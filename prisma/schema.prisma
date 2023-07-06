@@ -38,7 +38,6 @@ model Movie {
   runtimeMins Int
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  tickets     Ticket[]
 }
 
 model Screen {
@@ -47,7 +46,6 @@ model Screen {
   screenings  Screening[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  tickets     Ticket[]
 }
 
 model Screening {
@@ -68,10 +66,6 @@ model Ticket {
   screeningId   Int
   customer      Customer  @relation(fields: [customerId], references: [id])
   customerId    Int
-  screen        Screen    @relation(fields: [screenId], references: [id])
-  screenId      Int
-  movie         Movie     @relation(fields: [movieId], references: [id])
-  movieId       Int
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
