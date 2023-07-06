@@ -2,13 +2,34 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
-  const getAllMovies = await prisma.movie.findMany({
-    include: {
-      screenings: true,
-    },
-  });
-  res.json({ movies: getAllMovies });
-}
+  let { runtimeLt, runtimeGt } = req.query;
+  if (runtimeLt) {
+    runtimeLt = Number(runtimeLt);
+    const getAllMovies = await prisma.movie.findMany({
+      where: { runtimeMins: { lt: runtimeLt } },
+      include: {
+        screenings: true,
+      },
+    });
+    res.json({ movies: getAllMovies });
+  } else if (runtimeGt) {
+    runtimeGt = Number(runtimeGt);
+    const getAllMovies = await prisma.movie.findMany({
+      where: { runtimeMins: { gt: runtimeGt } },
+      include: {
+        screenings: true,
+      },
+    });
+    res.json({ movies: getAllMovies });
+  } else {
+    const getAllMovies = await prisma.movie.findMany({
+      include: {
+        screenings: true,
+      },
+    });
+    res.json({ movies: getAllMovies });
+  }
+};
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, startsAt } = req.body;
@@ -19,16 +40,18 @@ const createMovie = async (req, res) => {
     });
   }
 
-  try {
+  const findTitle = await prisma.movie.findFirst({
+    where: { title: title },
+  });
 
+  if (!findTitle) {
     const createMovie = await prisma.movie.create({
       data: {
         title,
-        runtimeMins, 
+        runtimeMins,
         screenings: {
-          startsAt
-        }
-        
+          startsAt,
+        },
       },
 
       include: {
@@ -37,58 +60,97 @@ const createMovie = async (req, res) => {
     });
 
     res.status(201).json({ movie: createMovie });
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        return res
-          .status(409)
-          .json({ error: "A movie with the provided title already exists" });
-      }
-    }
-
-    res.status(500).json({ error: e.message });
+  } else {
+    return res
+      .status(409)
+      .json({ error: "A movie with the provided title already exists" });
   }
 };
 
-const getMovieID = async (req, res)=> {
+const getMovieID = async (req, res) => {
   let { id } = req.params;
-  id = Number(id);
-  const getMovieID = await prisma.movie.findUnique({
+
+  const getMovieTitle = await prisma.movie.findFirst({
     where: {
-      id: id
+      title: id,
     },
     include: {
       screenings: true,
     },
-  })
-  res.json({ movie: getMovieID });
-}
+  });
+
+  if (getMovieTitle) {
+    res.json({ movie: getMovieTitle });
+  } else {
+    const getMovieID = await prisma.movie.findFirst({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        screenings: true,
+      },
+    });
+    if (getMovieID) {
+      res.json({ movie: getMovieID });
+    } else {
+      return res
+        .status(404)
+        .json({ error: "Movie with that id or title does not exist" });
+    }
+  }
+};
 
 const updateMovie = async (req, res) => {
   let { id } = req.params;
   id = Number(id);
   const { title, runtimeMins } = req.body;
 
-  const updateMovie = await prisma.movie.update({
-    where: {
-      id: id,
-    },
-    data: {
-      title: title,
-      runtimeMins: runtimeMins
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
 
-    },
-    include: {
-        screenings: true,
-      },
+  const findMovie = await prisma.movie.findFirst({
+    where: { id: id },
   });
+
+  if (!findMovie) {
+    return res.status(404).json({
+      error: "Movie with that id does not exist",
+    });
+  } else {
+    const findTitle = await prisma.movie.findFirst({
+      where: { title: title}
+    })
+    if(!findTitle){
+      const updateMovie = await prisma.movie.update({
+        where: {
+          id: id,
+        },
+        data: {
+          title: title,
+          runtimeMins: runtimeMins,
+        },
+        include: {
+          screenings: true,
+        },
+      });
   
-  res.status(201).json({ movie: updateMovie });
+      res.status(201).json({ movie: updateMovie });
+    }
+    else {
+      return res.status(409).json({
+        error: "Movie with that title already exists",
+      });
+    }
+    
+  }
 };
 
 module.exports = {
   getAllMovies,
   getMovieID,
   createMovie,
-  updateMovie
-  };
+  updateMovie,
+};
