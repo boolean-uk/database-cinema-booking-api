@@ -1,4 +1,8 @@
-const { getMoviesList, createNewMovie } = require("../domains/movies");
+const {
+  getMoviesList,
+  createNewMovie,
+  getMovieById,
+} = require("../domains/movies");
 
 const getMovies = async (req, res) => {
   try {
@@ -34,7 +38,23 @@ const createMovie = async (req, res) => {
   }
 };
 
+const findMovie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const retrievedMovie = await getMovieById(id);
+    res.json({ movie: retrievedMovie });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.json({ error: "findMovie went oopsie" });
+      }
+    }
+    res.status(500).json({ error: e.message });
+  }
+};
+
 module.exports = {
   getMovies,
   createMovie,
+  findMovie,
 };

@@ -16,12 +16,30 @@ async function createNewMovie(title, runtimeMins) {
       title,
       runtimeMins,
     },
+    include: {
+      screenings: true,
+    },
   });
   console.log("createdMovie", createdMovie);
   return { movie: createdMovie };
 }
 
+async function getMovieById(givenId) {
+  const id = Number(givenId)
+  const foundMovie = await prisma.movie.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+  console.log("foundMovie", foundMovie);
+  return foundMovie;
+}
+
 module.exports = {
   getMoviesList,
-  createNewMovie
+  createNewMovie,
+  getMovieById
 };
