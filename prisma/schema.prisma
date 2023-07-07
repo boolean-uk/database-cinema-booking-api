@@ -15,7 +15,7 @@ datasource db {
 model Customer {
   id          Int       @id @default(autoincrement())
   name        String
-  contact     Contact?
+  contact     Contact[]
   tickets     Ticket[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
