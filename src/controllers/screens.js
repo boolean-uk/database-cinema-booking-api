@@ -9,8 +9,8 @@ const createScreen = async (req, res) => {
     });
   }
   try {
-    const createdScreen = await createNewScreen(number);
-    res.status(201).json({ screen: createdScreen });
+    const screen = await createNewScreen(number);
+    res.status(201).json(screen);
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {

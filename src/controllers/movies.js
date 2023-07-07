@@ -7,9 +7,10 @@ const {
 } = require("../domains/movies");
 
 const getMovies = async (req, res) => {
+  const id = req.params
   try {
-    const retrievedMovies = await getMoviesList();
-    res.json({ movies: retrievedMovies });
+    const movies = await getMoviesList(id);
+    res.json( movies );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -28,8 +29,8 @@ const createMovie = async (req, res) => {
     });
   }
   try {
-    const createdMovie = await createNewMovie(title, runtimeMins);
-    res.status(201).json({ movie: createdMovie });
+    const movie = await createNewMovie(title, runtimeMins);
+    res.status(201).json( movie );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -43,8 +44,8 @@ const createMovie = async (req, res) => {
 const findMovie = async (req, res) => {
   try {
     const { id } = req.params;
-    const retrievedMovie = await getMovieById(id);
-    res.json({ movie: retrievedMovie });
+    const movie = await getMovieById(id);
+    res.json( movie );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -64,8 +65,8 @@ const updateMovie = async (req, res) => {
   }
   try {
     const { id } = req.params
-    const foundMovie = await updateMovieById(id, title, runtimeMins)
-    res.status(201).json({ movie: foundMovie })
+    const movie = await updateMovieById(id, title, runtimeMins)
+    res.status(201).json( movie )
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {

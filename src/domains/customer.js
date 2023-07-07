@@ -1,7 +1,7 @@
 const prisma = require("../utils/prisma");
 
 async function createNewCustomer(name, phone, email) {
-  const createdCustomer = await prisma.customer.create({
+  const customer = await prisma.customer.create({
     data: {
       name,
       contact: {
@@ -15,13 +15,12 @@ async function createNewCustomer(name, phone, email) {
       contact: true,
     },
   });
-  console.log("createdCustomer", createdCustomer);
-  return { customer: createdCustomer };
+  return {customer};
 }
 
 async function updateCustomerById(givenId, givenName) {
   const id = Number(givenId);
-  const updatedCustomer = await prisma.customer.update({
+  const customer = await prisma.customer.update({
     where: {
       id: id,
     },
@@ -32,8 +31,7 @@ async function updateCustomerById(givenId, givenName) {
       contact: true,
     },
   });
-  console.log("updatedCustomer", updatedCustomer);
-  return updatedCustomer;
+  return {customer};
 }
 
 module.exports = {

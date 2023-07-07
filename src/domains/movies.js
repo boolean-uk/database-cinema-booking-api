@@ -1,17 +1,16 @@
 const prisma = require("../utils/prisma");
 
 async function getMoviesList() {
-  const foundMovies = await prisma.movie.findMany({
+  const movies = await prisma.movie.findMany({
     include: {
       screenings: true,
     },
   });
-  console.log("foundMovies", foundMovies);
-  return { foundMovies };
+  return {movies} ;
 }
 
 async function createNewMovie(title, runtimeMins) {
-  const createdMovie = await prisma.movie.create({
+  const movie = await prisma.movie.create({
     data: {
       title,
       runtimeMins,
@@ -20,13 +19,12 @@ async function createNewMovie(title, runtimeMins) {
       screenings: true,
     },
   });
-  console.log("createdMovie", createdMovie);
-  return { movie: createdMovie };
+  return {movie} ;
 }
 
 async function getMovieById(givenId) {
   const id = Number(givenId);
-  const foundMovie = await prisma.movie.findUnique({
+  const movie = await prisma.movie.findUnique({
     where: {
       id: id,
     },
@@ -34,13 +32,12 @@ async function getMovieById(givenId) {
       screenings: true,
     },
   });
-  console.log("foundMovie", foundMovie);
-  return foundMovie;
+  return {movie};
 }
 
 async function updateMovieById(givenId, givenTitle, givenRuntimeMins) {
   const id = Number(givenId);
-  const updatedMovie = await prisma.movie.update({
+  const movie = await prisma.movie.update({
     where: {
       id: id,
     },
@@ -52,8 +49,7 @@ async function updateMovieById(givenId, givenTitle, givenRuntimeMins) {
       screenings: true,
     },
   });
-  console.log("updatedMovie", updatedMovie);
-  return updatedMovie;
+  return {movie};
 }
 
 module.exports = {

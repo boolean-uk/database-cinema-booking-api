@@ -12,8 +12,8 @@ const createCustomer = async (req, res) => {
     });
   }
   try {
-    const createdCustomer = await createNewCustomer(name, phone, email);
-    res.status(201).json({ customer: createdCustomer });
+    const customer = await createNewCustomer(name, phone, email);
+    res.status(201).json( customer );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -35,8 +35,8 @@ const updateCustomer = async (req, res) => {
   }
   try {
     const { id } = req.params;
-    const updatedCustomer = await updateCustomerById(id, name);
-    res.status(201).json({ customer: updatedCustomer });
+    const customer = await updateCustomerById(id, name);
+    res.status(201).json( customer );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
