@@ -58,6 +58,5 @@ describe("Screens Endpoint", () => {
         expect(response.status).toEqual(404);
         expect(response.body).toHaveProperty("error");
       });
-  });
-  
+  });  
 });

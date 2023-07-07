@@ -2,6 +2,7 @@ const supertest = require("supertest");
 const app = require("../../../src/server.js");
 const { createCustomer } = require("../../helpers/createCustomer.js");
 
+
 describe("Customer Endpoint", () => {
   describe("PUT /customers/:id", () => {
     it("can update a customers contact info when a contact property exists on the request body", async () => {
@@ -54,3 +55,5 @@ describe("Customer Endpoint", () => {
     });
   });
 });
+
+

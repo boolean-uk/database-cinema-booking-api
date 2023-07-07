@@ -22,6 +22,8 @@ const screenRouter = require('./routers/screen');
 app.use('/screens', screenRouter);
 const ticketRouter = require('./routers/ticket');
 app.use('/tickets', ticketRouter);
+const reviewRouter = require('./routers/review');
+app.use('/reviews', reviewRouter);
 
 
 
