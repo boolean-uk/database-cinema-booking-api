@@ -56,7 +56,7 @@ const findMovie = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-  const { title, runtimeMins, createdAt, updatedAt } = req.body;
+  const { title, runtimeMins} = req.body;
   if (!title || !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
@@ -65,7 +65,7 @@ const updateMovie = async (req, res) => {
   try {
     const { id } = req.params
     const foundMovie = await updateMovieById(id, title, runtimeMins)
-    res.json({ movie: foundMovie })
+    res.status(201).json({ movie: foundMovie })
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
