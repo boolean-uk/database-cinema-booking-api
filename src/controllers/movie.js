@@ -13,14 +13,14 @@ const getAllMovies = async (req, res) => {
 const getMovieByID = async (req, res) => {
   const { id } = req.params
 
-  let movie
-
   try {
+    let movie
     if (isNaN(Number(id))) {
       movie = await movieDomain.getMovieByTitle(id)
     } else {
       movie = await movieDomain.getMovieByID(id)
     }
+    res.status(200).json({ movie })
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
@@ -31,22 +31,56 @@ const getMovieByID = async (req, res) => {
     }
     res.status(500).json({ error: e.message })
   }
-  
-  res.status(200).json({ movie })
-  }
+}
 
 const createMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body
-  const movie = await movieDomain.createMovie(title, runtimeMins)
-  res.status(201).json({ movie })
+  const { title, runtimeMins, screenings } = req.body
+
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  try {
+    const movie = await movieDomain.createMovie(title, runtimeMins, screenings)
+    res.status(201).json({ movie })
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(409).json({ error: "A movie with the provided title already exists" })
+      }
+    }
+    res.status(500).json({ error: e.message })
+  }
+
 }
 
 const updateMovie = async(req, res) => {
-  const { title, runtimeMins } = req.body
+  const { title, runtimeMins, screenings } = req.body
   const { id } = req.params
 
-  const movie = await movieDomain.updateMovie(title, runtimeMins, id)
-  res.status(201).json({ movie })
+  if (!title || !runtimeMins) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+
+  try {
+    const movie = await movieDomain.updateMovie(title, runtimeMins, screenings, id)
+    res.status(201).json({ movie })
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(409).json({ error: "Movie with that title already exists" })
+      }
+      if (e.code === "P2025") {
+        return res.status(404).json({ error: "Movie with that id does not exist"})
+      }
+    }
+    res.status(500).json({ error: e.message })
+  }
+
 }
 
 module.exports = {

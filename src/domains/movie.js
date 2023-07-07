@@ -58,30 +58,50 @@ const getMovieByTitle = async (title) => {
   return movie;
 };
 
-const createMovie = async (title, runtimeMins) => {
-  const movie = await prisma.movie.create({
+const createMovie = async (title, runtimeMins, screenings) => {
+  
+  const request = {
     data: {
       title,
       runtimeMins,
     },
     include: {
-      screenings: true,
-    },
-  });
+      screenings: true
+    }
+  }
+
+  if (screenings) {
+    request.data.screenings = {
+      create: screenings
+    }
+  }
+
+  const movie = await prisma.movie.create(request)
   return movie;
 };
 
-const updateMovie = async (title, runtimeMins, id) => {
-  const movie = await prisma.movie.update({
-    where: { id: Number(id) },
+const updateMovie = async (title, runtimeMins, screenings, id) => {
+
+  const request = {
+    where: {
+      id: Number(id)
+    },
     data: {
       title: title,
       runtimeMins: runtimeMins,
     },
     include: {
-      screenings: true,
-    },
-  });
+      screenings: true
+    }
+  }
+
+  if (screenings) {
+    request.data.screenings = {
+      create: screenings
+    }
+  }
+
+  const movie = await prisma.movie.update(request)
   return movie;
 };
 
