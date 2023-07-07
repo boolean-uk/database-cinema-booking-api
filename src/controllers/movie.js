@@ -13,7 +13,6 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body
-  console.log('\n\n', title, runtimeMins, '\n\n')
 
   const movie = await prisma.movie.create({
     data: {
