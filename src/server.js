@@ -17,5 +17,7 @@ const customerRouter = require('./routers/customer')
 app.use('/customers', customerRouter)
 const movieRouter = require('./routers/movie')
 app.use('/movie', movieRouter)
+const screenRouter = require('./routers/screen')
+app.use('/screen', screenRouter)
 
 module.exports = app
