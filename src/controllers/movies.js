@@ -2,8 +2,12 @@ const { Prisma } = require('@prisma/client')
 const prisma = require('../utils/prisma')
 
 const getMovieList = async (req, res) => {
-	const movies = await prisma.movie.findMany({})
-	res.status(200).json({ movies: movies })
+	const movies = await prisma.movie.findMany({
+		orderBy: {
+			id: 'asc',
+		},
+	})
+	return res.status(200).json({ movies: movies })
 }
 
 const createMovie = async (req, res) => {
@@ -14,7 +18,7 @@ const createMovie = async (req, res) => {
 			runtimeMins: body.runtimeMins,
 		},
 	})
-	res.status(201).json({ movies: newMovie })
+	res.status(201).json({ movie: newMovie })
 }
 
 // by id
@@ -22,13 +26,13 @@ const getById = async (req, res) => {
 	const id = Number(req.params.id)
 	const newMovie = await prisma.movie.findUnique({
 		where: {
-			id,
+			id: id,
 		},
 		include: {
 			screenings: true,
 		},
 	})
-	res.status(200).json({ movie: newMovie })
+		res.status(200).json({ movie: newMovie })
 }
 
 // update movie
@@ -41,7 +45,7 @@ const updateMovie = async (req, res) => {
 			runtimeMins: body.runtimeMins,
 		},
 		where: {
-			id,
+			id: id,
 		},
 		include: {
 			screenings: true,

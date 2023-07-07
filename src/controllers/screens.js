@@ -2,7 +2,9 @@ const { Prisma } = require('@prisma/client')
 const prisma = require('../utils/prisma')
 
 const createScreen = async (req, res) => {
-	const body = req.body
+  const body = req.body
+  console.log('body', body);
+   console.log(typeof body.number) 
 	const newScreen = await prisma.screen.create({
 		data: {
 			number: body.number,
