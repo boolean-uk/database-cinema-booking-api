@@ -56,7 +56,7 @@ const findMovie = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-  const { title, runtimeMins } = req.body;
+  const { title, runtimeMins, createdAt, updatedAt } = req.body;
   if (!title || !runtimeMins) {
     return res.status(400).json({
       error: "Missing fields in request body",
