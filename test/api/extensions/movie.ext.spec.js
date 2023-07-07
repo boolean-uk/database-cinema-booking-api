@@ -7,9 +7,8 @@ const { movie } = require("../../../src/utils/prisma.js");
 describe("Movie Endpoint", () => {
   describe("GET /movies", () => {
     it("will retrieve a list of movies with runtime less than 115 and greater than 100", async () => {
-      const screen = await createScreen(1);
-      await createMovie("Dodgeball", 120, screen);
-      await createMovie("Scream", 113, screen);
+      await createMovie("Dodgeball", 120);
+      await createMovie("Scream", 113);
 
       const queryData = {
         runtimeLt: 115,
@@ -25,13 +24,10 @@ describe("Movie Endpoint", () => {
       const [movie1] = response.body.movies;
       expect(movie1.title).toEqual("Scream");
       expect(movie1.runtimeMins).toEqual(113);
-      expect(movie1.screenings).not.toEqual(undefined);
-      expect(movie1.screenings.length).toEqual(1);
     });
     it("will retrieve a list of movies with runtime less than 115", async () => {
-      const screen = await createScreen(1);
-      await createMovie("Dodgeball", 120, screen);
-      await createMovie("Scream", 113, screen);
+      await createMovie("Dodgeball", 120);
+      await createMovie("Scream", 113);
 
       const queryData = {
         runtimeLt: 115,
@@ -46,30 +42,59 @@ describe("Movie Endpoint", () => {
       const [movie1] = response.body.movies;
       expect(movie1.title).toEqual("Scream");
       expect(movie1.runtimeMins).toEqual(113);
-      expect(movie1.screenings).not.toEqual(undefined);
-      expect(movie1.screenings.length).toEqual(1);
     });
 
     it("will retrieve a list of movies with runtime more than 115", async () => {
-      const screen = await createScreen(1);
-      await createMovie("Dodgeball", 120, screen);
-      await createMovie("Scream", 113, screen);
+      await createMovie("Dodgeball", 120);
+      await createMovie("Scream", 113);
 
       const queryData = {
         runtimeGt: 115,
       };
 
       const response = await supertest(app).get("/movies").query(queryData);
-
       expect(response.status).toEqual(200);
       expect(response.body.movies).not.toEqual(undefined);
       expect(response.body.movies.length).toEqual(1);
-
       const [movie1] = response.body.movies;
       expect(movie1.title).toEqual("Dodgeball");
       expect(movie1.runtimeMins).toEqual(120);
-      expect(movie1.screenings).not.toEqual(undefined);
-      expect(movie1.screenings.length).toEqual(1);
+    });
+    it("will retrieve a list of movies with future screenings", async () => {
+      const screen = await createScreen(1);
+      const request = {
+        title: "Princess Diary",
+        runtimeMins: 110,
+        screenings: [
+          {
+            screenId: screen.id,
+            startsAt: "2024-07-08T06:00:37.671Z",
+          },
+        ],
+      };
+
+      const movie = await supertest(app).post("/movies").send(request);
+      const response = await supertest(app).get("/movies");
+      expect(response.status).toEqual(200);
+      expect(response.body.movies.length).toEqual(1);
+    });
+    it("if no future screenings, the list should be empty", async () => {
+      const screen = await createScreen(1);
+      const request = {
+        title: "Princess Diary",
+        runtimeMins: 110,
+        screenings: [
+          {
+            screenId: screen.id,
+            startsAt: "2020-07-08T06:00:37.671Z",
+          },
+        ],
+      };
+
+      const movie = await supertest(app).post("/movies").send(request);
+      const response = await supertest(app).get("/movies");
+      expect(response.status).toEqual(200);
+      expect(response.body.movies.length).toEqual(0);
     });
   });
 
@@ -82,7 +107,7 @@ describe("Movie Endpoint", () => {
         screenings: [
           {
             screenId: screen.id,
-            startsAt: "2023-07-08T06:00:37.671Z",
+            startsAt: "2025-07-08T06:00:37.671Z",
           },
         ],
       };

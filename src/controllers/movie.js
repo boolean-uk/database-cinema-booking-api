@@ -3,42 +3,49 @@ const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
   let { runtimeLt, runtimeGt } = req.query;
+  const conditions = {};
+  const now = new Date();
+
   if (runtimeLt && runtimeGt) {
     runtimeLt = Number(runtimeLt);
     runtimeGt = Number(runtimeGt);
-    const getAllMovies = await prisma.movie.findMany({
-      where: { runtimeMins: { lt: runtimeLt, gt: runtimeGt } },
-      include: {
-        screenings: true,
-      },
-    });
-    res.json({ movies: getAllMovies });
+    conditions.runtimeMins = { gt: runtimeGt, lt: runtimeLt };
   } else if (runtimeLt) {
     runtimeLt = Number(runtimeLt);
-    const getAllMovies = await prisma.movie.findMany({
-      where: { runtimeMins: { lt: runtimeLt } },
-      include: {
-        screenings: true,
-      },
-    });
-    res.json({ movies: getAllMovies });
+    conditions.runtimeMins = { lt: runtimeLt };
   } else if (runtimeGt) {
     runtimeGt = Number(runtimeGt);
-    const getAllMovies = await prisma.movie.findMany({
-      where: { runtimeMins: { gt: runtimeGt } },
-      include: {
-        screenings: true,
-      },
-    });
-    res.json({ movies: getAllMovies });
-  } else {
-    const getAllMovies = await prisma.movie.findMany({
-      include: {
-        screenings: true,
-      },
-    });
-    res.json({ movies: getAllMovies });
+    conditions.runtimeMins = { gt: runtimeGt };
   }
+
+  const getAllMovies = await prisma.movie.findMany({
+    where: {
+      AND: [
+        conditions,
+        {
+          OR: [
+            {
+              screenings: {
+                some: {
+                  startsAt: {
+                    gt: now,
+                  },
+                },
+              },
+            },
+            {
+              screenings: {
+                none: {},
+              },
+            },
+          ],
+        },
+      ],
+    },
+    include: { screenings: true },
+  });
+
+  res.json({ movies: getAllMovies });
 };
 
 const createMovie = async (req, res) => {
