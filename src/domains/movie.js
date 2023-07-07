@@ -12,8 +12,8 @@ const getAllMovies = async (minRuntime, maxRuntime) => {
   if (minRuntime && maxRuntime) {
     request.where = {
       runtimeMins: {
-        gt: Number(minRuntime),
-        lt: Number(maxRuntime),
+        gte: Number(minRuntime),
+        lte: Number(maxRuntime),
       },
     };
   }
@@ -21,7 +21,7 @@ const getAllMovies = async (minRuntime, maxRuntime) => {
   if (minRuntime && !maxRuntime) {
     request.where = {
       runtimeMins: {
-        gt: Number(minRuntime)
+        gte: Number(minRuntime)
       },
     }
   }
@@ -29,7 +29,7 @@ const getAllMovies = async (minRuntime, maxRuntime) => {
   if (!minRuntime && maxRuntime) {
     request.where = {
       runtimeMins: {
-        lt: Number(maxRuntime)
+        lte: Number(maxRuntime)
       }
     }
   }
