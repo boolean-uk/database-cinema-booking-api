@@ -6,29 +6,64 @@ const prisma = require("../utils/prisma");
 //   return {movies}
 // };
 
-const movie_screening = {
-  select: {
-    id: true,
-    title: true,
-    runtimeMins: true,
-    createdAt: true,
-    updatedAt: true,
-    screenings: {
-      select: {
-        id: true,
-        movieId: true,
-        screenId: true,
-        startsAt: true,
-        createdAt: true,
-        updatedAt: true,
+const getMoviesData = async (runtimeLt, runtimeGt) => {
+  if (runtimeLt !== undefined && runtimeGt !== undefined) {
+    const movies = await prisma.movie.findMany({
+      where: {
+        OR: [
+          {
+            runtimeMins: {
+              lt: Number(runtimeLt),
+            },
+          },
+          {
+            runtimeMins: {
+              gt: Number(runtimeGt),
+            },
+          },
+        ],
       },
-    },
-  },
-};
-
-const getMoviesData = async () => {
-  const movies = await prisma.movie.findMany(movie_screening);
-  return { movies };
+      include: {
+        screenings: true,
+      },
+    });
+    console.log("both");
+    return { movies };
+  } else if (runtimeLt !== undefined) {
+    const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          lt: Number(runtimeLt),
+        },
+      },
+      include: {
+        screenings: true,
+      },
+    });
+    console.log("less than");
+    return { movies };
+  } else if (runtimeGt !== undefined) {
+    const movies = await prisma.movie.findMany({
+      where: {
+        runtimeMins: {
+          gt: Number(runtimeGt),
+        },
+      },
+      include: {
+        screenings: true,
+      },
+    });
+    console.log("greater than");
+    return { movies };
+  } else {
+    const movies = await prisma.movie.findMany({
+      include: {
+        screenings: true,
+      },
+    });
+    console.log("neither");
+    return { movies };
+  }
 };
 
 const getMovieDataById = async (id) => {
@@ -36,7 +71,9 @@ const getMovieDataById = async (id) => {
     where: {
       id,
     },
-    select: movie_screening.select,
+    include: {
+      screenings: true,
+    },
   });
   return { movie };
 };
@@ -62,7 +99,9 @@ const updateMovieData = async (id, title, runtimeMins) => {
       title,
       runtimeMins,
     },
-    select: movie_screening.select,
+    include: {
+      screenings: true,
+    },
   });
   return update_movie;
 };

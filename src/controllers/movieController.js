@@ -19,7 +19,8 @@ const {
 // };
 
 const getMovies = async (req, res) => {
-  const movie = await getMoviesData();
+  const { runtimeLt, runtimeGt } = req.query;
+  const movie = await getMoviesData(runtimeLt, runtimeGt);
   res.json(movie);
 };
 
