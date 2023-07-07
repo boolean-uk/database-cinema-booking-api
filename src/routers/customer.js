@@ -1,6 +1,7 @@
 const express = require("express");
 const {
-    createCustomer
+    createCustomer,
+    updateCustomer
 } = require('../controllers/customer');
 
 const router = express.Router();
@@ -9,5 +10,12 @@ const router = express.Router();
 // The below /register route extends that, so the end result will be a URL
 // that looks like http://localhost:4000/customer/register
 router.post("/register", createCustomer);
+
+router.put('/:id', async(req, res) => {
+    const id = req.params.id
+    const customer = await updateCustomer(id, req)
+    console.log(customer)
+    res.status(201).json({customer})
+})
 
 module.exports = router;
