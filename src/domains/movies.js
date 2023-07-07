@@ -1,6 +1,15 @@
 const prisma = require("../utils/prisma");
 
-async function getMoviesList() {
+async function getMoviesList(runtimeQuery) {
+  const { query } = runtimeQuery
+  
+  switch(query) {
+
+    case !query: 
+      
+
+  }
+
   const movies = await prisma.movie.findMany({
     include: {
       screenings: true,

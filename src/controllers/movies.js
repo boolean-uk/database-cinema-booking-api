@@ -7,9 +7,15 @@ const {
 } = require("../domains/movies");
 
 const getMovies = async (req, res) => {
-  const id = req.params
+  // const id = req.params
+  const { runtimeLt, runtimeGt } = req.query
+  const runtimeQuery = {}
+
+  if (runtimeLt) {runtimeQuery.runtimeLt}
+  if (runtimeGt) { runtimeQuery.runtimeGt}
+
   try {
-    const movies = await getMoviesList(id);
+    const movies = await getMoviesList(runtimeQuery);
     res.json( movies );
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
