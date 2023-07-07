@@ -26,7 +26,7 @@ const createCustomer = async (req, res) => {
 };
 
 const updateCustomer = async (req, res) => {
-    const { name } = req.body
+    const { name, contact } = req.body
     const { id } = req.params
 
     if (!name) {
@@ -36,7 +36,7 @@ const updateCustomer = async (req, res) => {
     }
 
     try {
-        const customer = await customerDomain.updateCustomer(name, id)
+        const customer = await customerDomain.updateCustomer(name, contact, id)
         res.status(201).json({ customer })
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {

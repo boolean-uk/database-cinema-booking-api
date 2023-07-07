@@ -19,14 +19,25 @@ const createCustomer = async (name, phone, email) => {
   return customer
 };
 
-const updateCustomer = async (name, id) => {
-  const customer = await prisma.customer.update({
+const updateCustomer = async (name, contact, id) => {
+
+  const request = {
     where: { id: Number(id)},
-    data: { name: name},
+    data: { 
+      name: name,
+    },
     include: {
       contact: true
     }
-  })
+  }
+
+  if (contact) {
+    request.data.contact = {
+      update: contact
+    }
+  }
+
+  const customer = await prisma.customer.update(request)
   return customer
 }
 
