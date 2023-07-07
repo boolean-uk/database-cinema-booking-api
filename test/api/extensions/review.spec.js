@@ -28,5 +28,23 @@ describe("Screens Endpoint", () => {
       expect(response.body.review).toHaveProperty("customer");
       expect(response.body.review).toHaveProperty("review");
     });
+    it("will return 400 when there are missing fields in the request body", async () => {
+      const newCustomer = await createCustomer(
+        "Carolina",
+        "91830495",
+        "myemail@email.com"
+      );
+      const screen = await createScreen(3);
+      const movie = await createMovie("The notebook", 90, screen);
+
+      const request = {
+        review: "This movie sucks",
+      };
+      const response = await supertest(app).post("/reviews").send(request);
+
+      expect(response.status).toEqual(400);
+      expect(response.body).toHaveProperty("error");
+
+    });
   });
 });

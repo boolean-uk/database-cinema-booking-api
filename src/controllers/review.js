@@ -13,18 +13,24 @@ const getAllReviews = async (req, res) => {
 
 const createReview = async (req, res) => {
   const { movieId, review, customerId } = req.body;
-  const createReview = await prisma.review.create({
-    data: {
-      movieId,
-      review,
-      customerId,
-    },
-    include: {
-      customer: true,
-      movie: true,
-    },
-  });
-  res.status(201).json({ review: createReview });
+  if (!movieId || !review || !customerId) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  } else {
+    const createReview = await prisma.review.create({
+      data: {
+        movieId,
+        review,
+        customerId,
+      },
+      include: {
+        customer: true,
+        movie: true,
+      },
+    });
+    res.status(201).json({ review: createReview });
+  }
 };
 
 module.exports = {

@@ -26,8 +26,9 @@ describe("Movie Endpoint", () => {
       expect(movie1.runtimeMins).toEqual(113);
     });
     it("will retrieve a list of movies with runtime less than 115", async () => {
-      await createMovie("Dodgeball", 120);
-      await createMovie("Scream", 113);
+      const screen = await createScreen(1);
+      await createMovie("Dodgeball", 120, screen);
+      await createMovie("Scream", 113, screen);
 
       const queryData = {
         runtimeLt: 115,
