@@ -3,7 +3,17 @@ const prisma = require("../utils/prisma");
 
 const getAllMovies = async (req, res) => {
   let { runtimeLt, runtimeGt } = req.query;
-  if (runtimeLt) {
+  if (runtimeLt && runtimeGt) {
+    runtimeLt = Number(runtimeLt);
+    runtimeGt = Number(runtimeGt);
+    const getAllMovies = await prisma.movie.findMany({
+      where: { runtimeMins: { lt: runtimeLt, gt: runtimeGt } },
+      include: {
+        screenings: true,
+      },
+    });
+    res.json({ movies: getAllMovies });
+  } else if (runtimeLt) {
     runtimeLt = Number(runtimeLt);
     const getAllMovies = await prisma.movie.findMany({
       where: { runtimeMins: { lt: runtimeLt } },
@@ -32,7 +42,7 @@ const getAllMovies = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-  const { title, runtimeMins, startsAt } = req.body;
+  const { title, runtimeMins, screenings } = req.body;
 
   if (!title || !runtimeMins) {
     return res.status(400).json({
@@ -45,21 +55,35 @@ const createMovie = async (req, res) => {
   });
 
   if (!findTitle) {
-    const createMovie = await prisma.movie.create({
-      data: {
-        title,
-        runtimeMins,
-        screenings: {
-          startsAt,
+    if (!screenings) {
+      const createMovie = await prisma.movie.create({
+        data: {
+          title,
+          runtimeMins,
         },
-      },
 
-      include: {
-        screenings: true,
-      },
-    });
+        include: {
+          screenings: true,
+        },
+      });
 
-    res.status(201).json({ movie: createMovie });
+      res.status(201).json({ movie: createMovie });
+    } else {
+      const createMovie = await prisma.movie.create({
+        data: {
+          title,
+          runtimeMins,
+          screenings: {
+            create: screenings,
+          },
+        },
+        include: {
+          screenings: true,
+        },
+      });
+
+      res.status(201).json({ movie: createMovie });
+    }
   } else {
     return res
       .status(409)
@@ -68,38 +92,26 @@ const createMovie = async (req, res) => {
 };
 
 const getMovieID = async (req, res) => {
-  let { id } = req.params;
+  const { id } = req.params;
 
-  const getMovieTitle = await prisma.movie.findFirst({
+  const movie = await prisma.movie.findFirst({
     where: {
-      title: id,
+      OR: [
+        {
+          id: Number(id) || undefined,
+        },
+        {
+          title: id,
+        },
+      ],
     },
     include: {
       screenings: true,
     },
   });
 
-  if (getMovieTitle) {
-    res.json({ movie: getMovieTitle });
-  }
-
-  if (isNaN(Number(id))) {
-    return res
-      .status(404)
-      .json({ error: "Movie with that id or title does not exist" });
-  }
-
-  const getMovieByID = await prisma.movie.findFirst({
-    where: {
-      id: Number(id),
-    },
-    include: {
-      screenings: true,
-    },
-  });
-
-  if (getMovieByID) {
-    return res.json({ movie: getMovieByID });
+  if (movie) {
+    return res.json({ movie: movie });
   }
 
   return res
@@ -146,7 +158,6 @@ const updateMovie = async (req, res) => {
         error: "Movie with that title already exists",
       });
     }
-   
   } else {
     return res.status(404).json({
       error: "Movie with that id does not exist",
