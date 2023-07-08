@@ -36,6 +36,8 @@ const createCustomer = async (req, res) => {
             }
         })
 
+        createdCustomer.contact = createdCustomer.contact[0]
+
         res.status(201).json({ customer: createdCustomer })
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -48,6 +50,28 @@ const createCustomer = async (req, res) => {
     }
 }
 
+const updateCustomer = async (req, res) => {
+  const id = Number(req.params.id)
+  const { name } = req.body
+
+  const customer = await prisma.customer.update({
+    where: {
+      id
+    },
+    data: {
+      name
+    },
+    include: {
+      contact: true
+    }
+  })
+
+  customer.contact = customer.contact[0]
+
+  return res.status(201).send({ customer })
+}
+
 module.exports = {
-    createCustomer
+  createCustomer,
+  updateCustomer
 }
