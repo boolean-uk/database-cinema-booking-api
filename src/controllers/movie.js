@@ -2,7 +2,11 @@ const { Prisma } = require("@prisma/client")
 const prisma = require('../utils/prisma')
 
 const getAll = async (req, res) => {
-    const movies = await prisma.movie.findMany()
+    const movies = await prisma.movie.findMany({
+        include: {
+            screenings: true
+        }
+    })
     return res.status(200).json({movies})
 }
 
@@ -21,7 +25,12 @@ const createMovie = async (req, res) => {
     const createdMovie = await prisma.movie.create({
         data: {
             title,
-            runtimeMins
+            runtimeMins,
+            screenings: {
+                create: [
+                    
+                ]
+            }
         }
     })
 

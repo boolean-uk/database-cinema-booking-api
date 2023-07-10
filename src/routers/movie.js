@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.get('/', getAll)
 
-router.post('/add_movie', createMovie)
+router.post('/', createMovie)
 
 module.exports = router
