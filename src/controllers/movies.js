@@ -6,6 +6,9 @@ const getMovieList = async (req, res) => {
 		orderBy: {
 			id: 'asc',
 		},
+		include: {
+			screenings: true,
+		},
 	})
 	return res.status(200).json({ movies: movies })
 }
@@ -16,6 +19,9 @@ const createMovie = async (req, res) => {
 		data: {
 			title: body.title,
 			runtimeMins: body.runtimeMins,
+		},
+		include: {
+			screenings: true,
 		},
 	})
 	res.status(201).json({ movie: newMovie })
@@ -32,7 +38,7 @@ const getById = async (req, res) => {
 			screenings: true,
 		},
 	})
-		res.status(200).json({ movie: newMovie })
+	res.status(200).json({ movie: newMovie })
 }
 
 // update movie
