@@ -48,7 +48,19 @@ const createCustomer = async (req, res) => {
 const updateCustomer = async (req, res) => {
   const id = Number(req.params.id)
   const { name, contact } = req.body
-
+  const findCustomer = await prisma.customer.findUnique({
+    where: {
+      id: id
+    }
+  })
+  if (!findCustomer) {
+    return res
+      .status(404)
+      .json({ error: 'Customer with that id does not exist' })
+  }
+  if (!name && !contact) {
+    return res.status(400).json({ error: 'Missing fields in request body' })
+  }
   if (contact) {
     const updatedCustomer = await prisma.customer.update({
       where: { id },
