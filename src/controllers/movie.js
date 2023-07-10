@@ -26,18 +26,31 @@ const createMovie = async (req, res) => {
         data: {
             title,
             runtimeMins,
-            screenings: {
-                create: [
-                    
-                ]
-            }
+        },
+        include: {
+            screenings: true
         }
     })
 
     res.status(201).json({movie: createdMovie})
 }
 
+const getById = async (req, res) => {
+    const id = Number(req.params.id)
+    const movie = await prisma.movie.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            screenings: true
+        }
+    })
+
+    res.status(200).json({movie: movie})
+}
+
 module.exports = {
     getAll,
-    createMovie
+    createMovie,
+    getById
 }
