@@ -57,7 +57,7 @@ const updateCustomer = async (req,res) => {
             id: Number(id),
         },
         data: {
-            name: "Jane",
+            name: name,
         },
         include: {
             contact: true,
