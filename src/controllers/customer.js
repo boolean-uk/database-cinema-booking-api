@@ -48,6 +48,26 @@ const createCustomer = async (req, res) => {
     }
 }
 
+const updateCustomer = async (req, res) => {
+    const id = Number(req.params.id)
+    const { name } = req.body
+
+    const updateData = await prisma.customer.update({
+        where: {
+            id
+        },
+        data: {
+            name: name
+        },
+        include: {
+            contact: true
+        }
+    })
+
+    return res.status(201).send({customer: updateData})
+}
+
 module.exports = {
-    createCustomer
+    createCustomer,
+    updateCustomer
 }
