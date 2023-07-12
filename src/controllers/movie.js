@@ -1,6 +1,20 @@
 const { Prisma } = require('@prisma/client');
 const prisma = require('../utils/prisma');
 
+const getMovies = async (req, res) => {
+  try {
+    const movies = await prisma.movie.findMany({
+      include: {
+        screenings: true,
+      },
+    });
+
+    res.status(200).json({ movies });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
@@ -13,24 +27,16 @@ const createMovie = async (req, res) => {
       data: {
         title,
         runtimeMins,
+        screenings: {
+          create: [],
+        },
       },
-    });
-
-    res.status(201).json({ movie: createdMovie });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-};
-
-const getMovies = async (req, res) => {
-  try {
-    const movies = await prisma.movie.findMany({
       include: {
         screenings: true,
       },
     });
 
-    res.status(200).json({ movies });
+    res.status(201).json({ movie: createdMovie });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -48,7 +54,7 @@ const getMovieById = async (req, res) => {
     });
 
     if (!movie) {
-      return res.status(404).json();
+      return res.status(404).json({ error: 'Movie not found' });
     }
 
     res.status(200).json({ movie });
@@ -72,6 +78,9 @@ const updateMovie = async (req, res) => {
         title,
         runtimeMins,
       },
+      include: {
+        screenings: true,
+      },
     });
 
     res.status(201).json({ movie: updatedMovie });
@@ -81,8 +90,8 @@ const updateMovie = async (req, res) => {
 };
 
 module.exports = {
-  createMovie,
   getMovies,
+  createMovie,
   getMovieById,
   updateMovie,
 };
