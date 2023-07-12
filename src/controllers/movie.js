@@ -18,7 +18,7 @@ const createMovie = async (req, res) => {
 
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ errar: e.message });
   }
 };
 
