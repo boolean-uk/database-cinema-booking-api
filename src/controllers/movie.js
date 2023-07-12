@@ -23,12 +23,6 @@ const createMovie = async (req, res) => {
   }
 
   try {
-    const existingMovie = await prisma.movie.findUnique({ where: { title } });
-
-    if (existingMovie) {
-      return res.status(400).json({ error: 'Movie with the same title already exists' });
-    }
-
     const createdMovie = await prisma.movie.create({
       data: {
         title,
@@ -47,7 +41,6 @@ const createMovie = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
-
 
 const getMovieById = async (req, res) => {
   const { id } = req.params;
