@@ -3,11 +3,13 @@ const prisma = require('../utils/prisma')
 const createScreen = async(req, res) => {
     const {number} = req.body
 
-    return await prisma.screen.create({
+    const screen =  await prisma.screen.create({
         data: {
             number
         }
     })
+
+    res.status(201).json({screen})
 }
 
 module.exports = { createScreen }

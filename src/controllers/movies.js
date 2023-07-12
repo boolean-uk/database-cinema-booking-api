@@ -1,8 +1,9 @@
 
 const prisma = require('../utils/prisma')
 
+
 const getAllMovies = async(req, res) => {
-    return await prisma.movie.findMany({
+    const movies = await prisma.movie.findMany({
         select: {
             id: true,
             title: true,
@@ -12,13 +13,15 @@ const getAllMovies = async(req, res) => {
             screenings: true
         }
     })
+
+    res.json({movies})
 }
 
 const createMovie = async(req, res) => {
     
     const {title, runtimeMins} = req.body
   
-    return await prisma.movie.create({
+    const movie = await prisma.movie.create({
         data: {
             title,
             runtimeMins
@@ -31,14 +34,17 @@ const createMovie = async(req, res) => {
             updatedAt: true,
             screenings: true
         }
-
     })
+
+    res.status(201).json({movie})
+
+
 }
 
-const getMovieById = async(id, res) => {
-    const result = await prisma.movie.findUnique({
+const getMovieById = async(req, res) => {
+    const movie = await prisma.movie.findUnique({
         where: {
-            id: Number(id)
+            id: Number(req.params.id)
         },
         select: {
             id: true,
@@ -50,14 +56,14 @@ const getMovieById = async(id, res) => {
         }
     })
 
-    return result
+    res.json({movie})
 }
 
-const updateMovieById = async(id, req, res) => {
+const updateMovieById = async(req, res) => {
     const {title, runtimeMins} = req.body
 
-    return await prisma.movie.update({
-        where: {id: Number(id)},
+    const movie = await prisma.movie.update({
+        where: {id: Number(req.params.id)},
         data: {
             title,
             runtimeMins
@@ -71,6 +77,8 @@ const updateMovieById = async(id, req, res) => {
             screenings: true
         }
     })
+
+    res.status(201).json({movie})
 }
 
 module.exports = {

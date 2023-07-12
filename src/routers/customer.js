@@ -11,11 +11,6 @@ const router = express.Router();
 // that looks like http://localhost:4000/customer/register
 router.post("/register", createCustomer);
 
-router.put('/:id', async(req, res) => {
-    const id = req.params.id
-    const customer = await updateCustomer(id, req)
-    console.log(customer)
-    res.status(201).json({customer})
-})
+router.put('/:id', updateCustomer)
 
 module.exports = router;
