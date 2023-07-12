@@ -5,7 +5,7 @@ const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.status(400).json();
+    return res.status(400).json({ error: 'Missing fields in request body' });
   }
 
   try {
@@ -18,7 +18,7 @@ const createMovie = async (req, res) => {
 
     res.status(201).json({ movie: createdMovie });
   } catch (e) {
-    res.status(500).json({ errar: e.message });
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -62,7 +62,7 @@ const updateMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.status(400).json();
+    return res.status(400).json({ error: 'Missing fields in request body' });
   }
 
   try {
@@ -74,7 +74,7 @@ const updateMovie = async (req, res) => {
       },
     });
 
-    res.status(200).json({ movie: updatedMovie });
+    res.status(201).json({ movie: updatedMovie });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
