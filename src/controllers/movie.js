@@ -1,28 +1,21 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { Prisma } = require('@prisma/client');
+const prisma = require('../utils/prisma');
 
 const getMovies = async (req, res) => {
   try {
-    const { runtimeLt, runtimeGt } = req.query;
     const movies = await prisma.movie.findMany({
       include: {
         screenings: true,
       },
       where: {
-        runtimeMins: {
-          lt: runtimeLt ? parseInt(runtimeLt) : undefined,
-          gt: runtimeGt ? parseInt(runtimeGt) : undefined,
-        },
+        runtimeLt: req.query.runtimeLt,
+        runtimeGt: req.query.runtimeGt,
       },
     });
 
     res.status(200).json({ movies });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Unknown error' });
-    }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -34,23 +27,22 @@ const createMovie = async (req, res) => {
   }
 
   try {
-    const existingMovie = await prisma.movie.findUnique({ where: { title } });
-    if (existingMovie) {
-      return res.status(409).json({ error: 'Movie with that title already exists' });
-    }
-
     const createdMovie = await prisma.movie.create({
       data: {
         title,
-        runtimeMins: parseInt(runtimeMins),
-        screenings: { create: [] },
+        runtimeMins,
+        screenings: {
+          create: [],
+        },
       },
-      include: { screenings: true },
+      include: {
+        screenings: true,
+      },
     });
 
     res.status(201).json({ movie: createdMovie });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -60,7 +52,9 @@ const getMovieById = async (req, res) => {
   try {
     const movie = await prisma.movie.findUnique({
       where: { id: parseInt(id) },
-      include: { screenings: true },
+      include: {
+        screenings: true,
+      },
     });
 
     if (!movie) {
@@ -68,8 +62,8 @@ const getMovieById = async (req, res) => {
     }
 
     res.status(200).json({ movie });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -82,23 +76,20 @@ const updateMovie = async (req, res) => {
   }
 
   try {
-    const existingMovie = await prisma.movie.findUnique({ where: { id: parseInt(id) } });
-    if (!existingMovie) {
-      return res.status(404).json({ error: 'Movie with that id does not exist' });
-    }
-
     const updatedMovie = await prisma.movie.update({
       where: { id: parseInt(id) },
       data: {
         title,
-        runtimeMins: parseInt(runtimeMins),
+        runtimeMins,
       },
-      include: { screenings: true },
+      include: {
+        screenings: true,
+      },
     });
 
-    res.status(200).json({ movie: updatedMovie });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(201).json({ movie: updatedMovie });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };
 
