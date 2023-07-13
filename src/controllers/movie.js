@@ -7,6 +7,10 @@ const getMovies = async (req, res) => {
       include: {
         screenings: true,
       },
+      where: {
+        runtimeLt: req.query.runtimeLt,
+        runtimeGt: req.query.runtimeGt,
+      },
     });
 
     res.status(200).json({ movies });
