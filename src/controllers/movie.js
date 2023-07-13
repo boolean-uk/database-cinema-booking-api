@@ -27,22 +27,23 @@ const createMovie = async (req, res) => {
   }
 
   try {
+    const existingMovie = await prisma.movie.findUnique({ where: { title } });
+    if (existingMovie) {
+      return res.status(409).json({ error: 'Movie with that title already exists' });
+    }
+
     const createdMovie = await prisma.movie.create({
       data: {
         title,
-        runtimeMins,
-        screenings: {
-          create: [],
-        },
+        runtimeMins: parseInt(runtimeMins),
+        screenings: { create: [] },
       },
-      include: {
-        screenings: true,
-      },
+      include: { screenings: true },
     });
 
     res.status(201).json({ movie: createdMovie });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
