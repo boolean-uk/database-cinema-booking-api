@@ -1,4 +1,4 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getMovies = async (req, res) => {
@@ -8,8 +8,10 @@ const getMovies = async (req, res) => {
         screenings: true,
       },
       where: {
-        runtimeLt: req.query.runtimeLt,
-        runtimeGt: req.query.runtimeGt,
+        runtimeMins: {
+          _gte: req.query.runtimeLt ? parseInt(req.query.runtimeLt) : undefined,
+          _lte: req.query.runtimeGt ? parseInt(req.query.runtimeGt) : undefined,
+        },
       },
     });
 
@@ -23,13 +25,15 @@ const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.status(400).json({ error: 'Missing fields in request body' });
+    return res.status(400).json({ error: "Missing fields in request body" });
   }
 
   try {
     const existingMovie = await prisma.movie.findUnique({ where: { title } });
     if (existingMovie) {
-      return res.status(409).json({ error: 'Movie with that title already exists' });
+      return res
+        .status(409)
+        .json({ error: "Movie with that title already exists" });
     }
 
     const createdMovie = await prisma.movie.create({
@@ -57,7 +61,7 @@ const getMovieById = async (req, res) => {
     });
 
     if (!movie) {
-      return res.status(404).json({ error: 'Movie not found' });
+      return res.status(404).json({ error: "Movie not found" });
     }
 
     res.status(200).json({ movie });
@@ -71,13 +75,17 @@ const updateMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
 
   if (!title || !runtimeMins) {
-    return res.status(400).json({ error: 'Missing fields in request body' });
+    return res.status(400).json({ error: "Missing fields in request body" });
   }
 
   try {
-    const existingMovie = await prisma.movie.findUnique({ where: { id: parseInt(id) } });
+    const existingMovie = await prisma.movie.findUnique({
+      where: { id: parseInt(id) },
+    });
     if (!existingMovie) {
-      return res.status(404).json({ error: 'Movie with that id does not exist' });
+      return res
+        .status(404)
+        .json({ error: "Movie with that id does not exist" });
     }
 
     const updatedMovie = await prisma.movie.update({
