@@ -87,4 +87,24 @@ describe("Movies Endpoint", () => {
             expect(response.body.movie.screenings.length).toEqual(1)
         })
     })
+
+    describe("GET /movies with runtime filters", () => {
+        it("can filter movies by runtime", async () => {
+            const screen = await createScreen(1)
+            await createMovie('Dodgeball', 120, screen)
+            await createMovie('Scream', 90, screen)
+
+            const response = await supertest(app).get('/movies?runtimeLt=120&runtimeGt=90');
+
+            expect(response.status).toEqual(200)
+            expect(response.body.movies).not.toEqual(undefined)
+            expect(response.body.movies.length).toEqual(1)
+
+            const [movie] = response.body.movies
+            expect(movie.title).toEqual('Dodgeball')
+            expect(movie.runtimeMins).toEqual(120)
+            expect(movie.screenings).not.toEqual(undefined)
+            expect(movie.screenings.length).toEqual(1)
+        })
+    });
 })
