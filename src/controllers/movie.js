@@ -18,7 +18,11 @@ const getMovies = async (req, res) => {
 
     res.status(200).json({ movies });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Unknown error' });
+    }
   }
 };
 
