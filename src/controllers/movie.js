@@ -3,22 +3,19 @@ const prisma = new PrismaClient();
 
 const getMovies = async (req, res) => {
   try {
-    const { runtimeLt, runtimeGt } = req.query;
     const movies = await prisma.movie.findMany({
       include: {
         screenings: true,
       },
       where: {
-        runtimeMins: {
-          lt: runtimeLt ? parseInt(runtimeLt) : undefined,
-          gt: runtimeGt ? parseInt(runtimeGt) : undefined,
-        },
+        runtimeLt: req.query.runtimeLt,
+        runtimeGt: req.query.runtimeGt,
       },
     });
 
     res.status(200).json({ movies });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };
 
