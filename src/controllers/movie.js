@@ -9,9 +9,11 @@ const getMovies = async (req, res) => {
         screenings: true,
       },
       where: {
-        runtimeMins: {
+        runtime: {
           lt: runtimeLt ? parseInt(runtimeLt) : undefined,
-          gt: runtimeGt ? parseInt(runtimeGt) : undefined,
+          and: {
+            gt: runtimeGt ? parseInt(runtimeGt) : undefined,
+          },
         },
       },
     });
