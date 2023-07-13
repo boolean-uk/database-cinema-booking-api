@@ -92,7 +92,7 @@ describe("Movies Endpoint", () => {
         it("can filter movies by runtime", async () => {
           const screen = await createScreen(1);
           await createMovie('Dodgeball', 110, screen); 
-          await createMovie('Scream', 100, screen); 
+          await createMovie('Scream', 130, screen); 
       
           const response = await supertest(app).get('/movies?runtimeLt=120&runtimeGt=90');
       
