@@ -16,7 +16,11 @@ const getMovies = async (req, res) => {
       },
     });
 
-    res.status(200).json({ movies });
+    if (movies.length === 0) {
+      return res.status(404).json({ error: 'No movies found' });
+    } else {
+      res.status(200).json({ movies });
+    }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(500).json({ error: error.message });
