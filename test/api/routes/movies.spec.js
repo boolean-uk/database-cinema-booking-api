@@ -84,4 +84,4 @@ describe("Movies Endpoint", () => {
       expect(movie.screenings.length).toEqual(1);
     });
   });
-  
+});
