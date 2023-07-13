@@ -15,7 +15,7 @@ const createMovie = async (title, runtimeMins, screen = null) => {
         movieData.data.screenings = {
             create: [
                 {
-                    startsAt: "2022-06-11T18:30:00.000Z",
+                    startsAt: "2027-06-11T18:30:00.000Z",
                     screenId: screen.id
                 }
             ]
