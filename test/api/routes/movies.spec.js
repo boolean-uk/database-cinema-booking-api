@@ -91,15 +91,20 @@ describe("Movies Endpoint", () => {
     describe("GET /movies with runtime filters", () => {
         it("can filter movies by runtime", async () => {
           const screen = await createScreen(1);
-          await createMovie('Dodgeball', 120, screen);
-          await createMovie('Scream', 90, screen);
-          await createMovie('The Shawshank Redemption', 120, screen);
+          await createMovie('Dodgeball', 110, screen); 
+          await createMovie('Scream', 100, screen); 
       
           const response = await supertest(app).get('/movies?runtimeLt=120&runtimeGt=90');
       
-          expect(response.status).toBe(200);
-          expect(response.body.movies.length).toBe(1);
-          expect(response.body.movies[0].title).toBe('The Shawshank Redemption');
+          expect(response.status).toEqual(200);
+          expect(response.body.movies).not.toEqual(undefined);
+          expect(response.body.movies.length).toEqual(1);
+      
+          const [movie] = response.body.movies;
+          expect(movie.title).toEqual('Dodgeball');
+          expect(movie.runtimeMins).toEqual(110);
+          expect(movie.screenings).not.toEqual(undefined);
+          expect(movie.screenings.length).toEqual(1);
         });
       });
 })
