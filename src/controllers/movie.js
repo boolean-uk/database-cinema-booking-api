@@ -1,21 +1,28 @@
-const { Prisma } = require('@prisma/client');
-const prisma = require('../utils/prisma');
+const { PrismaClient, Prisma } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const getMovies = async (req, res) => {
   try {
+    const { runtimeLt, runtimeGt } = req.query;
     const movies = await prisma.movie.findMany({
       include: {
         screenings: true,
       },
       where: {
-        runtimeLt: req.query.runtimeLt,
-        runtimeGt: req.query.runtimeGt,
+        runtimeMins: {
+          lt: runtimeLt ? parseInt(runtimeLt) : undefined,
+          gt: runtimeGt ? parseInt(runtimeGt) : undefined,
+        },
       },
     });
 
     res.status(200).json({ movies });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Unknown error' });
+    }
   }
 };
 
@@ -53,9 +60,7 @@ const getMovieById = async (req, res) => {
   try {
     const movie = await prisma.movie.findUnique({
       where: { id: parseInt(id) },
-      include: {
-        screenings: true,
-      },
+      include: { screenings: true },
     });
 
     if (!movie) {
@@ -63,8 +68,8 @@ const getMovieById = async (req, res) => {
     }
 
     res.status(200).json({ movie });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -77,20 +82,23 @@ const updateMovie = async (req, res) => {
   }
 
   try {
+    const existingMovie = await prisma.movie.findUnique({ where: { id: parseInt(id) } });
+    if (!existingMovie) {
+      return res.status(404).json({ error: 'Movie with that id does not exist' });
+    }
+
     const updatedMovie = await prisma.movie.update({
       where: { id: parseInt(id) },
       data: {
         title,
-        runtimeMins,
+        runtimeMins: parseInt(runtimeMins),
       },
-      include: {
-        screenings: true,
-      },
+      include: { screenings: true },
     });
 
-    res.status(201).json({ movie: updatedMovie });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(200).json({ movie: updatedMovie });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
