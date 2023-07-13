@@ -1,4 +1,4 @@
-const { PrismaClient, PrismaClientKnownRequestError } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const getMovies = async (req, res) => {
@@ -18,7 +18,7 @@ const getMovies = async (req, res) => {
 
     res.status(200).json({ movies });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(500).json({ error: error.message });
     } else {
       res.status(500).json({ error: 'Unknown error' });
