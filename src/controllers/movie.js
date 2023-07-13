@@ -1,5 +1,5 @@
-const { Prisma } = require('@prisma/client');
-const prisma = require('../utils/prisma');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const getMovies = async (req, res) => {
   try {
@@ -9,11 +9,9 @@ const getMovies = async (req, res) => {
         screenings: true,
       },
       where: {
-        runtime: {
+        runtimeMins: {
           lt: runtimeLt ? parseInt(runtimeLt) : undefined,
-          and: {
-            gt: runtimeGt ? parseInt(runtimeGt) : undefined,
-          },
+          gt: runtimeGt ? parseInt(runtimeGt) : undefined,
         },
       },
     });
