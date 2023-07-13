@@ -52,23 +52,18 @@ const updateCustomer = async (req, res) => {
     const { id } = req.params;
     const { name, contact } = req.body;
   
-    if (!name && !contact) {
+    if (!name) {
       return res.status(400).json({ error: "Missing fields in request body" });
     }
   
     try {
       const updatedCustomer = await prisma.customer.update({
-        where: { id: parseInt(id) },
+        where: { id },
         data: {
           name,
           contact: contact || {},
         },
-        include: { contact: true },
       });
-  
-      if (!updatedCustomer) {
-        return res.status(404).json({ error: "Customer with that id does not exist" });
-      }
   
       res.status(200).json({ customer: updatedCustomer });
     } catch (e) {
@@ -86,4 +81,4 @@ const updateCustomer = async (req, res) => {
   module.exports = {
     createCustomer,
     updateCustomer,
-}
+  }
