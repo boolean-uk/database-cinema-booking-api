@@ -16,17 +16,9 @@ const getMovies = async (req, res) => {
       },
     });
 
-    if (movies.length === 0) {
-      return res.status(404).json({ error: 'No movies found' });
-    } else {
-      res.status(200).json({ movies });
-    }
+    res.status(200).json({ movies });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Unknown error' });
-    }
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -54,7 +46,7 @@ const createMovie = async (req, res) => {
 
     res.status(201).json({ movie: createdMovie });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -73,7 +65,7 @@ const getMovieById = async (req, res) => {
 
     res.status(200).json({ movie });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -102,7 +94,7 @@ const updateMovie = async (req, res) => {
 
     res.status(200).json({ movie: updatedMovie });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
