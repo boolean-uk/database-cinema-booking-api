@@ -27,6 +27,10 @@ const createMovie = async (req, res) => {
   try {
     const { title, runtimeMins } = req.body;
 
+    if (!title && !runtimeMins) {
+      return res.status(400).send({ error: "Missing fields in request body" });
+    }
+
     const allMovies = await getAllMoviesDb();
 
     const titleExists = allMovies.some((movie) => movie.title === title);
@@ -37,13 +41,9 @@ const createMovie = async (req, res) => {
         .send({ error: "A movie with the provided title already exists" });
     }
 
-    if (title && runtimeMins) {
-      const createdMovie = await createMovieDb(title, runtimeMins);
+    const createdMovie = await createMovieDb(title, runtimeMins);
 
-      return res.status(201).send({ movie: createdMovie });
-    }
-
-    return res.status(400).send({ error: "Missing fields in request body" });
+    return res.status(201).send({ movie: createdMovie });
   } catch (e) {
     console.log(e.message);
     return res.status(500).json({ error: e.message });
