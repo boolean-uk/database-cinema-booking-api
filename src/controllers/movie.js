@@ -95,6 +95,9 @@ const getMovieById = async (req, res) => {
   const { id } = req.params;
   const idNum = Number(id);
   const movie = await getMovieByIdDb(idNum);
+  // attempts to refactor to try...catch seemed to indicate
+  // that prisma does not throw an error when a findUnique() fails
+  // TODO: look up docs to see whether this is accurate
   if (!movie) {
     res.status(404).json("movie not found");
   }
