@@ -4,6 +4,8 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 
+const customerRouter = require("./routers/customer.router.js");
+
 app.disable("x-powered-by");
 
 // Add middleware
@@ -13,7 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Tell express to use your routers here
-const customerRouter = require("./routers/customer.router.js");
 app.use("/customers", customerRouter);
 
 module.exports = app;
