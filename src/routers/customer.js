@@ -3,7 +3,6 @@ const {
   createCustomer,
   updateCustomerById
 } = require('../controllers/customer');
-const { updateCustomerByIdDB } = require("../domains/customer");
 
 const router = express.Router();
 
