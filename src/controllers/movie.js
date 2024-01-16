@@ -1,4 +1,4 @@
-const {getAllMoviesDB, createMovieDB} = require('../domains/movie.js')
+const {getAllMoviesDB, createMovieDB, getMovieByIdDB} = require('../domains/movie.js')
 
 const getAllMovies = async (req, res) => {
     const allMovies = await getAllMoviesDB()
@@ -11,7 +11,15 @@ const createMovie = async (req, res) => {
     res.status(201).json({movie: newMovie})
 }
 
+const getMovieById = async (req, res) => {
+    const id = Number(req.params.id)
+    const foundMovie = await getMovieByIdDB(id)
+    res.status(200).json({movie: foundMovie})
+}
+
+
 module.exports = {
     getAllMovies,
-    createMovie
+    createMovie,
+    getMovieById
 }
