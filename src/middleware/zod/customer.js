@@ -22,6 +22,25 @@ function createCustomer(req, res, next) {
   }
 }
 
+function updateCustomer(req, res, next) {
+  const contactSchema = z.object({
+    phone: z.string(),
+    email: z.string(),
+  });
+  const schema = z.object({
+    name: z.string(),
+    contact: contactSchema.optional(),
+  });
+
+  try {
+    schema.parse(req.body);
+    next();
+  } catch (error) {
+    res.status(400).json({ error: "Missing fields in request body" });
+  }
+}
+
 module.exports = {
   createCustomer,
+  updateCustomer,
 };
