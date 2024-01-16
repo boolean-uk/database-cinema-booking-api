@@ -7,6 +7,14 @@ const getMovies = async (req, res) => {
   res.json({ movies });
 };
 
+const createMovie = async (req, res) => {
+  const { title, runtimeMins } = req.body;
+
+  const newMovie = await movieDomain.createMovieDB(title, runtimeMins);
+  res.status(201).json({ movie: newMovie });
+};
+
 module.exports = {
   getMovies,
+  createMovie,
 };
