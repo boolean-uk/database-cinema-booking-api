@@ -14,8 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Tell express to use your routers here
-const movieRouter = require('./routers/movie')
-const customerRouter = require('./routers/customer');
+const movieRouter = require('./routers/movie.js')
+const customerRouter = require('./routers/customer.js');
 
 app.use('/movies', movieRouter)
 app.use('/customers', customerRouter);
