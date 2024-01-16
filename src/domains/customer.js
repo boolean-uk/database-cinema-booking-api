@@ -51,6 +51,9 @@ const updateCustomerByIdDb = async (request_body, id) => {
   const updatedCustomer = await prisma.customer.update({
     where: { id: id },
     data: dataToUpdate,
+    include: {
+      contact: true,
+    },
   });
 
   return updatedCustomer;
