@@ -37,7 +37,6 @@ const updateCustomerDb = async (id, newName) => {
   });
 };
 
-
 module.exports = {
   fetchAllCustomersDb,
   createCustomerDb,
