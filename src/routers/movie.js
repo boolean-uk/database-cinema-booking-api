@@ -1,8 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
-// GET LIST OF MOVIES
-router.get('/')
+const { getMovieList } = require('../controllers/movie.js')
 
+// GET LIST OF MOVIES
+router.get('/', getMovieList)
 
 module.exports = router
