@@ -70,6 +70,20 @@ const getMovieByIdDb = async (id) => await prisma.movie.findUnique({
   }, 
   include: {screenings: true}
 })
+
+const updateMovieDb = async (id, data) => await prisma.movie.update({
+  where: {
+    id: id
+  }, 
+  data: {
+    title: data.title,
+    runtimeMins: data.runtimeMins
+  }, 
+  include: {
+    screenings: true
+  }
+
+}) 
 module.exports = {
   getMoviesDb,
   getMoviesWhereLtDb,
@@ -77,5 +91,6 @@ module.exports = {
   getMoviesWhereAndDb,
   createMovieDb,
   createMovieWithScreeningsDb, 
-  getMovieByIdDb
+  getMovieByIdDb, 
+  updateMovieDb
 };

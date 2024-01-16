@@ -1,7 +1,7 @@
 const supertest = require("supertest")
 const app = require("../../../src/server.js")
 
-xdescribe("Screens Endpoint", () => {
+describe("Screens Endpoint", () => {
     describe("POST /screens", () => {
         it("will create a new screen", async () => {
             const request = {
