@@ -1,5 +1,5 @@
 const {
-  PrismaClientKnownRequestError,
+  PrismaClientKnownRequestError, PrismaClientValidationError,
 } = require("@prisma/client/runtime/library");
 const {
   getMoviesDb,
@@ -43,11 +43,6 @@ const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
   let createdMovie;
 
-  if (!title || !runtimeMins) {
-    res.status(400).json({ error: "Missing fields in request body" });
-    return;
-  }
-
   if (!screenings) {
     try {
       createdMovie = await createMovieDb(title, runtimeMins);
@@ -55,11 +50,24 @@ const createMovie = async (req, res) => {
       if (e instanceof PrismaClientKnownRequestError) {
         if (e.code === "P2002") {
           res
-            .status(409)
-            .json({ error: "A movie with the provided title already exists" });
+          .status(409)
+          .json({ error: "A movie with the provided title already exists" });
           return;
         }
       }
+      if(e instanceof PrismaClientValidationError){
+        // e.code is undefined for P1012 ("Arguement {} is missing.")
+        // hence testing that the ends of the message matches what 
+        // we'd expect instead.
+        if (e.message.endsWith("is missing.")) {
+          console.log(e.message)
+          res
+            .status(400)
+            .json({ error: "Missing fiels in request body" });
+          return;
+        }
+      }
+
     }
   }
 
