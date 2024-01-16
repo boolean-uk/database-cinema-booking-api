@@ -7,12 +7,19 @@ const prisma = require("../utils/prisma");
  * @returns
  */
 async function selectMovies(runTimeLessThan, runTimeGreaterThan) {
+  const runtimeWhere = {};
+
+  if (typeof runTimeLessThan === "number") {
+    runtimeWhere.lt = runTimeLessThan;
+  }
+
+  if (typeof runTimeGreaterThan === "number") {
+    runtimeWhere.gt = runTimeGreaterThan;
+  }
+
   return await prisma.movie.findMany({
     where: {
-      runtimeMins: {
-        gt: runTimeGreaterThan,
-        lt: runTimeLessThan,
-      },
+      runtimeMins: runtimeWhere,
     },
   });
 }
