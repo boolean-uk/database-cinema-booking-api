@@ -2,7 +2,7 @@ const {
   createCustomerDb,
   updateCustomerNameDb,
   updateCustomerContactDb,
-} = require("../domains/customer.js");
+} = require("../domains/customer.domain.js");
 
 const Types = require("../utils/types.d.js");
 const handleError = require("../utils/error.js");
