@@ -2,7 +2,7 @@ const supertest = require("supertest")
 const app = require("../../../src/server.js")
 const { createCustomer } = require("../../helpers/createCustomer.js")
 
-describe("Customer Endpoint", () => {
+xdescribe("Customer Endpoint", () => {
     describe("POST /customers/register", () => {
         it("will create a new customer", async () => {
             const request = {

@@ -35,9 +35,19 @@ const getMoviesWhereAndDb = async (runtimeGt, runtimeLt) =>
     },
   });
 
+const createMovieDb = async (title, runtimeMins, screenings = []) =>
+  await prisma.movie.create({
+    data: {
+      title: title,
+      runtimeMins: runtimeMins,
+      screenings: screenings
+    },
+  });
+
 module.exports = {
   getMoviesDb,
   getMoviesWhereLtDb,
   getMoviesWhereGtDb,
   getMoviesWhereAndDb,
+  createMovieDb,
 };
