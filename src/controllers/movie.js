@@ -1,10 +1,10 @@
 const {
   getMoviesDb,
   getMoviesWhereAndDb,
-  getMoviesWhereOrDb,
   getMoviesWhereLtDb,
   getMoviesWhereGtDb,
   createMovieDb,
+	createMovieWithScreeningsDb,
 } = require("../domains/movie");
 
 const getMovies = async (req, res) => {
@@ -29,19 +29,25 @@ const getMovies = async (req, res) => {
   if (!runtimeLt && !runtimeGt) {
     movies = await getMoviesDb();
   }
-  console.log(movies)
 
   res.json({ movies: movies });
 };
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
-
+  let createdMovie
+  
   if (!title || !runtimeMins) {
     res.status(400).json({ error: "Missing fields in request body" });
   }
-  const createdMovie = await createMovieDb(title, runtimeMins, screenings);
 
+  if(!screenings) {
+     createdMovie = await createMovieDb(title, runtimeMins);
+  }
+
+  if (screenings) {
+   createdMovie = await createMovieWithScreeningsDb(title, runtimeMins, screenings)
+  }
   res.status(201).json({ movie: createdMovie });
 };
 
