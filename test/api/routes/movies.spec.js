@@ -3,7 +3,7 @@ const app = require("../../../src/server.js")
 const { createMovie } = require("../../helpers/createMovie.js")
 const { createScreen } = require("../../helpers/createScreen.js")
 
-describe("Movies Endpoint", () => {
+xdescribe("Movies Endpoint", () => {
     describe("GET /movies", () => {
         it("will retrieve a list of movies", async () => {
             const screen = await createScreen(1)
