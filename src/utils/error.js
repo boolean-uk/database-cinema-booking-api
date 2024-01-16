@@ -6,6 +6,7 @@ const Types = require("../utils/types.d.js");
 
 const errorCodes = {
   P2002: uniqueConstraintFailed,
+  P2025: recordNotFound,
 };
 
 /**
@@ -39,6 +40,21 @@ function uniqueConstraintFailed(error, res) {
   }
 
   res.status(409).json({ error: errorMessage });
+}
+
+/**
+ * @param {import("@prisma/client").Prisma.PrismaClientKnownRequestError} error
+ * @param {Types.Response} res
+ * @returns {void}
+ */
+function recordNotFound(error, res) {
+  let errorMessage = error.message;
+  if (error.meta && typeof error.meta.modelName === "string") {
+    const model = error.meta.modelName;
+    errorMessage = `${model} id not found.`;
+  }
+  
+  res.status(404).json({ error: errorMessage });
 }
 
 module.exports = handleError;
