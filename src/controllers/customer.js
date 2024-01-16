@@ -1,4 +1,4 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client")
+const { Prisma: {PrismaClientKnownRequestError} } = require("@prisma/client")
 const { createCustomerDb } = require('../domain/customer.js')
 
 const createCustomer = async (req, res) => {
