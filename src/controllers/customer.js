@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, updateCustomerByIdDB } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +43,14 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const updateCustomerById = async (req, res) => {
+  const id = Number(req.params.id)
+  const  { name } = req.body
+  const updatedCustomer = await updateCustomerByIdDB(id, name)
+  res.status(201).json({customer: updatedCustomer})
+}
+
 module.exports = {
-  createCustomer
+  createCustomer,
+  updateCustomerById
 }
