@@ -19,7 +19,7 @@ const movieRouter = require('./routers/movie.js')
 const screenRouter = require('./routers/screen.js')
 app.use('/customers', customerRouter);
 app.use('/movies', movieRouter)
-app.use('/screen', screenRouter)
+app.use('/screens', screenRouter)
 
 
 

@@ -1,7 +1,9 @@
 const express = require("express");
+const app = require("../server");
 const router = express.Router();
 
+const { getAllMovies } = require('../controllers/movie.js')
 
-//write movie code here
+app.get('/', getAllMovies)
 
 module.exports = router
