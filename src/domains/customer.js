@@ -8,8 +8,8 @@ const Types = require("../utils/types.d");
  * @param {String} email
  * @returns {Promise<Types.Customer>}
  */
-const createCustomerDb = async (name, phone, email) =>
-  await prisma.customer.create({
+async function createCustomerDb(name, phone, email) {
+  return await prisma.customer.create({
     data: {
       name,
       contact: {
@@ -25,6 +25,7 @@ const createCustomerDb = async (name, phone, email) =>
       contact: true,
     },
   });
+}
 
 module.exports = {
   createCustomerDb,
