@@ -1,5 +1,5 @@
-const { Prisma } = require("@prisma/client")
-const prisma = require('../utils/prisma')
+const { PrismaClientKnownRequestError } = require("@prisma/client")
+const { createCustomerDb } = require('../domain/customer.js')
 
 const createCustomer = async (req, res) => {
     const {
@@ -15,30 +15,11 @@ const createCustomer = async (req, res) => {
     }
 
     try {
-        /**
-         * This will create a Customer AND create a new Contact, then automatically relate them with each other
-         * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
-         */
-        const createdCustomer = await prisma.customer.create({
-            data: {
-                name,
-                contact: {
-                    create: {
-                        phone,
-                        email
-                    }
-                }
-            },
-            // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-            // This is like doing RETURNING in SQL
-            include: { 
-                contact: true
-            }
-        })
+        const createdCustomer = await createCustomerDb(name, phone, email)
 
         res.status(201).json({ customer: createdCustomer })
     } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e instanceof PrismaClientKnownRequestError) {
             if (e.code === "P2002") {
                 return res.status(409).json({ error: "A customer with the provided email already exists" })
             }
