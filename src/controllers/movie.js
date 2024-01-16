@@ -1,4 +1,7 @@
 const {
+  PrismaClientKnownRequestError,
+} = require("@prisma/client/runtime/library");
+const {
   getMoviesDb,
   getMoviesWhereAndDb,
   getMoviesWhereLtDb,
@@ -7,7 +10,7 @@ const {
   createMovieWithScreeningsDb,
   getMovieByIdDb,
   updateMovieDb,
-  getMovieByTitleDb
+  getMovieByTitleDb,
 } = require("../domains/movie");
 
 const getMovies = async (req, res) => {
@@ -40,30 +43,48 @@ const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
   let createdMovie;
 
-  const matchingTitles = await getMovieByTitleDb(title)
-  
-  if (matchingTitles.length !== 0) {
-    res
-      .status(409)
-      .json({ error: "A movie with the provided title already exists" });
-      return
-  }
+  // const matchingTitles = await getMovieByTitleDb(title);
+
+  // if (matchingTitles.length !== 0) {
+  // }
 
   if (!title || !runtimeMins) {
     res.status(400).json({ error: "Missing fields in request body" });
-    return
+    return;
   }
 
   if (!screenings) {
-    createdMovie = await createMovieDb(title, runtimeMins);
+    try {
+      createdMovie = await createMovieDb(title, runtimeMins);
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          res
+            .status(409)
+            .json({ error: "A movie with the provided title already exists" });
+          return;
+        }
+      }
+    }
   }
 
   if (screenings) {
-    createdMovie = await createMovieWithScreeningsDb(
-      title,
-      runtimeMins,
-      screenings
-    );
+    try {
+      createdMovie = await createMovieWithScreeningsDb(
+        title,
+        runtimeMins,
+        screenings
+      );
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          res
+            .status(409)
+            .json({ error: "A movie with the provided title already exists" });
+          return;
+        }
+      }
+    }
   }
   res.status(201).json({ movie: createdMovie });
 };
