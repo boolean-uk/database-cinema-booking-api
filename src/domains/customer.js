@@ -19,8 +19,6 @@ async function createCustomerDb(name, phone, email) {
         },
       },
     },
-    // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-    // This is like doing RETURNING in SQL
     include: {
       contact: true,
     },
