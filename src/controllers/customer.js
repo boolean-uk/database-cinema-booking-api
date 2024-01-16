@@ -41,6 +41,7 @@ async function updateCustomer(req, res) {
     if (!contact) updatedCustomer = await updateCustomerNameDb(id, name);
   } catch (error) {
     handleError(error, res);
+    return;
   }
 
   res.status(201).json({ customer: updatedCustomer });
