@@ -1,10 +1,10 @@
 const prisma = require("../utils/prisma");
+const Types = require("../utils/types.d");
 
 /**
- *
  * @param {Number} [runTimeLessThan]
  * @param {Number} [runTimeGreaterThan]
- * @returns
+ * @returns {Promise<Types.Movie[]>}
  */
 async function selectMovies(runTimeLessThan, runTimeGreaterThan) {
   const runtimeWhere = {};
