@@ -3,6 +3,13 @@ const {
 } = require("@prisma/client");
 const { createCustomerDb } = require("../domains/customer.js");
 
+const Types = require("../utils/types.d.js");
+
+/**
+ * @param {Types.Request} req
+ * @param {Types.Response} res
+ * @returns {Promise<void>}
+ */
 async function createCustomer(req, res) {
   const { name, phone, email } = req.body;
 
@@ -12,9 +19,10 @@ async function createCustomer(req, res) {
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
-        return res
+        res
           .status(409)
           .json({ error: "A customer with the provided email already exists" });
+        return;
       }
     }
 
