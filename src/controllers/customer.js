@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, updateCustomerDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -12,7 +12,12 @@ const createCustomer = async (req, res) => {
     return res.status(400).json({
       error: "Missing fields in request body"
     })
-  }
+  };
+
+  
+  
+
+
 
   // Try-catch is a very common way to handle errors in JavaScript.
   // It allows us to customise how we want errors that are thrown to be handled.
@@ -43,6 +48,24 @@ const createCustomer = async (req, res) => {
   }
 }
 
+
+const updateCustomerName = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const updatedCustomer = await updateCustomerDb(id, name);
+
+    if (!updatedCustomer) {
+      return res.status(404).send({ error: "Customer not found" });
+    }
+
+    res.status(201).send({ customer: updatedCustomer });
+  } catch (error) {
+    res.status(500).send({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
-  createCustomer
+  createCustomer,
+  updateCustomerName
 }
