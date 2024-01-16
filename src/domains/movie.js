@@ -33,8 +33,8 @@ const updateMovieByIdDB = async (id, title, runtimeMins) =>
             runtimeMins,
         },
         include: {
-            screenings: true
-        }
+            screenings: true,
+        },
     });
 
 module.exports = {
