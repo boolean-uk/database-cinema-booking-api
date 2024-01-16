@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domain/customer.js')
+const { createCustomerDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
