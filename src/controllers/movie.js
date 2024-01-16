@@ -60,7 +60,6 @@ const createMovie = async (req, res) => {
         // hence testing that the ends of the message matches what 
         // we'd expect instead.
         if (e.message.endsWith("is missing.")) {
-          console.log(e.message)
           res
             .status(400)
             .json({ error: "Missing fiels in request body" });
