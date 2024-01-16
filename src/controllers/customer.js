@@ -64,6 +64,7 @@ const updateCustomerById = async (req, res) => {
     return res.status(404).send({ error: "No customer with provided ID" });
   } catch (e) {
     console.log(`${e.status}: ${e.message}`);
+    res.status(500).json({ error: e.message });
   }
 };
 
