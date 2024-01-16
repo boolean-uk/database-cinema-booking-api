@@ -47,24 +47,24 @@ const createCustomer = async (req, res) => {
 
 const updateCustomerById = async (req, res) => {
   const id = Number(req.params.id);
-  const { name } = req.body;
+  const { name, contact } = req.body;
   const customer = await findCustomerByIdDb(id);
 
   try {
-    if (!name) {
+    if (!name && !contact) {
       return res.status(400).send({ error: "Missing fields in request body" });
     }
 
-    if (customer) {
-      const updatedCustomer = await updateCustomerByIdDb(name, id);
-
-      return res.status(201).send({ customer: updatedCustomer });
+    if (!customer) {
+      return res.status(404).send({ error: "No customer with provided ID" });
     }
 
-    return res.status(404).send({ error: "No customer with provided ID" });
+    const updatedCustomer = await updateCustomerByIdDb(req.body, id);
+
+    return res.status(201).send({ customer: updatedCustomer });
   } catch (e) {
-    console.log(`${e.status}: ${e.message}`);
-    res.status(500).json({ error: e.message });
+    console.log(e.message);
+    return res.status(500).json({ error: e.message });
   }
 };
 
