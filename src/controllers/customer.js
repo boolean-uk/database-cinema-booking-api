@@ -3,7 +3,7 @@ const {
 } = require("@prisma/client");
 const { createCustomerDb } = require("../domains/customer.js");
 
-const createCustomer = async (req, res) => {
+async function createCustomer(req, res) {
   const { name, phone, email } = req.body;
 
   try {
@@ -20,7 +20,7 @@ const createCustomer = async (req, res) => {
 
     res.status(500).json({ error: e.message });
   }
-};
+}
 
 module.exports = {
   createCustomer,
