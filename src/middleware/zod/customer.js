@@ -22,6 +22,11 @@ function createCustomer(req, res, next) {
   }
 }
 
+/**
+ * @param {Types.Request} req
+ * @param {Types.Response} res
+ * @param {Types.NextFunction} next
+ */
 function updateCustomer(req, res, next) {
   const contactSchema = z.object({
     phone: z.string(),
