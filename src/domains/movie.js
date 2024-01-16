@@ -71,6 +71,12 @@ const getMovieByIdDb = async (id) => await prisma.movie.findUnique({
   include: {screenings: true}
 })
 
+const getMovieByTitleDb = async (title) => await prisma.movie.findUnique({
+  where: {
+    title: title
+  }, 
+})
+
 const updateMovieDb = async (id, data) => await prisma.movie.update({
   where: {
     id: id
@@ -92,5 +98,6 @@ module.exports = {
   createMovieDb,
   createMovieWithScreeningsDb, 
   getMovieByIdDb, 
-  updateMovieDb
+  updateMovieDb, 
+  getMovieByTitleDb
 };
