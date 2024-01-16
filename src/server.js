@@ -5,6 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 const customerRouter = require("./routers/customer.router.js");
+const movieRouter = require("./routers/movie.router.js");
 
 app.disable("x-powered-by");
 
@@ -16,5 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Tell express to use your routers here
 app.use("/customers", customerRouter);
+app.use("/movies", movieRouter);
 
 module.exports = app;
