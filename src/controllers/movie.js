@@ -21,8 +21,18 @@ const getMovieById = async (req, res) => {
   res.json({ movie });
 };
 
+const updateMovie = async (req, res) => {
+  const { id } = req.params;
+  const { title, runtimeMins } = req.body;
+
+  const updatedMovie = await movieDomain.updateMovieDB(id, title, runtimeMins);
+
+  res.status(201).json({ movie: updatedMovie });
+};
+
 module.exports = {
   getMovies,
   createMovie,
   getMovieById,
+  updateMovie,
 };
