@@ -5,6 +5,7 @@ const {
   getMoviesWhereGtDb,
   createMovieDb,
 	createMovieWithScreeningsDb,
+	getMovieByIdDb
 } = require("../domains/movie");
 
 const getMovies = async (req, res) => {
@@ -51,7 +52,18 @@ const createMovie = async (req, res) => {
   res.status(201).json({ movie: createdMovie });
 };
 
+const getMovieById = async (req, res) => {
+	const { id } = req.params
+	const idNum = Number(id)
+	const movie = await getMovieByIdDb(idNum)
+	if (!movie) {
+		res.status(404).json('movie not found')
+	}
+	res.json({movie: movie})
+}
+
 module.exports = {
   getMovies,
   createMovie,
+	getMovieById
 };
