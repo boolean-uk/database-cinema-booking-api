@@ -1,5 +1,6 @@
 const {
-  PrismaClientKnownRequestError, PrismaClientValidationError,
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
 } = require("@prisma/client/runtime/library");
 const {
   getMoviesDb,
@@ -50,23 +51,20 @@ const createMovie = async (req, res) => {
       if (e instanceof PrismaClientKnownRequestError) {
         if (e.code === "P2002") {
           res
-          .status(409)
-          .json({ error: "A movie with the provided title already exists" });
+            .status(409)
+            .json({ error: "A movie with the provided title already exists" });
           return;
         }
       }
-      if(e instanceof PrismaClientValidationError){
+      if (e instanceof PrismaClientValidationError) {
         // e.code is undefined for P1012 ("Arguement {} is missing.")
-        // hence testing that the ends of the message matches what 
+        // hence testing that the ends of the message matches what
         // we'd expect instead.
         if (e.message.endsWith("is missing.")) {
-          res
-            .status(400)
-            .json({ error: "Missing fiels in request body" });
+          res.status(400).json({ error: "Missing fiels in request body" });
           return;
         }
       }
-
     }
   }
 
@@ -91,10 +89,18 @@ const createMovie = async (req, res) => {
   res.status(201).json({ movie: createdMovie });
 };
 
-const getMovieById = async (req, res) => {
-  const { id } = req.params;
-  const idNum = Number(id);
-  const movie = await getMovieByIdDb(idNum);
+const getMovieBy = async (req, res) => {
+  const {searchparam} = req.params
+
+  let movie;
+
+  if (Number(searchparam)) {
+    const idNum = Number(searchparam);
+    movie = await getMovieByIdDb( idNum);
+  } else {
+    //TODO: handle cases where the movie title includes white space
+    movie = await getMovieByTitleDb(searchparam);
+  }
   // attempts to refactor to try...catch seemed to indicate
   // that prisma does not throw an error when a findUnique() fails
   // TODO: look up docs to see whether this is accurate
@@ -115,6 +121,6 @@ const updateMovie = async (req, res) => {
 module.exports = {
   getMovies,
   createMovie,
-  getMovieById,
+  getMovieBy,
   updateMovie,
 };
