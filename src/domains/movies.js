@@ -31,7 +31,7 @@ const createMovieDb = async (title, runtimeMins) =>
 const updateMovieByIdDb = async (request_body, id) => {
   const { title, runtimeMins, screenings } = request_body;
 
-  let dataToUpdate = {};
+  const dataToUpdate = {};
 
   if (title) {
     dataToUpdate.title = title;
@@ -43,9 +43,11 @@ const updateMovieByIdDb = async (request_body, id) => {
 
   if (screenings) {
     dataToUpdate.screenings = {
-      movieId: screenings.movieId,
-      screenId: screenings.screenId,
-      startsAt: screenings.startsAt,
+      update: {
+        movieId: screenings.movieId,
+        screenId: screenings.screenId,
+        startsAt: screenings.startsAt,
+      },
     };
   }
 

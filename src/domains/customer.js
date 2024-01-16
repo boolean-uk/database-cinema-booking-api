@@ -35,7 +35,7 @@ const findCustomerByIdDb = async (id) => {
 const updateCustomerByIdDb = async (request_body, id) => {
   const { name, contact } = request_body;
 
-  let dataToUpdate = {};
+  const dataToUpdate = {};
 
   if (name) {
     dataToUpdate.name = name;
@@ -43,8 +43,10 @@ const updateCustomerByIdDb = async (request_body, id) => {
 
   if (contact) {
     dataToUpdate.contact = {
-      phone: contact.phone,
-      email: contact.email,
+      update: {
+        phone: contact.phone,
+        email: contact.email,
+      },
     };
   }
 

@@ -5,7 +5,7 @@ const getAllScreensDb = async () => await prisma.screen.findMany();
 const createScreenDb = async (request_body) => {
   const { number, screenings } = request_body;
 
-  let dataToCreate = {};
+  const dataToCreate = {};
 
   if (number) {
     dataToCreate.number = number;
@@ -13,9 +13,11 @@ const createScreenDb = async (request_body) => {
 
   if (screenings) {
     dataToCreate.screenings = {
-      movieId: screenings.movieId,
-      screenId: screenings.screenId,
-      startsAt: screenings.startsAt,
+      create: {
+        movieId: screenings.movieId,
+        screenId: screenings.screenId,
+        startsAt: screenings.startsAt,
+      },
     };
   }
 
