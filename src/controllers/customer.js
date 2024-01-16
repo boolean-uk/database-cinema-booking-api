@@ -8,12 +8,6 @@ const createCustomer = async (req, res) => {
     email
   } = req.body
 
-  if (!name || !phone || !email) {
-    return res.status(400).json({
-      error: "Missing fields in request body"
-    })
-  }
-
   try {
     const createdCustomer = await createCustomerDb(name, phone, email)
     res.status(201).json({ customer: createdCustomer })
