@@ -71,7 +71,7 @@ const getMovieByIdDb = async (id) => await prisma.movie.findUnique({
   include: {screenings: true}
 })
 
-const getMovieByTitleDb = async (title) => await prisma.movie.findUnique({
+const getMovieByTitleDb = async (title) => await prisma.movie.findMany({
   where: {
     title: title
   }, 

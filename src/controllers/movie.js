@@ -4,9 +4,10 @@ const {
   getMoviesWhereLtDb,
   getMoviesWhereGtDb,
   createMovieDb,
-	createMovieWithScreeningsDb,
-	getMovieByIdDb,
-	updateMovieDb
+  createMovieWithScreeningsDb,
+  getMovieByIdDb,
+  updateMovieDb,
+  getMovieByTitleDb
 } = require("../domains/movie");
 
 const getMovies = async (req, res) => {
@@ -37,43 +38,57 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
-  let createdMovie
+  let createdMovie;
+
+  const matchingTitles = await getMovieByTitleDb(title)
   
-  if (!title || !runtimeMins) {
-    res.status(400).json({ error: "Missing fields in request body" });
+  if (matchingTitles.length !== 0) {
+    res
+      .status(409)
+      .json({ error: "A movie with the provided title already exists" });
+      return
   }
 
-  if(!screenings) {
-     createdMovie = await createMovieDb(title, runtimeMins);
+  if (!title || !runtimeMins) {
+    res.status(400).json({ error: "Missing fields in request body" });
+    return
+  }
+
+  if (!screenings) {
+    createdMovie = await createMovieDb(title, runtimeMins);
   }
 
   if (screenings) {
-   createdMovie = await createMovieWithScreeningsDb(title, runtimeMins, screenings)
+    createdMovie = await createMovieWithScreeningsDb(
+      title,
+      runtimeMins,
+      screenings
+    );
   }
   res.status(201).json({ movie: createdMovie });
 };
 
 const getMovieById = async (req, res) => {
-	const { id } = req.params
-	const idNum = Number(id)
-	const movie = await getMovieByIdDb(idNum)
-	if (!movie) {
-		res.status(404).json('movie not found')
-	}
-	res.json({movie: movie})
-}
+  const { id } = req.params;
+  const idNum = Number(id);
+  const movie = await getMovieByIdDb(idNum);
+  if (!movie) {
+    res.status(404).json("movie not found");
+  }
+  res.json({ movie: movie });
+};
 
 const updateMovie = async (req, res) => {
-	const { id } = req.params
-	const data = req.body
-	const idNum = Number(id)
-	const updatedMovie = await updateMovieDb(idNum, data)
-	res.status(201).json({movie: updatedMovie})
-}
+  const { id } = req.params;
+  const data = req.body;
+  const idNum = Number(id);
+  const updatedMovie = await updateMovieDb(idNum, data);
+  res.status(201).json({ movie: updatedMovie });
+};
 
 module.exports = {
   getMovies,
   createMovie,
-	getMovieById, 
-	updateMovie
+  getMovieById,
+  updateMovie,
 };
