@@ -23,11 +23,19 @@ const createCustomerDb = async (name, phone, email) =>
   });
 
 const updateCustomerDB = async (id, data) =>
-  await prisma.customer.updateMany({
+  await prisma.customer.update({
     where: {
       id: Number(id),
     },
-    data: { name: data.name, contact: data.contact },
+    data: {
+      name: data.name,
+      contact: {
+        update: {
+          phone: data.contact.phone,
+          email: data.contact.email,
+        },
+      },
+    },
     include: {
       contact: true,
     },
