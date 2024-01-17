@@ -7,7 +7,7 @@ describe("Screens Endpoint", () => {
     describe("POST /screens", () => {
         it("will create a new screen with screenings if included in the request body", async () => {
             const created = await createMovie('Dodgeball', 120)
-            
+
             const request = {
                 number: 10,
                 screenings: [
