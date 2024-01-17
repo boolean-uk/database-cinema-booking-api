@@ -80,7 +80,7 @@ describe("Movie Endpoint", () => {
       await createMovie("Scream", 113);
     });
     it("throws err. 404 if the title or id do not match that of any movie", async () => {
-      const response = await supertest(app).get("/78")
+      const response = await supertest(app).get("/movies/78")
       expect(response.status).toEqual(404)
       expect(response.body.error).toEqual("movie not found")})
     })

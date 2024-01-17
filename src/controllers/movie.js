@@ -43,7 +43,7 @@ const getMovies = async (req, res) => {
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
   let createdMovie;
-  
+
   if (!screenings || screenings.length === 0) {
     try {
       createdMovie = await createMovieDb(title, runtimeMins);
@@ -51,8 +51,8 @@ const createMovie = async (req, res) => {
       if (e instanceof PrismaClientKnownRequestError) {
         if (e.code === "P2002") {
           res
-          .status(409)
-          .json({ error: "A movie with the provided title already exists" });
+            .status(409)
+            .json({ error: "A movie with the provided title already exists" });
           return;
         }
       }
@@ -67,7 +67,7 @@ const createMovie = async (req, res) => {
       }
     }
   }
-  
+
   if (screenings && screenings.length !== 0) {
     try {
       createdMovie = await createMovieWithScreeningsDb(
@@ -90,13 +90,12 @@ const createMovie = async (req, res) => {
 };
 
 const getMovieBy = async (req, res) => {
-  const {searchparam} = req.params
-
+  const { searchparam } = req.params;
   let movie;
 
   if (Number(searchparam)) {
     const idNum = Number(searchparam);
-    movie = await getMovieByIdDb( idNum);
+    movie = await getMovieByIdDb(idNum);
   } else {
     //TODO: handle cases where the movie title includes white space
     movie = await getMovieByTitleDb(searchparam);
@@ -105,7 +104,8 @@ const getMovieBy = async (req, res) => {
   // that prisma does not throw an error when a findUnique() fails
   // TODO: look up docs to see whether this is accurate
   if (!movie) {
-    res.status(404).json("movie not found");
+    res.status(404).json({ error: "movie not found" });
+    return
   }
   res.json({ movie: movie });
 };
