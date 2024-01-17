@@ -69,4 +69,58 @@ describe("Movies Endpoint", () => {
             expect(movie3.screenings.length).toEqual(1)
         })
     })
+
+    describe("POST /movies", () => {
+        it("will create a movie with screenings for the movie when a screenings property exists on the request body", async () => {
+            const request = {
+                title: "Top Gun",
+                runtimeMins: 110,
+                screenings: [{
+                    movieId: 3,
+                    screenId: 3,
+                    startsAt: "show time"
+                }]
+            }
+
+            const response = await supertest(app)
+                .post("/movies")
+                .send(request)
+
+            expect(response.status).toEqual(201)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie.title).toEqual('Top Gun')
+            expect(response.body.movie.runtimeMins).toEqual(110)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(1)
+            expect(response.body.movie.screenings.movieId).toEqual(3)
+            expect(response.body.movie.screenings.screenId).toEqual(3)
+            expect(response.body.movie.screenings.startsAt).toEqual("show time")
+        })
+        it("will return 400 when there are missing fields in the request body", async () => {
+
+            const request = {}
+
+            const response = await supertest(app)
+                .post("/movies")
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
+        it('will return 409 if a movie with the provided title already exists', async () => {
+            await createMovie('Dodgeball', 120, screen)
+
+            const request = {
+                title: "Top Gun",
+                runtimeMins: 110,
+            }
+
+            const response = await supertest(app)
+                .post("/movies")
+                .send(request)
+
+            expect(response.status).toEqual(409)
+            expect(response.body).toHaveProperty('error')
+        })
+    })
 })
