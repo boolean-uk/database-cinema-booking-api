@@ -42,7 +42,7 @@ model Movie {
 
 model Screen {
   id         Int         @id @default(autoincrement())
-  number     Int
+  number     Int         @unique
   screenings Screening[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
