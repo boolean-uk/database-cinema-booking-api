@@ -28,7 +28,7 @@ async function getMovies(req, res) {
   try {
     const requestedMovies = await selectMovies(
       runTimeLessThan,
-      runTimeGreaterThan,
+      runTimeGreaterThan
     );
     res.json({ movies: requestedMovies });
   } catch (error) {
