@@ -71,14 +71,13 @@ describe("Movies Endpoint", () => {
     })
 
     describe("POST /movies", () => {
-        it("will create a movie with screenings for the movie when a screenings property exists on the request body", async () => {
+        it("will create a movie with screenings when a screenings property exists on the request body", async () => {
             const request = {
-                title: "Top Gun",
-                runtimeMins: 110,
+                title: "Test movie",
+                runtimeMins: 111,
                 screenings: [{
-                    movieId: 3,
-                    screenId: 3,
-                    startsAt: "show time"
+                    startsAt: "2024-01-17T12:53:27.868Z",
+                    screenId: 1
                 }]
             }
 
@@ -88,13 +87,12 @@ describe("Movies Endpoint", () => {
 
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie.title).toEqual('Top Gun')
-            expect(response.body.movie.runtimeMins).toEqual(110)
+            expect(response.body.movie.title).toEqual('Test movie')
+            expect(response.body.movie.runtimeMins).toEqual(111)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(1)
-            expect(response.body.movie.screenings.movieId).toEqual(3)
-            expect(response.body.movie.screenings.screenId).toEqual(3)
-            expect(response.body.movie.screenings.startsAt).toEqual("show time")
+            expect(response.body.movie.screenings.screenId).toEqual(1)
+            expect(response.body.movie.screenings.startsAt).toEqual("2024-01-17T12:53:27.868Z")
         })
         it("will return 400 when there are missing fields in the request body", async () => {
 
@@ -108,11 +106,11 @@ describe("Movies Endpoint", () => {
             expect(response.body).toHaveProperty('error')
         })
         it('will return 409 if a movie with the provided title already exists', async () => {
-            await createMovie('Dodgeball', 120, screen)
+            await createMovie('Dodgeball', 120)
 
             const request = {
-                title: "Top Gun",
-                runtimeMins: 110,
+                title: "Dodgeball",
+                runtimeMins: 120,
             }
 
             const response = await supertest(app)

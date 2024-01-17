@@ -53,6 +53,22 @@ const createMovieDb = async (title, runtimeMins) => await prisma.movie.create({
     include: { screenings: true }
 })
 
+const createMovieAndScreeningDb = async (title, runtimeMins, screenings) => await prisma.movie.create({
+    data: {
+        title,
+        runtimeMins,
+        screenings : {
+            create: screenings
+        }
+    },
+    include: { screenings: true }
+})
+
+// GET MOVIE BY TITLE
+const getMovieByTitleDb = async (title) => await prisma.movie.findFirst({
+    where: { title }
+})
+
 // GET MOVIE BY ID
 const getMovieByIdDb = async (id) => await prisma.movie.findUnique({
     where: { id },
@@ -69,4 +85,4 @@ const updateMovieDb = async (id, title, runtimeMins) => await prisma.movie.updat
     include: { screenings: true }
 })
 
-module.exports = { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb }
+module.exports = { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb, createMovieAndScreeningDb, getMovieByTitleDb }
