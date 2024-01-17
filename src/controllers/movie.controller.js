@@ -63,7 +63,6 @@ async function postMovie(req, res) {
   let newMovie;
   try {
     if (screenings) {
-      const { screenId, startsAt } = screenings;
       newMovie = await createMovieAndScreenings(title, runtimeMins, screenings);
     }
     if (!screenings) newMovie = await createMovie(title, runtimeMins);
