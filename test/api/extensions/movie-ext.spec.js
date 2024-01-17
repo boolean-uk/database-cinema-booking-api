@@ -38,6 +38,31 @@ describe("Movies Endpoint", () => {
     });
   });
 
+  describe("POST /movies", () => {
+    it("will return 400 when missing fields in request body", async () => {
+      const request = {};
+
+      const response = await supertest(app).post("/movies").send(request);
+
+      expect(response.status).toEqual(400);
+      expect(response.body).toHaveProperty("error");
+    });
+
+    it("will return 409 when movie with provided title already exists", async () => {
+      const request = {
+        title: "Top Gun",
+        runtimeMins: 110,
+      };
+
+      const screen = await createScreen(1);
+      await createMovie(request.title, request.runtimeMins, screen);
+
+      const response = (await supertest(app).post("/movies")).body(request);
+      expect(response.status).toEqual(409);
+      expect(response.body).toHaveProperty("error");
+    });
+  });
+
   describe("GET /movies/:id", () => {
     it("will return 404 if movie not found", async () => {
       const response = await supertest(app).get(`/movies/-1`);
