@@ -7,7 +7,7 @@ const { validateBody } = require("../middleware/zod/validate.js");
 const {
   newCustomerSchema,
   updateCustomerSchema,
-} = require("../middleware/zod/customer.js");
+} = require("../middleware/zod/customer.zod.js");
 
 const router = express.Router();
 
