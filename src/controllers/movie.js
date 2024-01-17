@@ -20,7 +20,7 @@ const getMovies = async (req, res) => {
   if (runtimeLt && runtimeGt) {
     const runtimeLtNum = Number(runtimeLt);
     const runtimeGtNum = Number(runtimeGt);
-    movies = await getMoviesWhereAndDb(runtimeLtNum, runtimeGtNum);
+    movies = await getMoviesWhereAndDb(runtimeGtNum, runtimeLtNum);
   }
 
   if (runtimeLt && !runtimeGt) {

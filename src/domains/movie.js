@@ -24,12 +24,12 @@ const getMoviesWhereAndDb = async (runtimeGt, runtimeLt) =>
       AND: [
         {
           runtimeMins: {
-            lt: runtimeLt,
+            gt: runtimeGt,
           },
         },
         {
           runtimeMins: {
-            gt: runtimeGt,
+            lt: runtimeLt,
           },
         },
       ],
