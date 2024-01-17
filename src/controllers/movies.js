@@ -9,7 +9,8 @@ const {
 // Error handlers
 const {
   fieldsErrorHandler,
-  titleErrorHandler
+  titleErrorHandler,
+  errorCreator
 } = require('../helpers/errorsHandler')
 
 const getAllMovies = async (req, res, next) => {
@@ -44,6 +45,10 @@ const getMovieById = async (req, res, next) => {
 
   try {
     const foundMovie = await getMovieByIdDb(id)
+
+    if (!foundMovie) {
+      throw errorCreator('Movie with that id or title does not exist', 404)
+    }
 
     res.status(200).json({ movie: foundMovie })
   } catch (error) {
