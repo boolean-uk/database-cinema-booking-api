@@ -37,8 +37,26 @@ const getMovieByIdDb = async (movieId) => {
   return foundMovie
 }
 
+const updateMovieByIdDb = async (fields, movieId) => {
+  const updatedMovie = await movie.update({
+    where: {
+      id: Number(movieId)
+    },
+    data: {
+      title: fields.title,
+      runtimeMins: fields.runtimeMins
+    },
+    include: {
+      screenings: true
+    }
+  })
+
+  return updatedMovie
+}
+
 module.exports = {
   getAllMoviesDb,
   createMovieDb,
-  getMovieByIdDb
+  getMovieByIdDb,
+  updateMovieByIdDb
 }

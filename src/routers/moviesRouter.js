@@ -5,7 +5,8 @@ const router = express.Router()
 const {
   getAllMovies,
   createMovie,
-  getMovieById
+  getMovieById,
+  updateMovieById
 } = require('../controllers/movies')
 
 // Retrieve a list of movies
@@ -16,5 +17,8 @@ router.post('/', createMovie)
 
 // Retrieve a movie by ID
 router.get('/:id', getMovieById)
+
+// Update a movie
+router.put('/:id', updateMovieById)
 
 module.exports = router
