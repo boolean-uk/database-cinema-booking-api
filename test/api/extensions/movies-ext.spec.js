@@ -138,8 +138,15 @@ describe("Movie Endpoint", () => {
         "movie not found"
       );
     })
-    // it("throws a 400 if input is missing", async () => {
-    // })
+    it("throws a 400 error when fields are missing in the request body", async () => {
+      const originalMovie = await createMovie("Dodgeball", 120);
+      const data = {
+        runtimeMins: 134,
+      };
+      const response = await supertest(app).put(`/movies/${originalMovie.id}`).send(data);
+      expect(response.status).toEqual(400);
+      expect(response.body.error).toEqual("Missing fiels in request body");
+    });
     // it("when there are screening, it replaces them", async () => {
     // })
     // it("when there are no screening, it adds them", async () => {

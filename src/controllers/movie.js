@@ -114,17 +114,29 @@ const updateMovie = async (req, res) => {
   const { id } = req.params;
   const data = req.body;
   const idNum = Number(id);
-  let updatedMovie
-  try {
-    updatedMovie = await updateMovieDb(idNum, data);
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if(e.code === "P2002") {
-        res.status(409).json({error: "A movie with the provided title already exists"})
-        return
+  let updatedMovie;
+
+  if (
+    !data.title ||
+    !data.runtimeMins ||
+    data.title.length === 0 ||
+    data.runtimeMins.length === 0
+  ) {
+    res.status(400).json({ error: "Missing fiels in request body" });
+    return;
+  }
+    try {
+      updatedMovie = await updateMovieDb(idNum, data);
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          res
+            .status(409)
+            .json({ error: "A movie with the provided title already exists" });
+          return;
+        }
       }
     }
-  }
   if (!updatedMovie || updatedMovie.length === 0) {
     res.status(404).json({ error: "movie not found" });
     return;
