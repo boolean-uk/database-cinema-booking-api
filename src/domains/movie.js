@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class MovieDomain {
-    // Method to get all movies
     async getAllMovies() {
         try {
             return await prisma.movie.findMany({
@@ -15,7 +14,6 @@ class MovieDomain {
         }
     }
 
-    // Method to add a new movie
     async addMovie(title, runtimeMins) {
         try {
             return await prisma.movie.create({
@@ -32,7 +30,6 @@ class MovieDomain {
         }
     }
 
-    // Method to get a movie by ID
     async getMovieById(id) {
         try {
             return await prisma.movie.findUnique({
@@ -46,7 +43,7 @@ class MovieDomain {
         }
     }
 
-    // Method to update a movie
+
     async updateMovie(id, title, runtimeMins) {
         try {
             return await prisma.movie.update({
@@ -54,7 +51,6 @@ class MovieDomain {
                 data: {
                     title,
                     runtimeMins,
-                    // update the updatedAt field to the current date and time
                     updatedAt: new Date(),
                 },
                 include: {
@@ -65,8 +61,6 @@ class MovieDomain {
             throw error;
         }
     }
-
-    // Add more methods as needed, e.g., deleteMovie, etc.
 }
 
 module.exports = MovieDomain;

@@ -3,7 +3,7 @@ const router = express.Router();
 const MovieDomain = require('../domains/movie');
 const movieDomain = new MovieDomain();
 
-// GET /movies - Get all movies
+
 router.get('/', async (req, res) => {
     try {
         const movies = await movieDomain.getAllMovies();
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST /movies - Add a new movie
+
 router.post('/', async (req, res) => {
     try {
         const { title, runtimeMins, screenings } = req.body;
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET /movies/:id - Get a movie by id
+
 router.get('/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// PUT /movies/:id - Update a movie by id
+
 router.put('/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id);
