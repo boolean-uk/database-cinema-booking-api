@@ -1,5 +1,8 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { 
+  createCustomerDb,
+  updateCustomerDb
+} = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +46,36 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const updateCustomer = async (req, res) => {
+  const id = Number(req.params.id)
+  const { name } = req.body
+
+  if (!id) {
+    return res.json(400).json({
+      error: `Supplied id ${id} is not valid`
+    })
+  }
+
+  if (!name) {
+    return res.status(400).json({
+      error: 'Missing fields in request body'
+    })
+  }
+
+  try {
+    const customer = await updateCustomerDb(id, name)
+    res.json({ customer })
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.log(`known Prisma error: ${error}`)
+    }
+    res.status(500).json({
+      error: error.message
+    })
+  }
+}
+
 module.exports = {
-  createCustomer
+  createCustomer,
+  updateCustomer
 }
