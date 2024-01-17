@@ -3,11 +3,15 @@ const { PrismaClientKnownRequestError } = require('@prisma/client')
 // DB
 const {
   createCustomerDb,
-  updateCustomerByIdDb
+  updateCustomerByIdDb,
+  getCustomerByIdDb
 } = require('../domains/customer.js')
 
 // Error handler
-const { fieldsErrorHandler } = require('../helpers/errorsHandler.js')
+const {
+  fieldsErrorHandler,
+  errorCreator
+} = require('../helpers/errorsHandler.js')
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body
@@ -33,12 +37,18 @@ const createCustomer = async (req, res) => {
 
 const updateCustomerById = async (req, res, next) => {
   const { id } = req.params
-  const { name } = req.body
+  const { name, contact } = req.body
 
   try {
     fieldsErrorHandler([name])
 
-    const updatedCustomer = await updateCustomerByIdDb(name, id)
+    const foundCustomer = await getCustomerByIdDb(id)
+
+    if (!foundCustomer) {
+      throw errorCreator('Customer with that id does not exist', 404)
+    }
+
+    const updatedCustomer = await updateCustomerByIdDb({ name, contact }, id)
 
     res.status(201).json({
       customer: updatedCustomer

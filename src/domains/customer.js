@@ -24,13 +24,25 @@ const createCustomerDb = async (name, phone, email) => {
   return createdCustomer
 }
 
-const updateCustomerByIdDb = async (newName, customerId) => {
+const updateCustomerByIdDb = async (fields, customerId) => {
   const updatedCustomer = await customer.update({
     where: {
       id: Number(customerId)
     },
     data: {
-      name: newName
+      name: fields.name,
+      contact: {
+        update: {
+          ...(fields.contact
+            ? {
+                where: {
+                  customerId: Number(customerId)
+                },
+                data: fields.contact
+              }
+            : {})
+        }
+      }
     },
     include: {
       contact: true
@@ -40,7 +52,18 @@ const updateCustomerByIdDb = async (newName, customerId) => {
   return updatedCustomer
 }
 
+const getCustomerByIdDb = async (customerId) => {
+  const foundCustomer = await customer.findFirst({
+    where: {
+      id: Number(customerId)
+    }
+  })
+
+  return foundCustomer
+}
+
 module.exports = {
   createCustomerDb,
-  updateCustomerByIdDb
+  updateCustomerByIdDb,
+  getCustomerByIdDb
 }
