@@ -3,12 +3,14 @@ const router = express.Router()
 
 const { 
   getAllMovies,
+  getMovieById,
   createMovie,
-  getMovieById
+  updateMovie
 } = require('../controllers/movie')
 
 router.get('/', getAllMovies)
 router.get('/:id', getMovieById)
 router.post('/', createMovie)
+router.put('/:id', updateMovie)
 
 module.exports = router

@@ -1,7 +1,8 @@
 const { 
   getAllMoviesDb,
   createMovieDb,
-  getMovieByIdDb
+  getMovieByIdDb,
+  updateMovieDb
 } = require('../domains/movie')
 
 const getAllMovies = async (req, res) => {
@@ -11,7 +12,7 @@ const getAllMovies = async (req, res) => {
 
 const getMovieById = async (req, res) => {
   const id = Number(req.params.id)
-  
+
   if (!id) {
     return res.status(400).json({ error: "no id supplied"})
   }
@@ -25,8 +26,14 @@ const createMovie = async (req, res) => {
   return res.status(201).json({ movie })
 }
 
+const updateMovie = async (req, res) => {
+  const movie = await updateMovieDb(req, res)
+  return res.status(201).json({ movie })
+}
+
 module.exports = {
   getAllMovies,
   createMovie,
-  getMovieById
+  getMovieById,
+  updateMovie
 }
