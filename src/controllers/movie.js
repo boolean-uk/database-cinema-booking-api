@@ -107,6 +107,7 @@ const getMovieBy = async (req, res) => {
     res.status(404).json({ error: "movie not found" });
     return
   }
+  [ movie ] = movie
   res.json({ movie: movie });
 };
 
