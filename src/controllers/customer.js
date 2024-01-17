@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb, updateCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, updateCustomerDb, updateContactDb, checkCustomerIdDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -45,7 +45,20 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   const id = Number(req.params.id)
-  const { name } = req.body
+
+  // check customer id is valid
+  const customerExists = await checkCustomerIdDb(id)
+  if (!customerExists) return res.status(404).json({ error: `Customer with id ${id} does not exist!`})
+
+  // check the name field is not missing (contact optional so no check needed)
+  const { name, contact } = req.body
+  if (!name)
+  return res.status(400).json({ error: "Oh no, you need to enter a name to update!"})
+
+  // if contact details provided update contact first, else skip to update customer
+  if (contact) await updateContactDb(id, contact)
+
+  // finally update customer
   const updatedCustomer = await updateCustomerDb(id, name)
   res.status(201).json({ customer: updatedCustomer })
 }
