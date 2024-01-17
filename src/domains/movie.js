@@ -18,8 +18,18 @@ const generateMovieDB = async (title, runtimeMins) =>
       screenings: true,
     },
   });
+const fetchMovieByIdDB = async (id) =>
+  await prisma.movie.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      screenings: true,
+    },
+  });
 
 module.exports = {
   fetchMoviesDB,
   generateMovieDB,
+  fetchMovieByIdDB,
 };

@@ -12,8 +12,15 @@ const generateMovie = async (request, response) => {
   const movieEntry = await domainMovie.generateMovieDB(title, runtimeMins);
   response.status(201).json({ movie: movieEntry });
 };
+const fetchMovieById = async (req, res) => {
+  const { id } = req.params;
+
+  const singleMovie = await domainMovie.fetchMovieByIdDB(id);
+  res.json({ singleMovie });
+};
 
 module.exports = {
   fetchMovies,
   generateMovie,
+  fetchMovieById,
 };
