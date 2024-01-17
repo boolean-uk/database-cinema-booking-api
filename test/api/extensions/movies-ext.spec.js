@@ -41,17 +41,19 @@ describe("Movie Endpoint", () => {
       };
       const response = await supertest(app).post("/movies").send(request);
       expect(response.status).toEqual(409);
-      expect(response.body.error).toEqual("A movie with the provided title already exists")
+      expect(response.body.error).toEqual(
+        "A movie with the provided title already exists"
+      );
     });
-    it("throws a 400 error when fields are missing in the request body",  async () => {
+    it("throws a 400 error when fields are missing in the request body", async () => {
       await createMovie("Dodgeball", 120);
       const request = {
         runtimeMins: 134,
       };
       const response = await supertest(app).post("/movies").send(request);
       expect(response.status).toEqual(400);
-      expect(response.body.error).toEqual("Missing fiels in request body")
-    })
+      expect(response.body.error).toEqual("Missing fiels in request body");
+    });
     it("adds screenings for the movie when these are provided by the CLI", async () => {
       const request = {
         title: "Rogue One",
@@ -59,11 +61,11 @@ describe("Movie Endpoint", () => {
         screenings: [
           {
             startsAt: "2017-06-11T18:30:00.000Z",
-            screen: {number: 1}
+            screen: { number: 1 },
           },
           {
             startsAt: "2017-08-11T18:30:00.000Z",
-            screen: {number: 1}
+            screen: { number: 1 },
           },
         ],
       };
@@ -79,10 +81,18 @@ describe("Movie Endpoint", () => {
       await createMovie("Dodgeball", 120);
       await createMovie("Scream", 113);
     });
-    it("throws err. 404 if the title or id do not match that of any movie", async () => {
-      const response = await supertest(app).get("/movies/78")
-      expect(response.status).toEqual(404)
-      expect(response.body.error).toEqual("movie not found")})
-    })
-    // it("retrieves a movie when a title to be provided instead of an id")
+    it("throws err. 404 if the id does not match that of any movie", async () => {
+      const response = await supertest(app).get("/movies/78");
+      expect(response.status).toEqual(404);
+      expect(response.body.error).toEqual("movie not found");
+    });
+    it("throws err. 404 if the title does not match that of any movie", async () => {
+      const response = await supertest(app).get("/movies/test");
+      expect(response.status).toEqual(404);
+      expect(response.body.error).toEqual("movie not found");
+    });
+
+  });
+
+  // it("retrieves a movie when a title to be provided instead of an id")
 });
