@@ -95,7 +95,7 @@ describe("Movie Endpoint", () => {
       const response = await supertest(app).get("/movies/Scream")
       expect(response.status).toEqual(200)
       expect(response.body.movie.title).toEqual("Scream")
-      expect(response.body.movie.duration).toEqual("113")
+      expect(response.body.movie.runtimeMins).toEqual(113)
     })
   });
 
