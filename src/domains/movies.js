@@ -1,7 +1,13 @@
 const { movie } = require('../utils/prisma')
 
-const getAllMoviesDb = async () => {
+const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
   const movies = await movie.findMany({
+    where: {
+      runtimeMins: {
+        ...(runtimeLt ? { lt: Number(runtimeLt) } : {}),
+        ...(runtimeGt ? { gt: Number(runtimeGt) } : {})
+      }
+    },
     include: {
       screenings: true
     }

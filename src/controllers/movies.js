@@ -10,8 +10,10 @@ const {
 const { fieldsErrorHandler } = require('../helpers/errorsHandler')
 
 const getAllMovies = async (req, res, next) => {
+  const { runtimeLt, runtimeGt } = req.query
+
   try {
-    const movies = await getAllMoviesDb()
+    const movies = await getAllMoviesDb(runtimeLt, runtimeGt)
 
     res.status(200).json({ movies: movies })
   } catch (error) {
