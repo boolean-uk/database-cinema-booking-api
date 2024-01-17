@@ -1,5 +1,6 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb, createMovieAndScreeningDb, getMovieByTitleDb } = require('../domains/movie.js')
+const e = require("express")
 
 // GET MOVIE LIST
 const getMovieList = async (req, res) => {
@@ -60,8 +61,19 @@ const getMovieById = async (req, res) => {
 const updateMovie = async (req, res) => {
     const id = Number(req.params.id)
     const { title, runtimeMins } = req.body
+    
+    const foundMovie = await getMovieByIdDb(id)
+    if (!foundMovie)
+    return res.status(404).json({ error: "Movie does not exist"})
+
+    if (!title || !runtimeMins)
+    return res.status(400).json({ error: "Missing fields in the request body, please enter the film title and runtime in minutes."})
+
+    const titleExists = await getMovieByTitleDb(title)
+    if (titleExists) return res.status(409).json({ error: "A movie with that title already exists!"})
+
     const updatedMovie = await updateMovieDb(id, title, runtimeMins)
-    res.status(201).json({ movie: updatedMovie })
+    return res.status(201).json({ movie: updatedMovie })
 }
 
 module.exports = { getMovieList, createMovie, getMovieById, updateMovie }
