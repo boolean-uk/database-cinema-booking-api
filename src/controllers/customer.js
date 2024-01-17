@@ -70,7 +70,7 @@ const updateCustomer = async (req, res) => {
 
   try {
     const customer = await updateCustomerDb(id, name)
-    res.json({ customer })
+    res.status(201).json({ customer })
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.log(`known Prisma error: ${error}`)

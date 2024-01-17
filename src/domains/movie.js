@@ -7,6 +7,9 @@ const getMovieByIdDb = async (req, res) => {
   const movie = await prisma.movie.findUnique({
     where: {
       id: id
+    },
+    include: {
+      screenings: true
     }
   })
   return movie
@@ -33,6 +36,9 @@ const updateMovieDb = async (req, res) => {
     data: {
       title,
       runtimeMins
+    },
+    include: {
+      screenings: true
     }
   })
   return movie

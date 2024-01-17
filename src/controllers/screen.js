@@ -2,7 +2,6 @@ const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/librar
 const { createScreenDb } = require('../domains/screen')
 
 const createScreen = async (req, res) => {
-  console.log()
   try {
     const number = Number(req.body.number)
     const screen = await createScreenDb(number)

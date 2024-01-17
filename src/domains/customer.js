@@ -28,7 +28,11 @@ const updateCustomerDb = async (id, name) => await prisma.customer.update({
     id
   },
   data: {
-    name
+    name,
+    contact
+  },
+  include: {
+    contact: true
   }
 })
 
