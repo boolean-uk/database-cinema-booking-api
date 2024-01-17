@@ -109,6 +109,8 @@ describe("Movie Endpoint", () => {
   });
   describe("PUT/movie/{id}", () => {
     it("throws a 409 if the inputed title already exists", async () => {
+      await createMovie("The Fellowship of the Ring", 178);
+      await createMovie("Scream", 113);
       const originalMovie = await createMovie("Dodgeball", 120);
       const data = {
         title: "The Fellowship of The Ring",
