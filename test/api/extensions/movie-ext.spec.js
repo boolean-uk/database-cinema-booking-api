@@ -2,6 +2,7 @@ const supertest = require("supertest");
 const app = require("../../../src/server.js");
 const { createMovie } = require("../../helpers/createMovie.js");
 const { createScreen } = require("../../helpers/createScreen.js");
+const { createScreening } = require("../../helpers/createScreening.js");
 
 describe("Movies Endpoint", () => {
   describe("GET /movies", () => {
@@ -106,5 +107,82 @@ describe("Movies Endpoint", () => {
       expect(response.status).toEqual(404);
       expect(response.body).toHaveProperty("error");
     });
+  });
+
+  describe("PUT /movies/:id", () => {
+    it("can replace screenings for the movie when a screenings property exists on the request body", async () => {
+      const screen = await createScreen(1);
+      const movie = await createMovie("Glee: The Movie", 120, screen);
+      const screening = await createScreening(
+        screen.id,
+        movie.id,
+        "2000-01-01"
+      );
+
+      const screening1 = {
+        screenId: screen.id,
+        startsAt: "2024-01-17T12:00:00.000Z",
+      };
+      const screening2 = {
+        screenId: screen.id,
+        startsAt: "2024-01-17T14:00:00.000Z",
+      };
+
+      const request = {
+        title: "Hunger Games",
+        runtimeMins: 270,
+        screenings: [screening1, screening2],
+      };
+
+      const response = await supertest(app)
+        .put(`/movies/${movie.id}`)
+        .send(request);
+
+      expect(response.status).toEqual(201);
+      expect(response.body.movie).not.toEqual(undefined);
+      expect(response.body.movie.title).toEqual("Hunger Games");
+      expect(response.body.movie.runtimeMins).toEqual(270);
+      expect(response.body.movie.screenings).not.toEqual(undefined);
+      expect(response.body.movie.screenings.length).toEqual(2);
+      expect(response.body.movie.screenings[0].screenId).toEqual(screen.id);
+      expect(response.body.movie.screenings[0].movieId).toEqual(movie.id);
+      expect(response.body.movie.screenings[0].startsAt).toEqual(
+        screening1.startsAt
+      );
+      expect(response.body.movie.screenings[1].screenId).toEqual(screen.id);
+      expect(response.body.movie.screenings[1].movieId).toEqual(movie.id);
+      expect(response.body.movie.screenings[1].startsAt).toEqual(
+        screening2.startsAt
+      );
+    });
+  });
+
+  it("will return 400 when missing fields in request body", async () => {
+    const request = {};
+
+    const response = await supertest(app).put("/movies").send(request);
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toHaveProperty("error");
+  });
+
+  it("will return 404 if movie not found", async () => {
+    const response = await supertest(app).put(`/movies/-1`);
+
+    expect(response.status).toEqual(404);
+    expect(response.body).toHaveProperty("error");
+  });
+
+  it("will return 409 when movie with provided title already exists", async () => {
+    const request = {
+      title: "Snakes on a Plane",
+      runtimeMins: 110,
+    };
+
+    await createMovie(request.title, request.runtimeMins);
+
+    const response = await supertest(app).post("/movies").send(request);
+    expect(response.status).toEqual(409);
+    expect(response.body).toHaveProperty("error");
   });
 });
