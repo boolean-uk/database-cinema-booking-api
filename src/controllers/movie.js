@@ -16,9 +16,20 @@ const getMovies = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-    const { title, runtimeMins } = req.body;
-    const newMovie = await createMovieDB(title, runtimeMins);
-    res.status(201).json({ movie: newMovie });
+    try {
+
+        const { title, runtimeMins } = req.body;
+        const newMovie = await createMovieDB(title, runtimeMins);
+        res.status(201).json({ movie: newMovie });
+
+    } catch (err) {
+
+        const recievedColumns = Object.keys(req.body);
+        res.status(400).json(
+            `Failed to create movie. You must provide fields: title, runtimeMins. Only recieved: ${recievedColumns}`
+        );
+        return null
+    }
 };
 
 const getMovieById = async (req, res) => {
