@@ -8,7 +8,18 @@ const fetchMoviesDB = async () => {
   });
   return theMovies;
 };
+const generateMovieDB = async (title, runtimeMins) =>
+  await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
 
 module.exports = {
   fetchMoviesDB,
+  generateMovieDB,
 };
