@@ -4,7 +4,7 @@ const { createMovie } = require("../../helpers/createMovie");
 const { createScreen } = require("../../helpers/createScreen");
 
 describe("Movie Endpoint", () => {
-  xdescribe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
+  describe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
     beforeEach(async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Dodgeball", 120);
@@ -33,7 +33,17 @@ describe("Movie Endpoint", () => {
     });
   });
   describe("POST/movies", () => {
-    // it("throws a 409 when the title is already in use");
+    it("throws a 409 when the title is already in use", async () => {
+      await createMovie("Dodgeball", 120);
+      const request = {
+        title: "Dodgeball",
+        runtimeMins: 134,
+      };
+      const response = await supertest(app).post("/movies").send(request);
+      expect(response.status).toEqual(409);
+      expect(response.body.error).toEqual("A movie with the provided title already exists")
+
+    });
     // it("throws a 400 error when fields are missing in the request body")
     it("adds screenings for the movie when these are provided by the CLI", async () => {
       const screen = await createScreen(1);
