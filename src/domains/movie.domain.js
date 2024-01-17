@@ -22,8 +22,8 @@ async function selectMovies(runTimeLessThan, runTimeGreaterThan) {
       runtimeMins: runtimeWhere,
     },
     include: {
-      screenings: true
-    }
+      screenings: true,
+    },
   });
 }
 
