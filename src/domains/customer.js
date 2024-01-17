@@ -21,15 +21,22 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   }
 })
 
-const getCustomersDb = async () => await prisma.customer.findMany()
+const getCustomersDb = async () => await prisma.customer.findMany({
+  data: {
+    name,
+    contact
+  },
+  include: {
+    contact: true
+  }
+})
 
 const updateCustomerDb = async (id, name) => await prisma.customer.update({
   where: {
     id
   },
   data: {
-    name,
-    contact
+    name
   },
   include: {
     contact: true

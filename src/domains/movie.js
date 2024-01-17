@@ -1,6 +1,10 @@
 const prisma = require('../utils/prisma')
 
-const getAllMoviesDb = async () => await prisma.movie.findMany()
+const getAllMoviesDb = async () => await prisma.movie.findMany({
+  include: {
+    screenings: true
+  }
+})
 
 const getMovieByIdDb = async (req, res) => {
   const id = Number(req.params.id)
@@ -20,7 +24,11 @@ const createMovieDb = async (req, res) => {
   const movie = await prisma.movie.create({
     data: {
       title,
-      runtimeMins
+      runtimeMins,
+      screenings: {}
+    },
+    include: {
+      screenings: true
     }
   })
   return movie
