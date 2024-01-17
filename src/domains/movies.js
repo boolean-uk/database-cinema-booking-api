@@ -1,11 +1,33 @@
 const prisma = require("../utils/prisma");
 
-const getAllMoviesDb = async () =>
-  await prisma.movie.findMany({
+const getAllMoviesDb = async ({ runtimeLt, runtimeGt }) => {
+  runtimeGt = parseInt(runtimeGt);
+  runtimeLt = parseInt(runtimeLt);
+
+  const movieQuery = {
     include: {
       screenings: true,
     },
-  });
+  };
+
+  if (runtimeLt) {
+    movieQuery.where = {
+      runtimeMins: {
+        lt: runtimeLt,
+      },
+    };
+  }
+
+  if (runtimeGt) {
+    movieQuery.where = {
+      runtimeMins: {
+        gt: runtimeGt,
+      },
+    };
+  }
+
+  return await prisma.movie.findMany(movieQuery);
+};
 
 const getMovieByIdDb = async (id) =>
   await prisma.movie.findUnique({

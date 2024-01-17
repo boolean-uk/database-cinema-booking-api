@@ -6,9 +6,14 @@ const {
 } = require("../domains/movies.js");
 
 const getAllMovies = async (req, res) => {
-  const allMovies = await getAllMoviesDb();
+  try {
+    const allMovies = await getAllMoviesDb(req.query);
 
-  return res.status(200).send({ movies: allMovies });
+    return res.status(200).send({ movies: allMovies });
+  } catch (e) {
+    console.error(e.message);
+    return res.status(500).send({ error: e.message });
+  }
 };
 
 const getMovieById = async (req, res) => {
