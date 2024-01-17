@@ -15,7 +15,7 @@ const getAllMovies = async (req, res, next) => {
 
     res.status(200).json({ movies: movies })
   } catch (error) {
-    res.status(error.status ?? 500).json({ error: e.message })
+    res.status(error.status ?? 500).json({ error: error.message })
   }
 }
 
