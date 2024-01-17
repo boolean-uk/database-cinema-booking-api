@@ -2,6 +2,8 @@ const prisma = require("../utils/prisma");
 
 const getMoviesDB = async (filter) => {
     let query = {
+        title: filter.title ? filter.title : undefined,
+        runtimeMins: filter.runtimeMins ? filter.runtimeMins : undefined,
         runtimeMins: {
             lt: filter.runtimeLt ? Number(filter.runtimeLt) : undefined,
             gt: filter.runtimeGt ? Number(filter.runtimeGt) : undefined,
