@@ -1,4 +1,4 @@
-const { selectMovies } = require("../domains/movie.domain.js");
+const { selectMovies, selectMovieById } = require("../domains/movie.domain.js");
 const handleError = require("../utils/error.js");
 
 const Types = require("../utils/types.d.js");
@@ -31,6 +31,23 @@ async function getMovies(req, res) {
   }
 }
 
+/**
+ * @param {Types.Request} req
+ * @param {Types.Response} res
+ * @returns {Promise<void>}
+ */
+async function getMovieById(req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    const requestedMovie = await selectMovieById(id);
+    res.json({ movie: requestedMovie });
+  } catch (error) {
+    handleError(error, res);
+  }
+}
+
 module.exports = {
   getMovies,
+  getMovieById,
 };

@@ -27,6 +27,22 @@ async function selectMovies(runTimeLessThan, runTimeGreaterThan) {
   });
 }
 
+/**
+ * @param {Number} id
+ * @returns {Promise<Types.Movie>}
+ */
+async function selectMovieById(id) {
+  return await prisma.movie.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+}
+
 module.exports = {
   selectMovies,
+  selectMovieById,
 };
