@@ -49,7 +49,7 @@ const createMovieDb = async (title, runtimeMins) =>
   });
 
 const createMovieWithScreeningsDb = async (title, runtimeMins, screenings) => {
-  return await prisma.movie.create({
+  const result = await prisma.movie.create({
     data: {
       title: title,
       runtimeMins: runtimeMins,
@@ -62,6 +62,8 @@ const createMovieWithScreeningsDb = async (title, runtimeMins, screenings) => {
     },
     include: { screenings: true },
   });
+  console.log(result)
+  return result
 }
 
 const getMovieByIdDb = async (id) => await prisma.movie.findUnique({

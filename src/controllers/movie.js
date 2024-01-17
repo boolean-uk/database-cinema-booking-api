@@ -44,17 +44,18 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
+  console.log(screenings)
   let createdMovie;
-
-  if (!screenings) {
+  
+  if (!screenings || screenings.length === 0) {
     try {
       createdMovie = await createMovieDb(title, runtimeMins);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         if (e.code === "P2002") {
           res
-            .status(409)
-            .json({ error: "A movie with the provided title already exists" });
+          .status(409)
+          .json({ error: "A movie with the provided title already exists" });
           return;
         }
       }
@@ -69,8 +70,8 @@ const createMovie = async (req, res) => {
       }
     }
   }
-
-  if (screenings) {
+  
+  if (screenings && screenings.length !== 0) {
     try {
       createdMovie = await createMovieWithScreeningsDb(
         title,

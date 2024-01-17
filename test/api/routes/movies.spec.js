@@ -24,8 +24,8 @@ describe("Movies Endpoint", () => {
 
             expect(movie2.title).toEqual('Scream')
             expect(movie2.runtimeMins).toEqual(113)
-            expect(movie2.screenings).not.toEqual(undefined)
-            expect(movie2.screenings.length).toEqual(1)
+            expect(movie1.screenings).not.toEqual(undefined)
+            expect(movie1.screenings.length).toEqual(1)
         })
     })
 

@@ -54,4 +54,5 @@ describe("Movie Endpoint", () => {
     expect(response.body.movie.screenings).not.toBeUndefined();
     expect(response.body.movie.screenings.length).toEqual(2);
   });
+  
 });
