@@ -1,51 +1,22 @@
 const { z } = require("zod");
 
-const Types = require("../../utils/types.d");
+const newCustomerSchema = z.object({
+  name: z.string(),
+  phone: z.string(),
+  email: z.string(),
+});
 
-/**
- * @param {Types.Request} req
- * @param {Types.Response} res
- * @param {Types.NextFunction} next
- */
-function createCustomer(req, res, next) {
-  const schema = z.object({
-    name: z.string(),
-    phone: z.string(),
-    email: z.string(),
-  });
+const updateContactSchema = z.object({
+  phone: z.string(),
+  email: z.string(),
+});
 
-  try {
-    schema.parse(req.body);
-    next();
-  } catch (error) {
-    res.status(400).json({ error: "Missing fields in request body" });
-  }
-}
-
-/**
- * @param {Types.Request} req
- * @param {Types.Response} res
- * @param {Types.NextFunction} next
- */
-function updateCustomer(req, res, next) {
-  const contactSchema = z.object({
-    phone: z.string(),
-    email: z.string(),
-  });
-  const schema = z.object({
-    name: z.string(),
-    contact: contactSchema.optional(),
-  });
-
-  try {
-    schema.parse(req.body);
-    next();
-  } catch (error) {
-    res.status(400).json({ error: "Missing fields in request body" });
-  }
-}
+const updateCustomerSchema = z.object({
+  name: z.string(),
+  contact: updateContactSchema.optional(),
+});
 
 module.exports = {
-  createCustomer,
-  updateCustomer,
+  newCustomerSchema,
+  updateCustomerSchema,
 };
