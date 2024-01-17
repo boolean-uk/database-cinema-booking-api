@@ -19,9 +19,12 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
     try {
-        const { title, runtimeMins } = req.body;
 
-        if (getMoviesDB(title)) {
+        const { title, runtimeMins } = req.body;
+        const filter = {title: title}
+        const foundMovie = await getMoviesDB(filter)
+        
+        if ( foundMovie.length !== 0) {
             return res
                 .status(409)
                 .json(`Failed to create movie: ${title} in use.`);
