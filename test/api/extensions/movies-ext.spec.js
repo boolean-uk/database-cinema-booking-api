@@ -91,8 +91,12 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(404);
       expect(response.body.error).toEqual("movie not found");
     });
-
+    it("retrieves a movie when a title to be provided instead of an id", async () => {
+      const response = await supertest(app).get("/movies/Scream")
+      expect(response.status).toEqual(200)
+      expect(response.body.movie.title).toEqual("Scream")
+      expect(response.body.movie.duration).toEqual("113")
+    })
   });
 
-  // it("retrieves a movie when a title to be provided instead of an id")
 });
