@@ -2,6 +2,7 @@ const app = require("../../../src/server");
 const supertest = require("supertest");
 const { createMovie } = require("../../helpers/createMovie");
 const { createScreen } = require("../../helpers/createScreen");
+const { updateMovie } = require("../../../src/controllers/movie");
 
 describe("Movie Endpoint", () => {
   describe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
@@ -92,17 +93,42 @@ describe("Movie Endpoint", () => {
       expect(response.body.error).toEqual("movie not found");
     });
     it("retrieves a movie when a title to be provided instead of an id", async () => {
-      const response = await supertest(app).get("/movies/Scream")
-      expect(response.status).toEqual(200)
-      expect(response.body.movie.title).toEqual("Scream")
-      expect(response.body.movie.runtimeMins).toEqual(113)
-    })
+      const response = await supertest(app).get("/movies/Scream");
+      expect(response.status).toEqual(200);
+      expect(response.body.movie.title).toEqual("Scream");
+      expect(response.body.movie.runtimeMins).toEqual(113);
+    });
     it("retrieves a movie by its title when it includes whitespaces", async () => {
-      const response = await supertest(app).get("/movies/The%20Fellowship%20of%20the%20Ring")
-      expect(response.status).toEqual(200)
-      expect(response.body.movie.title).toEqual("The Fellowship of the Ring")
-      expect(response.body.movie.runtimeMins).toEqual(178)
-    })
+      const response = await supertest(app).get(
+        "/movies/The%20Fellowship%20of%20the%20Ring"
+      );
+      expect(response.status).toEqual(200);
+      expect(response.body.movie.title).toEqual("The Fellowship of the Ring");
+      expect(response.body.movie.runtimeMins).toEqual(178);
+    });
   });
-
+  describe("PUT/movie/{id}", () => {
+    it("throws a 409 if the inputed title already exists", async () => {
+      const originalMovie = await createMovie("Dodgeball", 120);
+      const data = {
+        title: "The Fellowship of The Ring",
+        runtimeMins: 146,
+      };
+      const response = await supertest(app)
+        .put(`/movies/${originalMovie.id}`)
+        .send(data);
+      expect(response.status).toEqual(409);
+      expect(response.body.error).toEqual(
+        "A movie with the provided title already exists"
+      );
+    });
+    // it("throws a 409 if the id does not exist", async () => {
+    // })
+    // it("throws a 400 if input is missing", async () => {
+    // })
+    // it("when there are screening, it replaces them", async () => {
+    // })
+    // it("when there are no screening, it adds them", async () => {
+    // })
+  });
 });
