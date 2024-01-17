@@ -73,4 +73,16 @@ describe("Movie Endpoint", () => {
       expect(response.body.movie.screenings.length).toEqual(2);
     });
   });
+  describe("GET/movies/:id", () => {
+    beforeEach(async () => {
+      await createMovie("The Fellowship of the Ring", 178);
+      await createMovie("Dodgeball", 120);
+      await createMovie("Scream", 113);
+    });
+    it("throws err. 404 if the title or id do not match that of any movie", async () => {
+      const response = await supertest(app).get("/78")
+      expect(response.status).toEqual(404)
+      expect(response.body.error).toEqual("movie not found")})
+    })
+    // it("retrieves a movie when a title to be provided instead of an id")
 });
