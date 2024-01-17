@@ -58,12 +58,22 @@ const getMovieById = async (req, res, next) => {
 
 const updateMovieById = async (req, res, next) => {
   const { id } = req.params
-  const { title, runtimeMins } = req.body
+  const { title, runtimeMins, screenings } = req.body
 
   try {
     fieldsErrorHandler([title, runtimeMins])
+    await titleErrorHandler(title)
 
-    const updatedMovie = await updateMovieByIdDb({ title, runtimeMins }, id)
+    const foundMovie = await getMovieByIdDb(id)
+
+    if (!foundMovie) {
+      throw errorCreator('Movie with that id does not exist', 404)
+    }
+
+    const updatedMovie = await updateMovieByIdDb(
+      { title, runtimeMins, screenings },
+      id
+    )
 
     res.status(201).json({
       movie: updatedMovie

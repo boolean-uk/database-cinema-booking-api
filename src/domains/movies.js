@@ -55,7 +55,15 @@ const updateMovieByIdDb = async (fields, movieId) => {
     },
     data: {
       title: fields.title,
-      runtimeMins: fields.runtimeMins
+      runtimeMins: fields.runtimeMins,
+      screenings: {
+        deleteMany: {
+          movieId: Number(movieId)
+        },
+        createMany: {
+          ...(fields.screenings ? { data: fields.screenings } : {})
+        }
+      }
     },
     include: {
       screenings: true
