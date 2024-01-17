@@ -103,7 +103,7 @@ const getMovieBy = async (req, res) => {
   // attempts to refactor to try...catch seemed to indicate
   // that prisma does not throw an error when a findUnique() fails
   // TODO: look up docs to see whether this is accurate
-  if (!movie) {
+  if (!movie || movie.length === 0) {
     res.status(404).json({ error: "movie not found" });
     return
   }
