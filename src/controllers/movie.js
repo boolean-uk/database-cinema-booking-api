@@ -39,11 +39,11 @@ const createMovie = async (req, res) => {
 
     if (screenings) {
         const newMovieAndScreening = await createMovieAndScreeningDb(title, runtimeMins, screenings)
-        res.status(201).json({ movie: newMovieAndScreening })
+        return res.status(201).json({ movie: newMovieAndScreening })
     }
     else {
         const newMovie = await createMovieDb(title, runtimeMins)
-        res.status(201).json({ movie: newMovie })
+        return res.status(201).json({ movie: newMovie })
     }
 }
 
@@ -51,6 +51,8 @@ const createMovie = async (req, res) => {
 const getMovieById = async (req, res) => {
     const id = Number(req.params.id)
     const foundMovie = await getMovieByIdDb(id)
+    if (!foundMovie)
+    return res.status(404).json({ error: "Movie does not exist"})
     res.status(200).json({ movie: foundMovie })
 }
 
