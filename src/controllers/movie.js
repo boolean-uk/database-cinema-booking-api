@@ -98,7 +98,7 @@ const getMovieBy = async (req, res) => {
     movie = await getMovieByIdDb(idNum);
   } else {
     //TODO: handle cases where the movie title includes white space
-    movie = await getMovieByTitleDb(searchparam);
+    [movie] = await getMovieByTitleDb(searchparam);
   }
   // attempts to refactor to try...catch seemed to indicate
   // that prisma does not throw an error when a findUnique() fails
@@ -107,7 +107,6 @@ const getMovieBy = async (req, res) => {
     res.status(404).json({ error: "movie not found" });
     return;
   }
-  [movie] = movie;
   res.json({ movie: movie });
 };
 
