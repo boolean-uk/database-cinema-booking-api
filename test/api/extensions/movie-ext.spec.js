@@ -39,6 +39,38 @@ describe("Movies Endpoint", () => {
   });
 
   describe("POST /movies", () => {
+    it("can add screenings for the movie when a screenings property exists on the request body", async () => {
+      const screen = await createScreen(1);
+
+      const screening1 = {
+        screenId: screen.id,
+        startsAt: "2024-01-17T12:00:00Z",
+      };
+      const screening2 = {
+        screenId: screen.id,
+        startsAt: "2024-01-17T14:00:00Z",
+      };
+
+      const request = {
+        title: "Batman & Robin",
+        runtimeMins: 90,
+        screenings: [screening1, screening2],
+      };
+
+      const response = (await supertest(app).post("/movies")).body(request);
+
+      expect(response.status).toEqual(201);
+      expect(response.body.movie).not.toEqual(undefined);
+      expect(response.body.movie.title).toEqual(request.title);
+      expect(response.body.movie.runtimeMins).toEqual(request.runtimeMins);
+      expect(response.body.movie.screenings).not.toEqual(undefined);
+      expect(response.body.movie.screenings.length).toEqual(2);
+      expect(response.body.movie.screenings[0].screenId).toEqual(screen.id);
+      expect(response.body.movie.screenings[0].startsAt).toEqual(screening1.startsAt);
+      expect(response.body.movie.screenings[1].screenId).toEqual(screen.id);
+      expect(response.body.movie.screenings[1].startsAt).toEqual(screening2.startsAt);
+    });
+
     it("will return 400 when missing fields in request body", async () => {
       const request = {};
 
