@@ -116,7 +116,7 @@ describe("Movies Endpoint", () => {
       const screening = await createScreening(
         screen.id,
         movie.id,
-        "2000-01-01"
+        "2000-01-01T12:00:00.000Z"
       );
 
       const screening1 = {
@@ -158,16 +158,23 @@ describe("Movies Endpoint", () => {
   });
 
   it("will return 400 when missing fields in request body", async () => {
+    const movie = await createMovie("Human Centipede", 130);
     const request = {};
 
-    const response = await supertest(app).put("/movies").send(request);
+    const response = await supertest(app)
+      .put(`/movies/${movie.id}`)
+      .send(request);
 
     expect(response.status).toEqual(400);
     expect(response.body).toHaveProperty("error");
   });
 
   it("will return 404 if movie not found", async () => {
-    const response = await supertest(app).put(`/movies/-1`);
+    const request = {
+      title: "Barbie",
+      runtimeMins: 157,
+    };
+    const response = await supertest(app).put(`/movies/-1`).send(request);
 
     expect(response.status).toEqual(404);
     expect(response.body).toHaveProperty("error");
