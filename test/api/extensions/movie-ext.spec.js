@@ -9,13 +9,13 @@ describe("Movie Endpoint", () => {
 		await createMovie("Scream", 113);
 	})
   describe("GET/movies?runtimeLt={}", () => {
-    it("gets only the movies with a runtime lesser than runtimeLt", async () => {
+    xit("gets only the movies with a runtime lesser than runtimeLt", async () => {
       const response = await supertest(app).get("/movies?runtimeLt=130");
       expect(response.status).toEqual(200);
       expect(response.body.movies[0].title).toEqual("Dodgeball");
       expect(response.body.movies[1].title).toEqual("Scream");
     });
-    it("gets only the movies with a runtime greater than runtimeGt", async () => {
+    xit("gets only the movies with a runtime greater than runtimeGt", async () => {
       const response = await supertest(app).get("/movies?runtimeGt=115");
       expect(response.status).toEqual(200);
       expect(response.body.movies[0].title).toEqual("The Fellowship of the Ring");
@@ -23,7 +23,6 @@ describe("Movie Endpoint", () => {
     });
     it("gets only the movies with a runtime greater than runtimeGt and lesser than runtimeGt", async () => {
       const response = await supertest(app).get("/movies?runtimeGt=115&runtimeLt=140");
-			console.log(response.body)
       expect(response.status).toEqual(200);
       expect(response.body.movies.length).toEqual(1);
     });

@@ -23,17 +23,19 @@ const getMovies = async (req, res) => {
     movies = await getMoviesWhereAndDb(runtimeLtNum, runtimeGtNum);
   }
 
-  if (runtimeLt) {
+  if (runtimeLt && !runtimeGt) {
     const runtimeLtNum = Number(runtimeLt);
     movies = await getMoviesWhereLtDb(runtimeLtNum);
   }
 
-  if (runtimeGt) {
+  if (runtimeGt && !runtimeLt) {
     const runtimeGtNum = Number(runtimeGt);
     movies = await getMoviesWhereGtDb(runtimeGtNum);
   }
 
   if (!runtimeLt && !runtimeGt) {
+    console.log(4)
+
     movies = await getMoviesDb();
   }
 
