@@ -18,6 +18,7 @@ describe("Tickets Endpoint", () => {
 
             console.log('check screen:', screen)
             console.log('check movie:', created)
+            console.log('check customer:', customer)
 
             const response = await supertest(app)
                 .post("/tickets")
@@ -25,14 +26,10 @@ describe("Tickets Endpoint", () => {
 
             expect(response.status).toEqual(201)
             expect(response.body.ticket).not.toEqual(undefined)
-            expect(response.body.ticket.screenings).not.toEqual(undefined)
-            expect(response.body.ticket.screenings.length).toEqual(1)
+            expect(response.body.ticket.screening).not.toEqual(undefined)
             expect(response.body.ticket.customer).not.toEqual(undefined)
-            expect(response.body.ticket.customer.length).toEqual(1)
-            expect(response.body.ticket.screen).not.toEqual(undefined)
-            expect(response.body.ticket.screen.length).toEqual(1)
-            expect(response.body.ticket.movie).not.toEqual(undefined)
-            expect(response.body.ticket.movie.length).toEqual(1)
+            expect(response.body.ticket.screening.screen).not.toEqual(undefined)
+            expect(response.body.ticket.screening.movie).not.toEqual(undefined)
         })
         it("will return 400 when there are missing fields in the request body", async () => {
 

@@ -20,11 +20,11 @@ const createTicketDb = async (screeningId, customerId) => await prisma.ticket.cr
      }
 })
 
-const checkScreeningIdDb = async (screeningId) => await prisma.screening.findFirst({
+const checkScreeningIdDb = async (screeningId) => await prisma.screening.findUnique({
     where: { id: screeningId }
 })
 
-const checkCustomerIdDb = async (customerId) => await prisma.customer.findFirst({
+const checkCustomerIdDb = async (customerId) => await prisma.customer.findUnique({
     where: { id: customerId }
 })
 
