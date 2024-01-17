@@ -7,6 +7,8 @@
     "start": "npx nodemon ./src/index.js",
     "test": "npx jest -i test/api/routes",
     "test-extensions": "npx jest -i test/api/extensions --forceExit",
+    "test:customer": "npx jest -i -t \"Customer Endpoint\"",
+    "test:movie": "npx jest -i -t \"Movies Endpoint\"",
     "db:reset": "npx prisma migrate reset"
   },
   "prisma": {
