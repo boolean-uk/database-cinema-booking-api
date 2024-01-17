@@ -49,5 +49,5 @@ async function updateCustomer(req, res) {
 
 module.exports = {
   createCustomer,
-  updateCustomer
+  updateCustomer,
 };

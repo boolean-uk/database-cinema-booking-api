@@ -53,7 +53,7 @@ function recordNotFound(error, res) {
     const model = error.meta.modelName;
     errorMessage = `${model} id not found.`;
   }
-  
+
   res.status(404).json({ error: errorMessage });
 }
 
