@@ -31,6 +31,15 @@ const getCustomersDb = async () => await prisma.customer.findMany({
   }
 })
 
+const getCustomerByIdDb = async (id) => await prisma.customer.findUnique({
+  where: {
+    id
+  },
+  include: {
+    contact: true
+  }
+})
+
 const updateCustomerDb = async (id, name) => await prisma.customer.update({
   where: {
     id
@@ -46,5 +55,6 @@ const updateCustomerDb = async (id, name) => await prisma.customer.update({
 module.exports = {
   createCustomerDb,
   getCustomersDb,
+  getCustomerByIdDb,
   updateCustomerDb
 }

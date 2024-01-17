@@ -2,7 +2,8 @@ const express = require("express");
 const {
   createCustomer,
   updateCustomer,
-  getCustomers
+  getCustomers,
+  getCustomerById
 } = require('../controllers/customer');
 
 const router = express.Router();
@@ -12,6 +13,7 @@ const router = express.Router();
 // that looks like http://localhost:4040/customer/register
 router.post("/register", createCustomer);
 router.get('/', getCustomers);
+router.get('/:id', getCustomerById);
 router.put('/:id', updateCustomer);
 
 module.exports = router;
