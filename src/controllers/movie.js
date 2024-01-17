@@ -97,7 +97,6 @@ const getMovieBy = async (req, res) => {
     const idNum = Number(searchparam);
     movie = await getMovieByIdDb(idNum);
   } else {
-    //TODO: handle cases where the movie title includes white space
     [movie] = await getMovieByTitleDb(searchparam);
   }
   // attempts to refactor to try...catch seemed to indicate

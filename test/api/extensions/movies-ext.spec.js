@@ -147,9 +147,33 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(400);
       expect(response.body.error).toEqual("Missing fiels in request body");
     });
-    // it("when there are screening, it replaces them", async () => {
-    // })
-    // it("when there are no screening, it adds them", async () => {
+    it("when there are screenings, it replaces them", async () => {
+      const screen = await createScreen(1)
+      const originalMovie = await createMovie("Dodgeball", 120, screen);
+      const data = {
+        title: "Rogue One",
+        runtimeMins: 134,
+        screenings: [
+          {
+            startsAt: "2017-06-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+          {
+            startsAt: "2017-08-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+          {
+            startsAt: "2017-09-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+        ],
+      };
+      const response = await supertest(app).put(`/movies/${originalMovie.id}`).send(data);
+      console.log(response.body.movie.screenings)
+      expect(response.body.movie.screenings).not.toBeUndefined()
+      expect(response.body.movie.screenings.length).toEqual(3)
+    })
+    // it("when there are no screenings, it adds them", async () => {
     // })
   });
 });
