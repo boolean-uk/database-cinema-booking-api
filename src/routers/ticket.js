@@ -3,7 +3,7 @@ const router = express.Router()
 
 const { createTicket } = require('../controllers/ticket.js')
 
-// CREATE A SCREEN
+// CREATE A TICKET
 router.post('/', createTicket)
 
 module.exports = router
