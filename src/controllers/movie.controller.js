@@ -1,4 +1,9 @@
-const { selectMovies, selectMovieById } = require("../domains/movie.domain.js");
+const {
+  selectMovies,
+  selectMovieById,
+  createMovieAndScreenings,
+  createMovie,
+} = require("../domains/movie.domain.js");
 const handleError = require("../utils/error.js");
 
 const Types = require("../utils/types.d.js");
@@ -47,7 +52,31 @@ async function getMovieById(req, res) {
   }
 }
 
+/**
+ * @param {Types.Request} req
+ * @param {Types.Response} res
+ * @returns {Promise<void>}
+ */
+async function postMovie(req, res) {
+  const { title, runtimeMins, screenings } = req.body;
+
+  let newMovie;
+  try {
+    if (screenings) {
+      const { screenId, startsAt } = screenings;
+      newMovie = await createMovieAndScreenings(title, runtimeMins, screenings);
+    }
+    if (!screenings) newMovie = await createMovie(title, runtimeMins);
+  } catch (error) {
+    handleError(error, res);
+    return;
+  }
+
+  res.status(201).json({ movie: newMovie });
+}
+
 module.exports = {
   getMovies,
   getMovieById,
+  postMovie,
 };
