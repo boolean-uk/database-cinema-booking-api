@@ -36,7 +36,7 @@ const createMovie = async (req, res) => {
       return res.status(400).send({ error: "Missing fields in request body" });
     }
 
-    const allMovies = await getAllMoviesDb();
+    const allMovies = await getAllMoviesDb(req.query);
 
     const titleExists = allMovies.some((movie) => movie.title === title);
 
