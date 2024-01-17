@@ -2,6 +2,7 @@ const { PrismaClientKnownRequestError } = require("@prisma/client");
 const {
   createCustomerDb,
   updateCustomerDB,
+  findCustomerDB,
 } = require("../domains/customer.js");
 
 const createCustomer = async (req, res) => {
@@ -46,10 +47,33 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, contact } = req.body;
 
-  const updatedCustomer = await updateCustomerDB(id, name);
-  res.status(201).json({ customer: updatedCustomer });
+  if (!name && !contact) {
+    return res.status(400).json({ error: "Missing field in request body" });
+  }
+
+  try {
+    const existingCustomer = await findCustomerDB(id);
+    if (!existingCustomer) {
+      return res
+        .status(404)
+        .json({ error: "Customer with that id does not exist" });
+    }
+
+    existingCustomer.name = name || existingCustomer.name;
+
+    if (contact) {
+      existingCustomer.contact = {
+        phone: contact.phone || existingCustomer.contact?.phone,
+        email: contact.email || existingCustomer.contact?.email,
+      };
+    }
+    const updatedCustomer = await updateCustomerDB(id, existingCustomer);
+    res.status(201).json({ customer: updatedCustomer });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
 module.exports = {
