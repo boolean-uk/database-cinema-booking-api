@@ -97,6 +97,12 @@ describe("Movie Endpoint", () => {
       expect(response.body.movie.title).toEqual("Scream")
       expect(response.body.movie.runtimeMins).toEqual(113)
     })
+    it("retrieves a movie by its title when it includes whitespaces", async () => {
+      const response = await supertest(app).get("/movies/The%20Fellowship%20of%20the%20Ring")
+      expect(response.status).toEqual(200)
+      expect(response.body.movie.title).toEqual("The Fellowship of the Ring")
+      expect(response.body.movie.runtimeMins).toEqual(178)
+    })
   });
 
 });
