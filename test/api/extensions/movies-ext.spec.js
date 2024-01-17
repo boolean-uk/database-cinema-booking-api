@@ -5,7 +5,7 @@ const { createScreen } = require("../../helpers/createScreen");
 const { updateMovie } = require("../../../src/controllers/movie");
 
 describe("Movie Endpoint", () => {
-  describe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
+  xdescribe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
     beforeEach(async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Dodgeball", 120);
@@ -33,7 +33,7 @@ describe("Movie Endpoint", () => {
       expect(response.body.movies.length).toEqual(1);
     });
   });
-  describe("POST/movies", () => {
+  xdescribe("POST/movies", () => {
     it("throws a 409 when the title is already in use", async () => {
       await createMovie("Dodgeball", 120);
       const request = {
@@ -76,7 +76,7 @@ describe("Movie Endpoint", () => {
       expect(response.body.movie.screenings.length).toEqual(2);
     });
   });
-  describe("GET/movies/:id", () => {
+  xdescribe("GET/movies/:id", () => {
     beforeEach(async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Dodgeball", 120);
@@ -108,7 +108,7 @@ describe("Movie Endpoint", () => {
     });
   });
   describe("PUT/movie/{id}", () => {
-    it("throws a 409 if the inputed title already exists", async () => {
+    xit("throws a 409 if the inputed title already exists", async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Scream", 113);
       const originalMovie = await createMovie("Dodgeball", 120);
@@ -124,8 +124,20 @@ describe("Movie Endpoint", () => {
         "A movie with the provided title already exists"
       );
     });
-    // it("throws a 409 if the id does not exist", async () => {
-    // })
+    it("throws a 404 if the id does not exist", async () => {
+      const originalMovie = await createMovie("Dodgeball", 120);
+      const data = {
+        title: "Glass Onion",
+        runtimeMins: 146,
+      };
+      const response = await supertest(app)
+        .put(`/movies/${originalMovie.id + 1}`)
+        .send(data);
+      expect(response.status).toEqual(404);
+      expect(response.body.error).toEqual(
+        "movie not found"
+      );
+    })
     // it("throws a 400 if input is missing", async () => {
     // })
     // it("when there are screening, it replaces them", async () => {

@@ -115,16 +115,22 @@ const updateMovie = async (req, res) => {
   const { id } = req.params;
   const data = req.body;
   const idNum = Number(id);
+  let updatedMovie
   try {
-    const updatedMovie = await updateMovieDb(idNum, data);
-    res.status(201).json({ movie: updatedMovie });
+    updatedMovie = await updateMovieDb(idNum, data);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
-      if(e.code = "P2002") {
+      if(e.code === "P2002") {
         res.status(409).json({error: "A movie with the provided title already exists"})
+        return
       }
     }
   }
+  if (!updatedMovie || updatedMovie.length === 0) {
+    res.status(404).json({ error: "movie not found" });
+    return;
+  }
+  res.status(201).json({ movie: updatedMovie });
 };
 
 module.exports = {
