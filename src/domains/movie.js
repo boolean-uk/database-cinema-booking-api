@@ -10,14 +10,10 @@ const getMovieListGtLtDb = async (runtimeLt, runtimeGt) => await prisma.movie.fi
     where: {
         OR: [
             {
-                runtimeMins: {
-                    gt: runtimeGt
-                }
+                runtimeMins: { gt: runtimeGt }
             },
             {
-                runtimeMins: {
-                    lt: runtimeLt
-                }
+                runtimeMins: { lt: runtimeLt }
             }
         ]
     },
@@ -27,9 +23,7 @@ const getMovieListGtLtDb = async (runtimeLt, runtimeGt) => await prisma.movie.fi
 // GREATER THAN RT
 const getMovieListGtDb = async (runtimeGt) => await prisma.movie.findMany({
     where: {
-        runtimeMins: {
-            gt: runtimeGt
-        }
+        runtimeMins: { gt: runtimeGt }
     },
     include: { screenings: true }
 })
@@ -37,9 +31,7 @@ const getMovieListGtDb = async (runtimeGt) => await prisma.movie.findMany({
 // LESS THAN LT
 const getMovieListLtDb = async (runtimeLt) => await prisma.movie.findMany({
     where: {
-        runtimeMins: {
-            lt: runtimeLt
-        }
+        runtimeMins: { lt: runtimeLt }
     },
     include: { screenings: true }
 })

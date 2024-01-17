@@ -1,6 +1,4 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb, createMovieAndScreeningDb, getMovieByTitleDb } = require('../domains/movie.js')
-const e = require("express")
 
 // GET MOVIE LIST
 const getMovieList = async (req, res) => {
@@ -12,12 +10,10 @@ const getMovieList = async (req, res) => {
             const movieList = await getMovieListGtLtDb(runtimeLt, runtimeGt)
             return res.status(200).json({ movies: movieList })
         }
-
         if (runtimeLt) {
             const movieList = await getMovieListLtDb(runtimeLt)
             return res.status(200).json({ movies: movieList })
         }
-
         if (runtimeGt) {
             const movieList = await getMovieListGtDb(runtimeGt)
             return res.status(200).json({ movies: movieList })
@@ -42,19 +38,18 @@ const createMovie = async (req, res) => {
         const newMovieAndScreening = await createMovieAndScreeningDb(title, runtimeMins, screenings)
         return res.status(201).json({ movie: newMovieAndScreening })
     }
-    else {
-        const newMovie = await createMovieDb(title, runtimeMins)
-        return res.status(201).json({ movie: newMovie })
-    }
+    
+    const newMovie = await createMovieDb(title, runtimeMins)
+    return res.status(201).json({ movie: newMovie })
 }
 
 // GET MOVIE BY ID
 const getMovieById = async (req, res) => {
     const id = Number(req.params.id)
     const foundMovie = await getMovieByIdDb(id)
-    if (!foundMovie)
-    return res.status(404).json({ error: "Movie does not exist"})
-    res.status(200).json({ movie: foundMovie })
+    if (!foundMovie) return res.status(404).json({ error: "Movie does not exist"})
+    
+    return res.status(200).json({ movie: foundMovie })
 }
 
 // UPDATE MOVIE BY ID
@@ -63,8 +58,7 @@ const updateMovie = async (req, res) => {
     const { title, runtimeMins } = req.body
     
     const foundMovie = await getMovieByIdDb(id)
-    if (!foundMovie)
-    return res.status(404).json({ error: "Movie does not exist"})
+    if (!foundMovie) return res.status(404).json({ error: "Movie does not exist"})
 
     if (!title || !runtimeMins)
     return res.status(400).json({ error: "Missing fields in the request body, please enter the film title and runtime in minutes."})

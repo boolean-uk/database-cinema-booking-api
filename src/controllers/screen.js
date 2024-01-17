@@ -1,13 +1,11 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { createScreenDb, createScreenAndScreeningsDb, getScreenByNum } = require('../domains/screen.js')
 
 // CREATE A SCREEN
 const createScreen = async (req, res) => {
     const { number, screenings } = req.body
 
-    if (!number) {
-        return res.status(400).json({error: "Missing fields in the request body, please enter a screen number."})
-    }
+    if (!number) 
+    return res.status(400).json({error: "Missing fields in the request body, please enter a screen number."})
 
     const duplicateScreen = await getScreenByNum(number)
     if (duplicateScreen)

@@ -10,9 +10,8 @@ const createTicket = async (req, res) => {
     const checkScreeningId = await checkScreeningIdDb(screeningId)
     const checkCustomerId = await checkCustomerIdDb(customerId)
 
-    if (!checkScreeningId || !checkCustomerId) {
-        return res.status(404).json({ error: "A customer or screening does not exist with the provided ID."})
-    }
+    if (!checkScreeningId || !checkCustomerId) 
+    return res.status(404).json({ error: "A customer or screening does not exist with the provided ID."})
 
     const ticket = await createTicketDb(screeningId, customerId)
     return res.status(201).json({ ticket: ticket })

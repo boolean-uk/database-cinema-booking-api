@@ -1,6 +1,5 @@
 const express = require("express");
 const { createCustomer, updateCustomer } = require('../controllers/customer.js');
-
 const router = express.Router();
 
 // In index.js, we told express that the /customer route should use this router file

@@ -12,7 +12,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Tell express to use your routers here
 const movieRouter = require('./routers/movie.js')
 const customerRouter = require('./routers/customer.js');
