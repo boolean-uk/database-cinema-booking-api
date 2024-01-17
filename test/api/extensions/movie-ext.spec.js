@@ -44,11 +44,11 @@ describe("Movies Endpoint", () => {
 
       const screening1 = {
         screenId: screen.id,
-        startsAt: "2024-01-17T12:00:00Z",
+        startsAt: "2024-01-17T12:00:00.000Z",
       };
       const screening2 = {
         screenId: screen.id,
-        startsAt: "2024-01-17T14:00:00Z",
+        startsAt: "2024-01-17T14:00:00.000Z",
       };
 
       const request = {
@@ -57,7 +57,7 @@ describe("Movies Endpoint", () => {
         screenings: [screening1, screening2],
       };
 
-      const response = (await supertest(app).post("/movies")).body(request);
+      const response = await supertest(app).post("/movies").send(request);
 
       expect(response.status).toEqual(201);
       expect(response.body.movie).not.toEqual(undefined);
@@ -66,9 +66,13 @@ describe("Movies Endpoint", () => {
       expect(response.body.movie.screenings).not.toEqual(undefined);
       expect(response.body.movie.screenings.length).toEqual(2);
       expect(response.body.movie.screenings[0].screenId).toEqual(screen.id);
-      expect(response.body.movie.screenings[0].startsAt).toEqual(screening1.startsAt);
+      expect(response.body.movie.screenings[0].startsAt).toEqual(
+        screening1.startsAt
+      );
       expect(response.body.movie.screenings[1].screenId).toEqual(screen.id);
-      expect(response.body.movie.screenings[1].startsAt).toEqual(screening2.startsAt);
+      expect(response.body.movie.screenings[1].startsAt).toEqual(
+        screening2.startsAt
+      );
     });
 
     it("will return 400 when missing fields in request body", async () => {
@@ -89,7 +93,7 @@ describe("Movies Endpoint", () => {
       const screen = await createScreen(1);
       await createMovie(request.title, request.runtimeMins, screen);
 
-      const response = (await supertest(app).post("/movies")).body(request);
+      const response = await supertest(app).post("/movies").send(request);
       expect(response.status).toEqual(409);
       expect(response.body).toHaveProperty("error");
     });
