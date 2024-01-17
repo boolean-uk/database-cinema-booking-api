@@ -18,9 +18,22 @@ const fetchMovieById = async (req, res) => {
   const singleMovie = await domainMovie.fetchMovieByIdDB(id);
   res.json({ singleMovie });
 };
+const updateTheMovie = async (req, res) => {
+  const { id } = req.params;
+  const { title, runtimeMins } = req.body;
+
+  const updatedMovie = await domainMovie.updateTheMovieDB(
+    id,
+    title,
+    runtimeMins
+  );
+
+  res.status(201).json({ movie: updatedMovie });
+};
 
 module.exports = {
   fetchMovies,
   generateMovie,
   fetchMovieById,
+  updateTheMovie,
 };
