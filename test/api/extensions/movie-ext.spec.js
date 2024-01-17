@@ -8,7 +8,7 @@ describe("Movie Endpoint", () => {
 		await createMovie("Dodgeball", 120);
 		await createMovie("Scream", 113);
 	})
-  describe("GET/movies?runtimeLt={}", () => {
+  describe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
     it("gets only the movies with a runtime lesser than runtimeLt", async () => {
       const response = await supertest(app).get("/movies?runtimeLt=130");
       expect(response.status).toEqual(200);
