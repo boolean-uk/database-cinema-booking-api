@@ -1,10 +1,30 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require('../domains/movie.js')
+const { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb } = require('../domains/movie.js')
 
 // GET MOVIE LIST
 const getMovieList = async (req, res) => {
+    if (req.query) {
+        const runtimeLt = Number(req.query.runtimeLt)
+        const runtimeGt = Number(req.query.runtimeGt)
+        
+        if (runtimeLt && runtimeGt) {
+            const movieList = await getMovieListGtLtDb(runtimeLt, runtimeGt)
+            return res.status(200).json({ movies: movieList })
+        }
+
+        if (runtimeLt) {
+            const movieList = await getMovieListLtDb(runtimeLt)
+            return res.status(200).json({ movies: movieList })
+        }
+
+        if (runtimeGt) {
+            const movieList = await getMovieListGtDb(runtimeGt)
+            return res.status(200).json({ movies: movieList })
+        }
+    }
+
     const movieList = await getMovieListDb()
-    res.status(200).json({ movies: movieList })
+    return res.status(200).json({ movies: movieList })
 }
 
 // CREATE MOVIE

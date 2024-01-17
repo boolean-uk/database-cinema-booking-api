@@ -5,6 +5,45 @@ const getMovieListDb = async () => await prisma.movie.findMany({
     include: { screenings: true }
 })
 
+// GREATER THAN AND LESS THAN RT
+const getMovieListGtLtDb = async (runtimeLt, runtimeGt) => await prisma.movie.findMany({
+    where: {
+        OR: [
+            {
+                runtimeMins: {
+                    gt: runtimeGt
+                }
+            },
+            {
+                runtimeMins: {
+                    lt: runtimeLt
+                }
+            }
+        ]
+    },
+    include: { screenings: true }
+})
+
+// GREATER THAN RT
+const getMovieListGtDb = async (runtimeGt) => await prisma.movie.findMany({
+    where: {
+        runtimeMins: {
+            gt: runtimeGt
+        }
+    },
+    include: { screenings: true }
+})
+
+// LESS THAN LT
+const getMovieListLtDb = async (runtimeLt) => await prisma.movie.findMany({
+    where: {
+        runtimeMins: {
+            lt: runtimeLt
+        }
+    },
+    include: { screenings: true }
+})
+
 // CREATE MOVIE
 const createMovieDb = async (title, runtimeMins) => await prisma.movie.create({
     data: {
@@ -30,4 +69,4 @@ const updateMovieDb = async (id, title, runtimeMins) => await prisma.movie.updat
     include: { screenings: true }
 })
 
-module.exports = { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb }
+module.exports = { getMovieListDb, createMovieDb, getMovieByIdDb, updateMovieDb, getMovieListGtLtDb, getMovieListGtDb, getMovieListLtDb }
