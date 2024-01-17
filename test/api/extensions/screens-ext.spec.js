@@ -24,8 +24,8 @@ describe("Screens Endpoint", () => {
 
             expect(response.status).toEqual(201)
             expect(response.body.screen).not.toEqual(undefined)
-            expect(response.body.movie.screenings).not.toEqual(undefined)
-            expect(response.body.screen.number).toEqual(10)
+            expect(response.body.screen.screenings).not.toEqual(undefined)
+            expect(response.body.screen.screenings.length).toEqual(1)
         })
         it("will return 400 when there are missing fields in the request body", async () => {
 
