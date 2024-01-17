@@ -16,11 +16,16 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
   return movies
 }
 
-const createMovieDb = async (title, runtimeMins) => {
+const createMovieDb = async (title, runtimeMins, screenings) => {
   const createdMovie = await movie.create({
     data: {
       title: title,
-      runtimeMins: runtimeMins
+      runtimeMins: runtimeMins,
+      screenings: {
+        createMany: {
+          ...(screenings ? { data: screenings } : {})
+        }
+      }
     },
     include: {
       screenings: true

@@ -7,7 +7,10 @@ const {
 } = require('../domains/movies')
 
 // Error handlers
-const { fieldsErrorHandler } = require('../helpers/errorsHandler')
+const {
+  fieldsErrorHandler,
+  titleErrorHandler
+} = require('../helpers/errorsHandler')
 
 const getAllMovies = async (req, res, next) => {
   const { runtimeLt, runtimeGt } = req.query
@@ -22,12 +25,13 @@ const getAllMovies = async (req, res, next) => {
 }
 
 const createMovie = async (req, res, next) => {
-  const { title, runtimeMins } = req.body
+  const { title, runtimeMins, screenings } = req.body
 
   try {
     fieldsErrorHandler([title, runtimeMins])
+    await titleErrorHandler(title)
 
-    const createdMovie = await createMovieDb(title, runtimeMins)
+    const createdMovie = await createMovieDb(title, runtimeMins, screenings)
 
     res.status(201).json({ movie: createdMovie })
   } catch (error) {
