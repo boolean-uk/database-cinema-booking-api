@@ -6,7 +6,6 @@ const errorCreator = (message, status) => {
 
 const fieldsErrorHandler = (fields) => {
   fields.forEach((field) => {
-    console.log(field)
     if (!field) {
       throw errorCreator('Missing fields in request body', 400)
     }

@@ -24,7 +24,21 @@ const createMovieDb = async (title, runtimeMins) => {
   return createdMovie
 }
 
+const getMovieByIdDb = async (movieId) => {
+  const foundMovie = await movie.findFirst({
+    where: {
+      id: Number(movieId)
+    },
+    include: {
+      screenings: true
+    }
+  })
+
+  return foundMovie
+}
+
 module.exports = {
   getAllMoviesDb,
-  createMovieDb
+  createMovieDb,
+  getMovieByIdDb
 }

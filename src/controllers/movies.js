@@ -1,5 +1,9 @@
 // DB
-const { getAllMoviesDb, createMovieDb } = require('../domains/movies')
+const {
+  getAllMoviesDb,
+  createMovieDb,
+  getMovieByIdDb
+} = require('../domains/movies')
 
 // Error handlers
 const { fieldsErrorHandler } = require('../helpers/errorsHandler')
@@ -28,7 +32,20 @@ const createMovie = async (req, res, next) => {
   }
 }
 
+const getMovieById = async (req, res, next) => {
+  const { id } = req.params
+
+  try {
+    const foundMovie = await getMovieByIdDb(id)
+
+    res.status(200).json({ movie: foundMovie })
+  } catch (error) {
+    res.status(error.status ?? 500).json({ error: error.message })
+  }
+}
+
 module.exports = {
   getAllMovies,
-  createMovie
+  createMovie,
+  getMovieById
 }
