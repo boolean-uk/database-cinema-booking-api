@@ -9,10 +9,6 @@ try {
 
   exec('npx prisma migrate reset --force', { encoding: 'utf-8' })
   exec('npx prisma generate', { encoding: 'utf-8' })
-
-  // Reset the database connection to their original dev database instance
-  process.env['DATABASE_URL'] = process.env['ORIGINAL_DATABASE_URL']
-  console.log(`Reset DB instance to: ${process.env['DATABASE_URL']}`)
 } catch (err) {
   console.error(`Migration failed! \r\n ${err}`)
   process.exit()

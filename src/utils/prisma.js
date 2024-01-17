@@ -12,9 +12,6 @@ if (process.env.NODE_ENV === 'test') {
     // Connect to the user's test database instance
     process.env['DATABASE_URL'] = process.env['TEST_DATABASE_URL']
     console.log(`Connected to DB instance: ${process.env['DATABASE_URL']}`)
-} else {
-    // Make sure we are connected to the user's dev database instance
-    process.env['DATABASE_URL'] = process.env['ORIGINAL_DATABASE_URL']
 }
 
 const prisma = new PrismaClient(logLevel);
