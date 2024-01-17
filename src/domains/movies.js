@@ -21,11 +21,13 @@ const createMovieDb = async (title, runtimeMins, screenings) => {
     data: {
       title: title,
       runtimeMins: runtimeMins,
-      screenings: {
-        createMany: {
-          ...(screenings ? { data: screenings } : {})
+      ...(screenings && {
+        screenings: {
+          createMany: {
+            data: screenings
+          }
         }
-      }
+      })
     },
     include: {
       screenings: true
@@ -56,14 +58,16 @@ const updateMovieByIdDb = async (fields, movieId) => {
     data: {
       title: fields.title,
       runtimeMins: fields.runtimeMins,
-      screenings: {
-        deleteMany: {
-          movieId: Number(movieId)
-        },
-        createMany: {
-          ...(fields.screenings ? { data: fields.screenings } : {})
+      ...(fields.screenings && {
+        screenings: {
+          deleteMany: {
+            movieId: Number(movieId)
+          },
+          createMany: {
+            data: fields.screenings
+          }
         }
-      }
+      })
     },
     include: {
       screenings: true

@@ -1,7 +1,7 @@
 const { getAllMoviesDb } = require('../domains/movies')
+const { getAllScreensDb } = require('../domains/screens')
 
 const errorCreator = (message, status) => {
-  console.log(message, status)
   const error = new Error(message)
   error.status = status
   return error
@@ -25,8 +25,21 @@ const titleErrorHandler = async (title) => {
   }
 }
 
+const screenNumberErrorHandler = async (screenNumber) => {
+  const allScreens = await getAllScreensDb()
+
+  const foundScreen = allScreens.find(
+    (screen) => screen.number === screenNumber
+  )
+
+  if (foundScreen) {
+    throw errorCreator('A screen with the provided number already exist', 409)
+  }
+}
+
 module.exports = {
   errorCreator,
   fieldsErrorHandler,
-  titleErrorHandler
+  titleErrorHandler,
+  screenNumberErrorHandler
 }

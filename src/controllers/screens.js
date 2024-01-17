@@ -2,15 +2,19 @@
 const { createScreenDb } = require('../domains/screens')
 
 // Error handler
-const { fieldsErrorHandler } = require('../helpers/errorsHandler')
+const {
+  fieldsErrorHandler,
+  screenNumberErrorHandler
+} = require('../helpers/errorsHandler')
 
 const createScreen = async (req, res, next) => {
-  const { number } = req.body
+  const { number, screenings } = req.body
 
   try {
     fieldsErrorHandler([number])
+    await screenNumberErrorHandler(number)
 
-    const createdScreen = await createScreenDb(number)
+    const createdScreen = await createScreenDb(number, screenings)
 
     res.status(201).json({
       screen: createdScreen
