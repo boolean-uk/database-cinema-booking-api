@@ -113,7 +113,7 @@ const updateMovieDb = async (id, data) => {
     };
   }
 
-  await prisma.movie.update({
+  return await prisma.movie.update({
     where: {
       id: id,
     },
@@ -122,7 +122,6 @@ const updateMovieDb = async (id, data) => {
       screenings: true,
     },
   });
-  console.log(await prisma.screen.findMany())
 };
 module.exports = {
   getMoviesDb,

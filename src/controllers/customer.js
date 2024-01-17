@@ -1,3 +1,5 @@
+// TODO: update updateCustomer() to meet ext. criteria (+  write matching spec)
+
 const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { createCustomerDb, udpateCustomerDb } = require('../domains/customer.js')
 

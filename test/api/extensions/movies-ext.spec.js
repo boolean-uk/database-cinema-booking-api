@@ -1,3 +1,8 @@
+// TODO: add last test for "PUT/movie"
+// TODO: write tests to match ext. criteria for screen endpoint
+// TODO: write tests to match ext. criteria for ticket endpoint
+// TODO: create ticket.js router, controller, and domain
+
 const app = require("../../../src/server");
 const supertest = require("supertest");
 const { createMovie } = require("../../helpers/createMovie");
