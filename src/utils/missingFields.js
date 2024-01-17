@@ -4,7 +4,7 @@ const missingFields = (required, submitted) => {
       return field
     }
   })
-  return `Missing fields in request body: ${missing.join(", ")}. Submitted: ${submitted.join(", ")}, required: ${required.join(", ")}`
+  return `Missing fields in request body: ${missing.join(", ")}. Submitted: ${submitted.join(", ")}; required: ${required.join(", ")}`
 }
 
 module.exports = { missingFields }
