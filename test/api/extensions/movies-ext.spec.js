@@ -71,30 +71,26 @@ describe("Movies Endpoint", () => {
     })
 
     describe("POST /movies", () => {
-        // it("will create a movie with screenings when a screenings property exists on the request body", async () => {
-        //     const screen = await createScreen(1)
-        //     const request = {
-        //         title: "Test movie",
-        //         runtimeMins: 111,
-        //         screenings: [{
-        //             startsAt: "2024-01-17T12:53:27.868Z",
-        //             screenId: screen.id
-        //         }]
-        //     }
+        it("will create a movie with screenings when a screenings property exists on the request body", async () => {
+            const screen = await createScreen(1)
+            const request = {
+                title: "Test movie",
+                runtimeMins: 111,
+                screenings: [{
+                    startsAt: "2024-01-17T12:53:27.868Z",
+                    screenId: screen.id
+                }]
+            }
 
-        //     const response = await supertest(app)
-        //         .post("/movies")
-        //         .send(request)
+            const response = await supertest(app)
+                .post("/movies")
+                .send(request)
 
-        //     expect(response.status).toEqual(201)
-        //     expect(response.body.movie).not.toEqual(undefined)
-        //     expect(response.body.movie.title).toEqual('Test movie')
-        //     expect(response.body.movie.runtimeMins).toEqual(111)
-        //     expect(response.body.movie.screenings).not.toEqual(undefined)
-        //     expect(response.body.movie.screenings.length).toEqual(1)
-        //     expect(response.body.movie.screenings.screenId).toEqual(1)
-        //     expect(response.body.movie.screenings.startsAt).toEqual("2024-01-17T12:53:27.868Z")
-        // })
+            expect(response.status).toEqual(201)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(1)
+        })
         it("will return 400 when there are missing fields in the request body", async () => {
 
             const request = {}
@@ -130,6 +126,75 @@ describe("Movies Endpoint", () => {
             const response = await supertest(app).get(`/movies/999`)
 
             expect(response.status).toEqual(404)
+            expect(response.body).toHaveProperty('error')
+        })
+    })
+
+    describe("PUT /movies/:id", () => {
+        it("will update a movie and screenings if request body contains a screenings property", async () => {
+            const screen = await createScreen(1)
+            const created = await createMovie('Dodgeball', 120, screen)
+
+            const request = {
+                title: 'Scream',
+                runtimeMins: 113,
+                screenings: [
+                    {
+                        screenId: screen.id,
+                        startsAt: "2024-01-17T12:53:27.868Z"
+                    }
+                ]
+            }
+
+            const response = await supertest(app)
+                .put(`/movies/${created.id}`)
+                .send(request)
+
+            expect(response.status).toEqual(201)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(1)
+        })
+        it("will return 400 when there are missing fields in the request body", async () => {
+            const created = await createMovie('Dodgeball', 120)
+
+            const request = {}
+
+            const response = await supertest(app)
+                .put(`/movies/${created.id}`)
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
+        it("will return 404 when the movie id does not exist", async () => {
+            await createMovie('Dodgeball', 120)
+
+            const request = {
+                title: 'Scream',
+                runtimeMins: 113,
+            }
+
+            const response = await supertest(app)
+                .put(`/movies/999`)
+                .send(request)
+
+            expect(response.status).toEqual(404)
+            expect(response.body).toHaveProperty('error')
+        })
+        it("will return 409 when the movie title already exists", async () => {
+            const created = await createMovie('Dodgeball', 120)
+
+            const request = {
+                title: 'Dodgeball',
+                runtimeMins: 120,
+            }
+
+            const response = await supertest(app)
+                .put(`/movies/${created.id}`)
+                .send(request)
+
+            expect(response.status).toEqual(409)
             expect(response.body).toHaveProperty('error')
         })
     })
