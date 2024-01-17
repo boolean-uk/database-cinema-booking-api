@@ -113,7 +113,7 @@ describe("Movie Endpoint", () => {
       await createMovie("Scream", 113);
       const originalMovie = await createMovie("Dodgeball", 120);
       const data = {
-        title: "The Fellowship of The Ring",
+        title: "The Fellowship of the Ring",
         runtimeMins: 146,
       };
       const response = await supertest(app)

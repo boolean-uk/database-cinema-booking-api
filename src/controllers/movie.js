@@ -105,9 +105,9 @@ const getMovieBy = async (req, res) => {
   // TODO: look up docs to see whether this is accurate
   if (!movie || movie.length === 0) {
     res.status(404).json({ error: "movie not found" });
-    return
+    return;
   }
-  [ movie ] = movie
+  [movie] = movie;
   res.json({ movie: movie });
 };
 
@@ -115,8 +115,16 @@ const updateMovie = async (req, res) => {
   const { id } = req.params;
   const data = req.body;
   const idNum = Number(id);
-  const updatedMovie = await updateMovieDb(idNum, data);
-  res.status(201).json({ movie: updatedMovie });
+  try {
+    const updatedMovie = await updateMovieDb(idNum, data);
+    res.status(201).json({ movie: updatedMovie });
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError) {
+      if(e.code = "P2002") {
+        res.status(409).json({error: "A movie with the provided title already exists"})
+      }
+    }
+  }
 };
 
 module.exports = {
