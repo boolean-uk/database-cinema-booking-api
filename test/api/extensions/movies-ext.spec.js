@@ -53,7 +53,6 @@ describe("Movie Endpoint", () => {
       expect(response.body.error).toEqual("Missing fiels in request body")
     })
     it("adds screenings for the movie when these are provided by the CLI", async () => {
-      const screen = await createScreen(1);
       const request = {
         title: "Rogue One",
         runtimeMins: 134,
