@@ -72,12 +72,13 @@ describe("Movies Endpoint", () => {
 
     describe("POST /movies", () => {
         it("will create a movie with screenings when a screenings property exists on the request body", async () => {
+            const screen = await createScreen(1)
             const request = {
                 title: "Test movie",
                 runtimeMins: 111,
                 screenings: [{
                     startsAt: "2024-01-17T12:53:27.868Z",
-                    screenId: 1
+                    screenId: screen.id
                 }]
             }
 
@@ -91,7 +92,7 @@ describe("Movies Endpoint", () => {
             expect(response.body.movie.runtimeMins).toEqual(111)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(1)
-            expect(response.body.movie.screenings.screenId).toEqual(1)
+            expect(response.body.movie.screenings.screenId).toEqual(screen.id)
             expect(response.body.movie.screenings.startsAt).toEqual("2024-01-17T12:53:27.868Z")
         })
         it("will return 400 when there are missing fields in the request body", async () => {
@@ -118,6 +119,17 @@ describe("Movies Endpoint", () => {
                 .send(request)
 
             expect(response.status).toEqual(409)
+            expect(response.body).toHaveProperty('error')
+        })
+    })
+
+    describe("GET /movies/:id", () => {
+        it("will return 404 if movie does not exist", async () => {
+            await createMovie('Dodgeball', 120)
+
+            const response = await supertest(app).get(`/movies/999`)
+
+            expect(response.status).toEqual(404)
             expect(response.body).toHaveProperty('error')
         })
     })
