@@ -31,18 +31,16 @@ const updateCustomerByIdDb = async (fields, customerId) => {
     },
     data: {
       name: fields.name,
-      contact: {
-        update: {
-          ...(fields.contact
-            ? {
-                where: {
-                  customerId: Number(customerId)
-                },
-                data: fields.contact
-              }
-            : {})
+      ...(fields.contact && {
+        contact: {
+          update: {
+            where: {
+              customerId: Number(customerId)
+            },
+            data: fields.contact
+          }
         }
-      }
+      })
     },
     include: {
       contact: true
