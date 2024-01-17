@@ -1,6 +1,6 @@
 const prisma = require("../../src/utils/prisma");
 
-const createMovie = async (title, runtimeMins, screen = null) => {
+const createMovie = async (title, runtimeMins, screen) => {
   const movieData = {
     data: {
       title: title,
