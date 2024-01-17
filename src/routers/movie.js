@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    getAllMovies,
+    getMovies,
     createMovie,
     getMovieById,
     updateMovieById,
 } = require("../controllers/movie.js");
 
-router.get("/", getAllMovies);
+router.get("/", getMovies);
 router.get("/:id", getMovieById);
 router.post("/", createMovie);
 router.put("/:id", updateMovieById);
