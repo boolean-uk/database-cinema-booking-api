@@ -7,6 +7,8 @@ const {
 
 const getMovies = async (req, res) => {
     const filter = {
+        title: req.query.title,
+        runtimeMins: req.query.runtimeMins,
         runtimeLt: req.query.runtimeLt,
         runtimeGt: req.query.runtimeGt,
     };
@@ -17,18 +19,23 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
     try {
-
         const { title, runtimeMins } = req.body;
+
+        if (getMoviesDB(title)) {
+            return res
+                .status(409)
+                .json(`Failed to create movie: ${title} in use.`);
+        }
+
         const newMovie = await createMovieDB(title, runtimeMins);
         res.status(201).json({ movie: newMovie });
-
+        
     } catch (err) {
-
         const recievedColumns = Object.keys(req.body);
         res.status(400).json(
             `Failed to create movie. You must provide fields: title, runtimeMins. Only recieved: ${recievedColumns}`
         );
-        return null
+        return null;
     }
 };
 
