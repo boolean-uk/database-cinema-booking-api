@@ -80,9 +80,68 @@ async function createMovieAndScreenings(title, runtimeMins, screenings) {
   });
 }
 
+/**
+ * @param {Number} movieId
+ * @param {String} title
+ * @param {Number} runtimeMins
+ * @returns {Promise<Types.Movie>}
+ */
+async function updateMovie(movieId, title, runtimeMins) {
+  return await prisma.movie.update({
+    where: {
+      id: movieId,
+    },
+    data: {
+      title,
+      runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+}
+
+/**
+ * @param {Number} movieId
+ * @param {String} title
+ * @param {Number} runtimeMins
+ * @param {Types.ScreeningWithMovie[]} screenings
+ * @returns {Promise<Types.Movie>}
+ */
+async function updateMovieReplaceScreenings(
+  movieId,
+  title,
+  runtimeMins,
+  screenings
+) {
+  await prisma.screening.deleteMany({
+    where: {
+      movieId,
+    },
+  });
+
+  return await prisma.movie.update({
+    where: {
+      id: movieId,
+    },
+    data: {
+      title,
+      runtimeMins,
+      screenings: {
+        create: screenings,
+      },
+    },
+    include: {
+      screenings: true,
+    },
+  });
+}
+
 module.exports = {
   selectMovies,
   selectMovieById,
   createMovie,
   createMovieAndScreenings,
+  updateMovie,
+  updateMovieReplaceScreenings,
 };

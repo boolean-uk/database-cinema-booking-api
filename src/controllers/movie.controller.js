@@ -3,6 +3,8 @@ const {
   selectMovieById,
   createMovieAndScreenings,
   createMovie,
+  updateMovieReplaceScreenings,
+  updateMovie,
 } = require("../domains/movie.domain.js");
 const handleError = require("../utils/error.js");
 
@@ -74,8 +76,37 @@ async function postMovie(req, res) {
   res.status(201).json({ movie: newMovie });
 }
 
+/**
+ * @param {Types.Request} req
+ * @param {Types.Response} res
+ * @returns {Promise<void>}
+ */
+async function putMovie(req, res) {
+  const { title, runtimeMins, screenings } = req.body;
+  const movieId = Number(req.params.id);
+
+  let amendedMovie;
+  try {
+    if (screenings)
+      amendedMovie = await updateMovieReplaceScreenings(
+        movieId,
+        title,
+        runtimeMins,
+        screenings
+      );
+    if (!screenings)
+      amendedMovie = await updateMovie(movieId, title, runtimeMins);
+  } catch (error) {
+    handleError(error, res);
+    return;
+  }
+
+  res.status(201).json({ movie: amendedMovie });
+}
+
 module.exports = {
   getMovies,
   getMovieById,
   postMovie,
+  putMovie,
 };
