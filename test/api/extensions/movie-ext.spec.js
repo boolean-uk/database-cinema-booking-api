@@ -10,12 +10,16 @@ describe("Movies Endpoint", () => {
       await createMovie("Dodgeball", 120, screen);
       await createMovie("Scream", 113, screen);
 
-      const response1 = await supertest(app).get("/movies").query({runtimeGt: 115});
+      const response1 = await supertest(app)
+        .get("/movies")
+        .query({ runtimeGt: 115 });
       expect(response1.status).toEqual(200);
       expect(response1.body.movies).not.toEqual(undefined);
       expect(response1.body.movies.length).toEqual(1);
       
-      const response2 = await supertest(app).get("/movies").query({runtimeLt: 115});
+      const response2 = await supertest(app)
+        .get("/movies")
+        .query({ runtimeLt: 115 });
       expect(response2.status).toEqual(200);
       expect(response2.body.movies).not.toEqual(undefined);
       expect(response2.body.movies.length).toEqual(1);
