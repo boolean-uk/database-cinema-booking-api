@@ -15,7 +15,7 @@ describe("Screens Endpoint", () => {
 
       const request = {
         number: 169,
-        screenings: screening,
+        screenings: [screening],
       };
 
       const response = await supertest(app).post("/screens").send(request);
@@ -23,10 +23,10 @@ describe("Screens Endpoint", () => {
       expect(response.status).toEqual(201);
       expect(response.body.screen).not.toEqual(undefined);
       expect(response.body.screen.number).toEqual(169);
-      expect(response.body.movie.screenings).not.toEqual(undefined);
-      expect(response.body.movie.screenings.length).toEqual(1);
-      expect(response.body.movie.screenings[0].movieId).toEqual(movie.id);
-      expect(response.body.movie.screenings[0].startsAt).toEqual(
+      expect(response.body.screen.screenings).not.toEqual(undefined);
+      expect(response.body.screen.screenings.length).toEqual(1);
+      expect(response.body.screen.screenings[0].movieId).toEqual(movie.id);
+      expect(response.body.screen.screenings[0].startsAt).toEqual(
         screening.startsAt
       );
     });
