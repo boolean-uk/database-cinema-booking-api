@@ -34,8 +34,6 @@ const getMovies = async (req, res) => {
   }
 
   if (!runtimeLt && !runtimeGt) {
-    console.log(4)
-
     movies = await getMoviesDb();
   }
 
@@ -44,7 +42,6 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins, screenings } = req.body;
-  console.log(screenings)
   let createdMovie;
   
   if (!screenings || screenings.length === 0) {

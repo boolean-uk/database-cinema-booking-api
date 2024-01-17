@@ -49,57 +49,66 @@ const createMovieDb = async (title, runtimeMins) =>
   });
 
 const createMovieWithScreeningsDb = async (title, runtimeMins, screenings) => {
-  const result = await prisma.movie.create({
-    data: {
-      title: title,
-      runtimeMins: runtimeMins,
-      screenings: {
-        create: screenings.map((screening) => ({
-          startsAt: screening.startsAt,
-          screenId: screening.screenId,
-        }))
-      },
+  const data = {
+    title: title,
+    runtimeMins: runtimeMins,
+  };
+  const movieData = {
+    data: data, 
+    include: {
+      screenings: true
+    }
+  }
+  movieData.data.screenings = {
+    create: screenings.map((screening) => ({
+      startsAt: screening.startsAt,
+      screen: {
+        create: {
+          number: 1
+        }
+      }
+    })),
+  }
+
+  return await prisma.movie.create(movieData)
+};
+
+const getMovieByIdDb = async (id) =>
+  await prisma.movie.findUnique({
+    where: {
+      id: id,
     },
     include: { screenings: true },
   });
-  console.log(result)
-  return result
-}
 
-const getMovieByIdDb = async (id) => await prisma.movie.findUnique({
-  where: {
-    id: id
-  }, 
-  include: {screenings: true}
-})
+const getMovieByTitleDb = async (title) =>
+  await prisma.movie.findMany({
+    where: {
+      title: title,
+    },
+  });
 
-const getMovieByTitleDb = async (title) => await prisma.movie.findMany({
-  where: {
-    title: title
-  }, 
-})
-
-const updateMovieDb = async (id, data) => await prisma.movie.update({
-  where: {
-    id: id
-  }, 
-  data: {
-    title: data.title,
-    runtimeMins: data.runtimeMins
-  }, 
-  include: {
-    screenings: true
-  }
-
-}) 
+const updateMovieDb = async (id, data) =>
+  await prisma.movie.update({
+    where: {
+      id: id,
+    },
+    data: {
+      title: data.title,
+      runtimeMins: data.runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
 module.exports = {
   getMoviesDb,
   getMoviesWhereLtDb,
   getMoviesWhereGtDb,
   getMoviesWhereAndDb,
   createMovieDb,
-  createMovieWithScreeningsDb, 
-  getMovieByIdDb, 
-  updateMovieDb, 
-  getMovieByTitleDb
+  createMovieWithScreeningsDb,
+  getMovieByIdDb,
+  updateMovieDb,
+  getMovieByTitleDb,
 };

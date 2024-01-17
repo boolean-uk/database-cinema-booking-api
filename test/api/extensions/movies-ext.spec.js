@@ -1,6 +1,7 @@
 const app = require("../../../src/server");
 const supertest = require("supertest");
 const { createMovie } = require("../../helpers/createMovie");
+const { createScreen } = require("../../helpers/createScreen");
 
 describe("Movie Endpoint", () => {
   xdescribe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
@@ -31,28 +32,29 @@ describe("Movie Endpoint", () => {
       expect(response.body.movies.length).toEqual(1);
     });
   });
-  describe("POST/movies", () => {});
-  // it("throws a 409 when the title is already in use");
-  // it("throws a 400 error when fields are missing in the request body")
-  it("adds screenings for the movie when these are provided by the CLI", async () => {
-    const request = {
-      title: "Rogue One",
-      runtimeMins: 134,
-      screenings: [
-        {
-          startsAt: "2017-06-11T18:30:00.000Z",
-          screenId: 1,
-        },
-        {
-          startsAt: "2017-08-11T18:30:00.000Z",
-          screenId: 1,
-        },
-      ],
-    };
-    const response = await supertest(app).post("/movies").send(request);
-    expect(response.status).toEqual(201);
-    expect(response.body.movie.screenings).not.toBeUndefined();
-    expect(response.body.movie.screenings.length).toEqual(2);
+  describe("POST/movies", () => {
+    // it("throws a 409 when the title is already in use");
+    // it("throws a 400 error when fields are missing in the request body")
+    it("adds screenings for the movie when these are provided by the CLI", async () => {
+      const screen = await createScreen(1);
+      const request = {
+        title: "Rogue One",
+        runtimeMins: 134,
+        screenings: [
+          {
+            startsAt: "2017-06-11T18:30:00.000Z",
+            screen: {number: 1}
+          },
+          {
+            startsAt: "2017-08-11T18:30:00.000Z",
+            screen: {number: 1}
+          },
+        ],
+      };
+      const response = await supertest(app).post("/movies").send(request);
+      expect(response.status).toEqual(201);
+      expect(response.body.movie.screenings).not.toBeUndefined();
+      expect(response.body.movie.screenings.length).toEqual(2);
+    });
   });
-  
 });
