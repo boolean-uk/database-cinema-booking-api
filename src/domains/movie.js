@@ -30,4 +30,23 @@ const getMovieByIdDb = async (id) =>
     },
   });
 
-module.exports = { getMoviesDb,createMovieDb, getMovieByIdDb };
+const updateMovieDb = async (id, title, runtimeMins, screenings = []) =>{
+  return await prisma.movie.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+      runtimeMins,
+      screenings: {
+        ...(screenings.length > 0 && {
+          createMany: {
+            data: screenings,
+          },
+        })
+      },
+    },
+  });
+}
+
+module.exports = { getMoviesDb,createMovieDb, getMovieByIdDb,updateMovieDb };
