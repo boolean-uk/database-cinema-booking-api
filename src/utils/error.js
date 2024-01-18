@@ -6,6 +6,7 @@ const Types = require("../utils/types.d.js");
 
 const errorCodes = {
   P2002: uniqueConstraintFailed,
+  P2003: foreignKeyConstraintFailed,
   P2025: recordNotFound,
 };
 
@@ -40,6 +41,20 @@ function uniqueConstraintFailed(error, res) {
   }
 
   res.status(409).json({ error: errorMessage });
+}
+
+/**
+ * @param {import("@prisma/client").Prisma.PrismaClientKnownRequestError} error
+ * @param {Types.Response} res
+ * @returns {void}
+ */
+function foreignKeyConstraintFailed(error, res) {
+  let errorMessage = error.message
+  if (error.meta && typeof error.meta.modelName === "string" && typeof error.meta.field_name === "string") {
+    const fieldName = error.meta.field_name.split("_")[1]
+    errorMessage = `Provided ${fieldName} does not exist`;
+  }
+  res.status(404).json({error: errorMessage})
 }
 
 /**
