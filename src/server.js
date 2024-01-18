@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const customerRouter = require("./routers/customer.router.js");
 const movieRouter = require("./routers/movie.router.js");
 const screenRouter = require("./routers/screen.router.js");
+const ticketRouter = require("./routers/tickets.router.js");
 
 app.disable("x-powered-by");
 
@@ -20,5 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/customers", customerRouter);
 app.use("/movies", movieRouter);
 app.use("/screens", screenRouter);
+app.use("/tickets", ticketRouter);
 
 module.exports = app;
