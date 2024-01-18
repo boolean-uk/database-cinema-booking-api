@@ -1,7 +1,8 @@
+const { query } = require("express");
 const prisma = require("../utils/prisma");
 
 const getMoviesDB = async (filter) => {
-    let query = {
+    const query = {
         title: filter.title && filter.title,
         runtimeMins: filter.runtimeMins && filter.runtimeMins,
         runtimeMins: {
@@ -27,15 +28,19 @@ const createMovieDB = async (title, runtimeMins) =>
         },
     });
 
-const getMovieByIdDB = async (id) =>
-    await prisma.movie.findUnique({
-        where: {
-            id,
-        },
+const getMovieDB = async (id) => {
+
+    const query = {
+        id: id && id,
+    };
+
+    return await prisma.movie.findUnique({
+        where: query,
         include: {
             screenings: true,
         },
     });
+};
 
 const updateMovieByIdDB = async (id, title, runtimeMins) =>
     await prisma.movie.update({
@@ -54,6 +59,6 @@ const updateMovieByIdDB = async (id, title, runtimeMins) =>
 module.exports = {
     getMoviesDB,
     createMovieDB,
-    getMovieByIdDB,
+    getMovieDB,
     updateMovieByIdDB,
 };
