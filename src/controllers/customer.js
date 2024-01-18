@@ -3,7 +3,8 @@ const {
   createCustomerDb,
   updateCustomerByIdDb,
   findCustomerByIdDb,
-} = require("../domains/customer.js")
+} 
+ = require("../domains/customer.js")
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body

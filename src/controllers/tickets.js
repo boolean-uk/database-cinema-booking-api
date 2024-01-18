@@ -1,6 +1,7 @@
-const { findCustomerByIdDb } = require("../domains/customers")
-const { findScreeningByIdDb } = require("../domains/screenings")
-const { createTicketDb } = require("../domains/tickets")
+const { findCustomerByIdDb } = require("../domains/customer.js")
+const { createTicketDb } = require("../domains/tickets.js")
+const { findScreeningByIdDb } = require("../domains/screening.js")
+
 //Handles the creation of a ticket and extracts screeningId and customerId
 const createTicket = async (req, res) => {
   try {
