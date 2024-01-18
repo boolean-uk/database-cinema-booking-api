@@ -45,10 +45,8 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   try {
-    const {
-      id,
-      name
-    } = req.body
+    const { id } = req.params
+    const { name } = req.body
     const updatedCustomer = await updateCustomerDb(id, name)
 
     if (!updatedCustomer) {
