@@ -1,7 +1,7 @@
 const {
     getMoviesDB,
     createMovieDB,
-    getMovieByIdDB,
+    getMovieDB,
     updateMovieByIdDB,
 } = require("../domains/movie.js");
 
@@ -19,20 +19,17 @@ const getMovies = async (req, res) => {
 
 const createMovie = async (req, res) => {
     try {
-
         const { title, runtimeMins } = req.body;
-        const filter = {title: title}
-        const foundMovie = await getMoviesDB(filter)
-        
-        if ( foundMovie.length !== 0) {
+        const filter = { title: title };
+        const foundMovie = await getMoviesDB(filter);
+
+        if (foundMovie.length !== 0) {
             return res
                 .status(409)
                 .json(`Failed to create movie: ${title} in use.`);
         }
-
         const newMovie = await createMovieDB(title, runtimeMins);
         res.status(201).json({ movie: newMovie });
-        
     } catch (err) {
         const recievedColumns = Object.keys(req.body);
         res.status(400).json(
@@ -42,9 +39,18 @@ const createMovie = async (req, res) => {
     }
 };
 
-const getMovieById = async (req, res) => {
+const getMovie = async (req, res) => {
     const id = Number(req.params.id);
-    const foundMovie = await getMovieByIdDB(id);
+
+    if (!id) {
+        return res.status(400).json("Please provide an ID");
+    }
+
+    const foundMovie = await getMovieDB(id);
+    if (foundMovie === null) {
+        return res.status(404).json(`No movie found with id: ${req.params.id}`);
+    }
+
     res.status(200).json({ movie: foundMovie });
 };
 
@@ -58,6 +64,6 @@ const updateMovieById = async (req, res) => {
 module.exports = {
     getMovies,
     createMovie,
-    getMovieById,
+    getMovie,
     updateMovieById,
 };
