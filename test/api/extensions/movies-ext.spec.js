@@ -10,7 +10,7 @@ const { createScreen } = require("../../helpers/createScreen");
 const { updateMovie } = require("../../../src/controllers/movie");
 
 describe("Movie Endpoint", () => {
-  xdescribe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
+  describe("GET/movies?runtimeLt={} and/or runtimeGt={}", () => {
     beforeEach(async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Dodgeball", 120);
@@ -38,7 +38,7 @@ describe("Movie Endpoint", () => {
       expect(response.body.movies.length).toEqual(1);
     });
   });
-  xdescribe("POST/movies", () => {
+  describe("POST/movies", () => {
     it("throws a 409 when the title is already in use", async () => {
       await createMovie("Dodgeball", 120);
       const request = {
@@ -81,7 +81,7 @@ describe("Movie Endpoint", () => {
       expect(response.body.movie.screenings.length).toEqual(2);
     });
   });
-  xdescribe("GET/movies/:id", () => {
+  describe("GET/movies/:id", () => {
     beforeEach(async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Dodgeball", 120);
@@ -113,7 +113,7 @@ describe("Movie Endpoint", () => {
     });
   });
   describe("PUT/movie/{id}", () => {
-    xit("throws a 409 if the inputed title already exists", async () => {
+    it("throws a 409 if the inputed title already exists", async () => {
       await createMovie("The Fellowship of the Ring", 178);
       await createMovie("Scream", 113);
       const originalMovie = await createMovie("Dodgeball", 120);
@@ -174,8 +174,7 @@ describe("Movie Endpoint", () => {
         ],
       };
       const response = await supertest(app).put(`/movies/${originalMovie.id}`).send(data);
-      console.log(response.body.movie.screenings)
-      expect(response.body.movie.screenings).not.toBeUndefined()
+      expect(response.body.movie.screenings[0]).not.toBeUndefined()
       expect(response.body.movie.screenings.length).toEqual(3)
     })
     // it("when there are no screenings, it adds them", async () => {
