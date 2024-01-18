@@ -58,11 +58,13 @@ const getCustomerById = async (req, res) => {
 
   try {
     const customer = await getCustomerByIdDb(id)
-    if (customer === null) {
-      return res.status(404).json({ error: `Supplied id ${id} does not exist` })
-    }
     return res.json({ customer })
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code = "P2025") {
+        return res.status(404).json({ error: 'not found'})
+      }
+    }
     return res.status(404)
   }
 }
