@@ -12,6 +12,7 @@ const {
   getMovieByIdDb,
   updateMovieDb,
   getMovieByTitleDb,
+  updateMovieWithScreeningsDb,
 } = require("../domains/movie");
 
 const getMovies = async (req, res) => {
@@ -124,7 +125,13 @@ const updateMovie = async (req, res) => {
     res.status(400).json({ error: "Missing fiels in request body" });
     return;
   }
+
   try {
+    if(data.screenings) {
+    	findOrCreateScreenIn(data.screenings)
+      updatedMovie = await updateMovieWithScreeningsDb(idNum, data)
+      return
+    }
     updatedMovie = await updateMovieDb(idNum, data);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
