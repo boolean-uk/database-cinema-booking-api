@@ -7,6 +7,19 @@ const getMoviesDb = async () =>
     },
   });
 
+const createMovieDb = async (title, runtimeMins, screenings = [] ) =>
+  await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+      screenings: {
+        createMany: {
+          data: screenings,
+        },
+      },
+    },
+  });
+
 const getMovieByIdDb = async (id) =>
   await prisma.movie.findUnique({
     where: {
@@ -17,4 +30,4 @@ const getMovieByIdDb = async (id) =>
     },
   });
 
-module.exports = { getMoviesDb, getMovieByIdDb };
+module.exports = { getMoviesDb,createMovieDb, getMovieByIdDb };

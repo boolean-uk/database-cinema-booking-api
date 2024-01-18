@@ -1,8 +1,18 @@
-const { getMoviesDb,getMovieByIdDb } = require("../domains/movie");
+const { getMoviesDb,createMovieDb,getMovieByIdDb } = require("../domains/movie");
 
 const getAllMovies = async (req,res) => {
     const movies = await getMoviesDb();
     return res.status(200).json({movies: movies});
+}
+
+const createMovie = async (req,res) => {
+    try {
+        const {title,runtimeMins,screenings} = req.body;
+        const movie = await createMovieDb(title,runtimeMins,screenings);
+        return res.status(201).json({movie: movie});
+    }catch (err) {
+        return res.status(400).json({error: err.message});
+    }
 }
 
 const getMovieById = async (req,res) => {
@@ -21,4 +31,4 @@ const getMovieById = async (req,res) => {
 
 
 
-module.exports = { getAllMovies,getMovieById };
+module.exports = { getAllMovies,createMovie,getMovieById };
