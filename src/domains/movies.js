@@ -35,8 +35,27 @@ const getMovieByIdDb = async (req, res) => {
     return movieId
 }
 
+const updateMovieByIdDb = async (req, res) => {
+    const id = Number(req.params.id)
+    const {title, runtimeMins} = req.body
+    const updateMovie = await prisma.movie.update({
+        where: {
+            id: id
+        },
+        data: {
+            title,
+            runtimeMins
+        },
+        include: {
+            screenings: true
+        }
+    })
+    return updateMovie
+}
+ 
 module.exports = {
     moviesDb,
     createMovieDb,
-    getMovieByIdDb
+    getMovieByIdDb, 
+    updateMovieByIdDb
 }
