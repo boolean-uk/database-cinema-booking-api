@@ -1,5 +1,11 @@
 const { screen } = require('../utils/prisma')
 
+const getAllScreensDb = async () => {
+  const allScreens = await screen.findMany()
+
+  return allScreens
+}
+
 const createScreenDb = async (number, screenings) => {
   const createdScreen = await screen.create({
     data: {
@@ -17,13 +23,7 @@ const createScreenDb = async (number, screenings) => {
   return createdScreen
 }
 
-const getAllScreensDb = async () => {
-  const allScreens = await screen.findMany()
-
-  return allScreens
-}
-
 module.exports = {
-  createScreenDb,
-  getAllScreensDb
+  getAllScreensDb,
+  createScreenDb
 }

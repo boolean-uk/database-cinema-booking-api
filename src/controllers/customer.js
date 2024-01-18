@@ -13,6 +13,17 @@ const {
   errorCreator
 } = require('../helpers/errorsHandler.js')
 
+// Global functions
+const findCustomerById = async (customerId) => {
+  const foundCustomer = await getCustomerByIdDb(customerId)
+
+  if (!foundCustomer) {
+    throw errorCreator('A customer does not exist with the provided id', 404)
+  }
+
+  return foundCustomer
+}
+
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body
 
@@ -41,12 +52,7 @@ const updateCustomerById = async (req, res, next) => {
 
   try {
     fieldsErrorHandler([name])
-
-    const foundCustomer = await getCustomerByIdDb(id)
-
-    if (!foundCustomer) {
-      throw errorCreator('Customer with that id does not exist', 404)
-    }
+    await findCustomerById(id)
 
     const updatedCustomer = await updateCustomerByIdDb({ name, contact }, id)
 
@@ -60,7 +66,8 @@ const updateCustomerById = async (req, res, next) => {
 
 module.exports = {
   createCustomer,
-  updateCustomerById
+  updateCustomerById,
+  findCustomerById
 }
 
 // Prisma error codes: https://www.prisma.io/docs/orm/reference/error-reference#common
