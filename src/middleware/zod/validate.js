@@ -2,6 +2,7 @@ const Types = require("../../utils/types.d");
 
 /**
  * @param {import("zod").AnyZodObject} schema
+ * @returns {(req: Types.Request, res: Types.Response, next: Types.NextFunction) => void}
  */
 function validateBody(schema) {
   /**
