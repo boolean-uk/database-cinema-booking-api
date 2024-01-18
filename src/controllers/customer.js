@@ -1,48 +1,74 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { PrismaClientKnownRequestError } = require('@prisma/client')
 
-const createCustomer = async (req, res) => {
-  const {
-    name,
-    phone,
-    email
-  } = req.body
+// DB
+const {
+  createCustomerDb,
+  updateCustomerByIdDb,
+  getCustomerByIdDb
+} = require('../domains/customer.js')
 
-  if (!name || !phone || !email) {
-    return res.status(400).json({
-      error: "Missing fields in request body"
-    })
+// Error handler
+const {
+  fieldsErrorHandler,
+  errorCreator
+} = require('../helpers/errorsHandler.js')
+
+// Global functions
+const findCustomerById = async (customerId) => {
+  const foundCustomer = await getCustomerByIdDb(customerId)
+
+  if (!foundCustomer) {
+    throw errorCreator('A customer does not exist with the provided id', 404)
   }
 
-  // Try-catch is a very common way to handle errors in JavaScript.
-  // It allows us to customise how we want errors that are thrown to be handled.
-  // Read more here: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch
+  return foundCustomer
+}
 
-  // Here, if Prisma throws an error in the process of trying to create a new customer,
-  // instead of the Prisma error being thrown (and the app potentially crashing) we exit the
-  // `try` block (bypassing the `res.status` code) and enter the `catch` block.
+const createCustomer = async (req, res) => {
+  const { name, phone, email } = req.body
+
   try {
+    fieldsErrorHandler([name, phone, email])
+
     const createdCustomer = await createCustomerDb(name, phone, email)
 
     res.status(201).json({ customer: createdCustomer })
-  } catch (e) {
-    // In this catch block, we are able to specify how different Prisma errors are handled.
-    // Prisma throws errors with its own codes. P2002 is the error code for
-    // "Unique constraint failed on the {constraint}". In our case, the {constraint} is the
-    // email field which we have set as needing to be unique in the prisma.schema.
-    // To handle this, we return a custom 409 (conflict) error as a response to the client.
-    // Prisma error codes: https://www.prisma.io/docs/orm/reference/error-reference#common
-    // HTTP error codes: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        return res.status(409).json({ error: "A customer with the provided email already exists" })
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return res
+          .status(409)
+          .json({ error: 'A customer with the provided email already exists' })
       }
     }
 
-    res.status(500).json({ error: e.message })
+    res.status(error.status ?? 500).json({ error: error.message })
+  }
+}
+
+const updateCustomerById = async (req, res, next) => {
+  const { id } = req.params
+  const { name, contact } = req.body
+
+  try {
+    fieldsErrorHandler([name])
+    await findCustomerById(id)
+
+    const updatedCustomer = await updateCustomerByIdDb({ name, contact }, id)
+
+    res.status(201).json({
+      customer: updatedCustomer
+    })
+  } catch (error) {
+    res.status(error.status ?? 500).json({ error: error.message })
   }
 }
 
 module.exports = {
-  createCustomer
+  createCustomer,
+  updateCustomerById,
+  findCustomerById
 }
+
+// Prisma error codes: https://www.prisma.io/docs/orm/reference/error-reference#common
+// HTTP error codes: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
