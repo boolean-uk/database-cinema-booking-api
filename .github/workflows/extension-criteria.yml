@@ -45,5 +45,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: test:migration
+    - run: npm run test:migration
     - run: npx jest --bail -i test/api/extensions
