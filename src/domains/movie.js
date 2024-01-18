@@ -1,10 +1,5 @@
-// TODO: update how screenings are processed so that only one screen
-// TODO: make screen.number unique
-// exists for a given screen number
-// TODO: update "udpateMovie" so that new screenings replace old ones instead of being added to them
-
-
 const prisma = require("../utils/prisma");
+const { getScreensByDb, createScreenDb } = require("./screen");
 
 const getMoviesDb = async () =>
   await prisma.movie.findMany({ include: { screenings: true } });
@@ -95,33 +90,53 @@ const getMovieByTitleDb = async (title) =>
   });
 
 const updateMovieDb = async (id, data) => {
+	//TODO: REFACTOR
+  const { title, runtimeMins, screenings } = data;
 
-  const updatedData = {
-    title: data.title,
-    runtimeMins: data.runtimeMins,
-  };
-  if (data.screenings) {
+  screenings.map(async (screening) => {
+    const screen = screening.screen;
+    const num = screen.number;
+    const foundScreen = await getScreensByDb(num);
+    if (foundScreen.length === 0) {
+      createScreenDb(screen);
+    }
+  });
+
+  const updatedData = { title, runtimeMins };
+
+  if (screenings) {
     updatedData.screenings = {
-      create: data.screenings.map((screening) => ({
+      create: screenings.map((screening) => ({
         startsAt: screening.startsAt,
         screen: {
-          create: {
-            number: screening.screen.number
+          connect: {
+            number: screening.screen.number,
           },
         },
       })),
     };
   }
 
-  return await prisma.movie.update({
-    where: {
-      id: id,
+  await prisma.movie.update({
+    where: { id },
+    data: {
+      screenings: {
+        deleteMany: {}
+      },
     },
-    data: updatedData,
     include: {
-      screenings: true,
+      screenings: { include: { screen: true } },
     },
   });
+
+  const result = await prisma.movie.update({
+    where: { id },
+    data: updatedData,
+    include: {
+      screenings: { include: { screen: true } },
+    },
+  });
+  return result;
 };
 module.exports = {
   getMoviesDb,
