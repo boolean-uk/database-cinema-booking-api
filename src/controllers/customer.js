@@ -55,8 +55,16 @@ const getCustomers = async (req, res) => {
 
 const getCustomerById = async (req, res) => {
   const id = Number(req.params.id)
-  const customer = await getCustomerByIdDb(id)
-  return res.json({ customer })
+
+  try {
+    const customer = await getCustomerByIdDb(id)
+    if (customer === null) {
+      return res.status(404).json({ error: `Supplied id ${id} does not exist` })
+    }
+    return res.json({ customer })
+  } catch (error) {
+    return res.status(404)
+  }
 }
 
 const updateCustomer = async (req, res) => {
@@ -80,8 +88,10 @@ const updateCustomer = async (req, res) => {
     return res.status(201).json({ customer })
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code = "P2025") {
+        return res.status(404).json({ error: 'not found'})
+      }
       console.log(`known Prisma error: ${error}`)
-      res.status(error.code).json({ error: error.message })
     }
     res.status(500).json({
       error: error.message
