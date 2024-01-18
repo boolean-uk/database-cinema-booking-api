@@ -17,5 +17,5 @@ const createScreenDb = async (data) =>
 
 module.exports = {
   createScreenDb,
-  getScreenByDb
+  getScreensByDb
 };
