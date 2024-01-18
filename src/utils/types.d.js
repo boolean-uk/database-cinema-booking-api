@@ -2,7 +2,7 @@
  * @typedef {import("express").Request} Request
  * @typedef {import("express").Response} Response
  * @typedef {import("express").NextFunction} NextFunction
- * 
+ *
  * @typedef {{screenId: Number, startsAt: String}} ScreeningWithMovie
  * @typedef {{movieId: Number, startsAt: String}} ScreeningWithScreen
  *
@@ -10,6 +10,8 @@
  * @typedef {import("@prisma/client").Contact} Contact
  * @typedef {import("@prisma/client").Movie} Movie
  * @typedef {import("@prisma/client").Screen} Screen
+ * @typedef {import("@prisma/client").Screening} Screening
+ * @typedef {import("@prisma/client").Ticket} Ticket
  */
 const Types = {};
 
