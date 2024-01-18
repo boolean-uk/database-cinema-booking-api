@@ -5,13 +5,13 @@ const {
     getMovies,
     createMovie,
     getMovie,
-    updateMovieById,
+    updateMovie,
 } = require("../controllers/movie.js");
 
 router.get("/", getMovies);
 router.get("/:id", getMovie);
 router.post("/", createMovie);
-router.put("/:id", updateMovieById);
+router.put("/:id", updateMovie);
 
 
 module.exports = router;

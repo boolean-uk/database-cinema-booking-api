@@ -2,7 +2,7 @@ const {
     getMoviesDB,
     createMovieDB,
     getMovieDB,
-    updateMovieByIdDB,
+    updateMovieDB,
 } = require("../domains/movie.js");
 
 const getMovies = async (req, res) => {
@@ -54,10 +54,12 @@ const getMovie = async (req, res) => {
     res.status(200).json({ movie: foundMovie });
 };
 
-const updateMovieById = async (req, res) => {
+const updateMovie = async (req, res) => {
+
     const id = Number(req.params.id);
-    const { title, runtimeMins } = req.body;
-    const updatedMovie = await updateMovieByIdDB(id, title, runtimeMins);
+    
+    const { title, runtimeMins, screenings} = req.body;
+    const updatedMovie = await updateMovieDB(id, title, runtimeMins, screenings);
     res.status(201).json({ movie: updatedMovie });
 };
 
@@ -65,5 +67,5 @@ module.exports = {
     getMovies,
     createMovie,
     getMovie,
-    updateMovieById,
+    updateMovie,
 };
