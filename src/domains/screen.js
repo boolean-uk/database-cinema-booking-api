@@ -1,5 +1,13 @@
 const prisma = require("../utils/prisma");
 
+const getScreenByDb = async (number) => {
+  await prisma.screen.findUnique({
+    where: {
+      number:number
+    }
+  })
+}
+
 const createScreenDb = async (data) =>
   await prisma.screen.create({
     data: {
@@ -9,4 +17,5 @@ const createScreenDb = async (data) =>
 
 module.exports = {
   createScreenDb,
+  getScreenByDb
 };
