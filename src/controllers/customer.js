@@ -1,5 +1,7 @@
+// TODO: update updateCustomer() to meet ext. criteria (+  write matching spec)
+
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, udpateCustomerDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +45,15 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const udpateCustomer = async (req, res) => {
+  const { id } = req.params
+  const idNum = Number(id)
+  const data = req.body
+  const updatedCustomer = await udpateCustomerDb(idNum, data)
+  res.status(201).json({customer: updatedCustomer})
+}
+
 module.exports = {
-  createCustomer
+  createCustomer, 
+  udpateCustomer
 }
