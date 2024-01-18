@@ -28,7 +28,7 @@ describe("Tickets Endpoint", () => {
 
       expect(response.body.ticket.screening).not.toEqual(undefined);
       expect(response.body.ticket.screening.startsAt).toEqual(
-        movie.screenings[0].startsAt
+        "2022-06-11T18:30:00.000Z"
       );
 
       expect(response.body.ticket.customer).not.toEqual(undefined);
@@ -75,10 +75,10 @@ describe("Tickets Endpoint", () => {
       };
 
       const response1 = await supertest(app)
-        .post("tickets")
+        .post("/tickets")
         .send(invalidCustomerRequest);
       const response2 = await supertest(app)
-        .post("tickets")
+        .post("/tickets")
         .send(invalidScreeningRequest);
 
       expect(response1.status).toEqual(404);
