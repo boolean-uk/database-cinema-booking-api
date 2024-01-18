@@ -14,8 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Tell express to use your routers here
-const customerRouter = require('./routers/customer');
-app.use('/customers', customerRouter);
+const customerRouter = require('./routers/customer')
+app.use('/customers', customerRouter)
+
+const ticketRouter = require("./routers/tickets")
+app.use("/tickets", ticketRouter)
 
 
 module.exports = app
