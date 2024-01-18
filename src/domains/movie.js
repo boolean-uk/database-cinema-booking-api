@@ -1,9 +1,20 @@
-const prisma = require("../utils/prisma")
+const prisma = require("../utils/prisma");
 
-const getMoviesDb = async () => await prisma.movie.findMany({
+const getMoviesDb = async () =>
+  await prisma.movie.findMany({
     include: {
-      screenings: true
-    }
-});
+      screenings: true,
+    },
+  });
 
-module.exports = { getMoviesDb };
+const getMovieByIdDb = async (id) =>
+  await prisma.movie.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+
+module.exports = { getMoviesDb, getMovieByIdDb };
