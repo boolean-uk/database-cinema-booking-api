@@ -10,7 +10,7 @@ function validateBody(schema) {
    * @param {Types.Response} res
    * @param {Types.NextFunction} next
    */
-  return (req, res, next) => {
+  return function (req, res, next) {
     try {
       schema.parse(req.body);
       next();
