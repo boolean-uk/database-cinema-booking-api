@@ -16,8 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 const customerRouter = require("./routers/customer");
 const movieRouter = require("./routers/movie.js");
 const screenRouter = require("./routers/screen.js");
+const ticketRouter = require('./routers/ticket.js')
 app.use("/customers", customerRouter);
 app.use("/movies", movieRouter);
 app.use("/screens", screenRouter);
+app.use('/tickets', ticketRouter )
 
 module.exports = app;
