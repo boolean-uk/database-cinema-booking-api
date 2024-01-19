@@ -7,20 +7,20 @@ const getMoviesDb = async () =>
     },
   });
 
-  const createMovieDb = async (req, res) => {
-    const { title, runtimeMins } =  req.body
-    const movie = await prisma.movie.create({
-      data: {
-        title,
-        runtimeMins,
-        screenings: {}
-      },
-      include: {
-        screenings: true
-      }
-    })
-    return movie
-  }
+const createMovieDb = async (req, res) => {
+  const { title, runtimeMins } = req.body;
+  const movie = await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+      screenings: {},
+    },
+    include: {
+      screenings: true,
+    },
+  });
+  return movie;
+};
 
 const getMovieByIdDb = async (id) =>
   await prisma.movie.findUnique({
@@ -32,23 +32,22 @@ const getMovieByIdDb = async (id) =>
     },
   });
 
-  const updateMovieDb = async (req, res) => {
-    const id = Number(req.params.id)
-    const { title, runtimeMins } = req.body
-    const movie = await prisma.movie.update({
-      where: {
-        id: id
-      },
-      data: {
-        title,
-        runtimeMins
-      },
-      include: {
-        screenings: true
-      }
-    })
-    return movie
-  }
-  
+const updateMovieDb = async (req, res) => {
+  const id = Number(req.params.id);
+  const { title, runtimeMins } = req.body;
+  const movie = await prisma.movie.update({
+    where: {
+      id: id,
+    },
+    data: {
+      title,
+      runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+  return movie;
+};
 
-module.exports = { getMoviesDb,createMovieDb, getMovieByIdDb,updateMovieDb };
+module.exports = { getMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb };

@@ -1,10 +1,9 @@
-// Load our .env file
-require('dotenv').config();
-// Load app
-const app = require('./server.js')
-// Set the port
+require("dotenv").config();
+
+const app = require("./server.js");
+
 const port = process.env.PORT || 4040;
-// Start our API server
+
 app.listen(port, () => {
   console.log(`\n Server is running on http://localhost:${port}\n`);
 });

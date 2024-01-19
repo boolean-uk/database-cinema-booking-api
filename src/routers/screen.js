@@ -1,8 +1,8 @@
-const express = require('express')
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
-const { createScreen } = require('../controllers/screen')
+const { createScreen } = require("../controllers/screen");
 
-router.post('/', createScreen)
+router.post("/", createScreen);
 
-module.exports = router
+module.exports = router;
