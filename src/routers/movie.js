@@ -5,8 +5,8 @@ const theDomainMovie = new DomainMovie();
 
 router.get("/", async (req, res) => {
   try {
-    const allMovies = await theDomainMovie.fetchAllMovies();
-    res.status(200).json({ allMovies });
+    const movies = await theDomainMovie.fetchAllMovies();
+    res.status(200).json({ movies });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
