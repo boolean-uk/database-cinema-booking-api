@@ -1,13 +1,20 @@
-// TODO: update createScreen() to meet ext. criteria (+  write matching spec)
-
 const { PrismaClientKnownRequestError, PrismaClientValidationError } = require("@prisma/client/runtime/library");
-const { createScreenDb, getScreensByDb } = require("../domains/screen");
+const { createScreenDb, createScreenWithScreeningsDb } = require("../domains/screen");
+const { createMovieWithScreeningsDb } = require("../domains/movie");
 
 const createScreen = async (req, res) => {
   const data = req.body;
   try {
-    const screen = await createScreenDb(data);
-    res.status(201).json({ screen: screen });
+    if(!data.screenings) {
+      const screen = await createScreenDb(data);
+      res.status(201).json({ screen: screen });
+      return
+    }
+    if(data.screenings) {
+      const screen = await createScreenWithScreeningsDb(data.number, data.screenings);
+      res.status(201).json({ screen: screen });
+      return
+    }
   } catch (e) {
     if (e instanceof PrismaClientValidationError) {
       if (e.message.endsWith("is missing.")) {
@@ -17,7 +24,7 @@ const createScreen = async (req, res) => {
     }
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
-        res
+        res 
           .status(409)
           .json({ error: "A screen with the provided number already exists" });
         return;
