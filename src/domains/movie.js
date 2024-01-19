@@ -61,18 +61,18 @@ const createMovieWithScreeningsDb = async (title, runtimeMins, screenings) => {
       screenings: true,
     },
   };
+  await findOrCreateScreenIn(screenings)
   movieData.data.screenings = {
     create: screenings.map((screening) => ({
       startsAt: screening.startsAt,
       screen: {
-        create: {
-          number: 1,
+        connect: {
+          number: screening.screen.number,
         },
       },
     })),
   };
-
-  return await prisma.movie.create(movieData);
+    return await prisma.movie.create(movieData);
 };
 
 const getMovieByIdDb = async (id) =>

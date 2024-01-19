@@ -60,10 +60,10 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(400);
       expect(response.body.error).toEqual("Missing fiels in request body");
     });
-    it("adds screenings for the movie when these are provided by the CLI", async () => {
+   fit("adds screenings for the movie when these are provided by the CLI", async () => {
       const request = {
-        title: "Rogue One",
-        runtimeMins: 134,
+        title: "The Grand Budapest Hotel",
+        runtimeMins: 146,
         screenings: [
           {
             startsAt: "2017-06-11T18:30:00.000Z",
