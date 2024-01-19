@@ -1,47 +1,63 @@
-const prisma = require("../utils/prisma");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
-const fetchMoviesDB = async () => {
-  const theMovies = await prisma.movie.findMany({
-    include: {
-      screenings: true,
-    },
-  });
-  return theMovies;
-};
-const generateMovieDB = async (title, runtimeMins) =>
-  await prisma.movie.create({
-    data: {
-      title,
-      runtimeMins,
-    },
-    include: {
-      screenings: true,
-    },
-  });
-const fetchMovieByIdDB = async (id) =>
-  await prisma.movie.findUnique({
-    where: {
-      id: Number(id),
-    },
-    include: {
-      screenings: true,
-    },
-  });
+class DomainMovie {
+  async fetchAllMovies() {
+    try {
+      return await prisma.movie.findMany({
+        include: {
+          screenings: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 
-const updateTheMovieDB = async (id, title, runtimeMins) =>
-  await prisma.movie.update({
-    where: {
-      id: Number(id),
-    },
-    data: { title: title, runtimeMins: runtimeMins },
-    include: {
-      screenings: true,
-    },
-  });
+  async createMovie(title, runtimeMins) {
+    try {
+      return await prisma.movie.create({
+        data: {
+          title,
+          runtimeMins,
+        },
+        include: {
+          screenings: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 
-module.exports = {
-  fetchMoviesDB,
-  generateMovieDB,
-  fetchMovieByIdDB,
-  updateTheMovieDB,
-};
+  async fetchMovieById(id) {
+    try {
+      return await prisma.movie.findUnique({
+        where: { id },
+        include: {
+          screenings: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateMovie(id, title, runtimeMins) {
+    try {
+      return await prisma.movie.update({
+        where: { id },
+        data: {
+          title,
+          runtimeMins,
+          updatedAt: new Date(),
+        },
+        include: {
+          screenings: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+module.exports = DomainMovie;

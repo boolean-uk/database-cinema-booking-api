@@ -11,5 +11,4 @@ const router = express.Router();
 // that looks like http://localhost:4040/customer/register
 router.post("/register", createCustomer);
 router.put("/:id", updateTheCustomer);
-
 module.exports = router;

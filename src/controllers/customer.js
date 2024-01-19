@@ -45,11 +45,19 @@ const createCustomer = async (req, res) => {
 };
 
 const updateTheCustomer = async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const theUpdatedCustomer = await updateTheCustomerDB(id, name);
 
-  const updatedCustomer = await updateTheCustomerDB(id, name);
-  res.status(201).json({ customer: updatedCustomer });
+    if (!theUpdatedCustomer) {
+      return res.status(404).send({ error: "Customer is not  found" });
+    }
+
+    res.status(201).send({ customer: theUpdatedCustomer });
+  } catch (error) {
+    res.status(500).send({ error: "Internal server error " });
+  }
 };
 
 module.exports = {

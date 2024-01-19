@@ -1,39 +1,65 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client");
-const domainMovie = require("../domains/movie");
+const express = require("express");
+const router = express.Router();
+const DomainMovie = require("../domains/movie");
+const theDomainMovie = new DomainMovie();
 
-const fetchMovies = async (req, res) => {
-  const theMovies = await domainMovie.fetchMoviesDB();
-  res.json({ theMovies });
-};
+router.get("/", async (req, res) => {
+  try {
+    const movies = await theDomainMovie.fetchAllMovies();
+    res.status(200).json({ movies });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-const generateMovie = async (request, response) => {
-  const { title, runtimeMins } = request.body;
+router.post("/", async (req, res) => {
+  try {
+    const { title, runtimeMins, screenings } = req.body;
+    const addNewMovie = await theDomainMovie.createMovie(
+      title,
+      runtimeMins,
+      screenings
+    );
+    res.status(201).json({ movie: addNewMovie });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  const movieEntry = await domainMovie.generateMovieDB(title, runtimeMins);
-  response.status(201).json({ movie: movieEntry });
-};
-const fetchMovieById = async (req, res) => {
-  const { id } = req.params;
+router.get("/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const getMovie = await theDomainMovie.fetchMovieById(id);
 
-  const singleMovie = await domainMovie.fetchMovieByIdDB(id);
-  res.json({ singleMovie });
-};
-const updateTheMovie = async (req, res) => {
-  const { id } = req.params;
-  const { title, runtimeMins } = req.body;
+    res
+      .status(getMovie ? 200 : 404)
+      .json(getMovie ? { getMovie } : { message: "Movie not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  const updatedMovie = await domainMovie.updateTheMovieDB(
-    id,
-    title,
-    runtimeMins
-  );
+router.put("/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { title, runtimeMins } = req.body;
 
-  res.status(201).json({ movie: updatedMovie });
-};
+    const theUpdatedMovie = await theDomainMovie.updateMovie(
+      id,
+      title,
+      runtimeMins
+    );
 
-module.exports = {
-  fetchMovies,
-  generateMovie,
-  fetchMovieById,
-  updateTheMovie,
-};
+    res
+      .status(theUpdatedMovie ? 201 : 404)
+      .json(
+        theUpdatedMovie
+          ? { movie: theUpdatedMovie }
+          : { message: "Movie not found" }
+      );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
