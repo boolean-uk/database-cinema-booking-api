@@ -128,11 +128,13 @@ const updateMovie = async (req, res) => {
 
   try {
     if(data.screenings) {
-    	findOrCreateScreenIn(data.screenings)
       updatedMovie = await updateMovieWithScreeningsDb(idNum, data)
+      res.status(201).json({ movie: updatedMovie });
       return
     }
     updatedMovie = await updateMovieDb(idNum, data);
+    res.status(201).json({ movie: updatedMovie });
+    return
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -147,7 +149,6 @@ const updateMovie = async (req, res) => {
     res.status(404).json({ error: "movie not found" });
     return;
   }
-  res.status(201).json({ movie: updatedMovie });
 };
 
 module.exports = {
