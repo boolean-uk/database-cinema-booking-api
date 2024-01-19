@@ -107,38 +107,30 @@ const updateMovieDb = async (id, data) =>
   });
 
 const updateMovieWithScreeningsDb = async (id, data) => {
+  
   const updatedData = {
     title: data.title,
     runtimeMins: data.runtimeMins,
   };
-
-  updatedData.screenings = {
-    create: data.screenings.map((screening) => ({
-      startsAt: screening.startsAt,
-      screen: {
-        connectOrCreate: {
-          where: {
-            number: screening.screen.number,
-          },
-          create: {
-            number: screening.screen.number,
-          },
+  
+  const newScreenings = data.screenings.map((screening) => ({
+    startsAt: screening.startsAt,
+    screen: {
+      connectOrCreate: {
+        where: {
+          number: screening.screen.number,
+        },
+        create: {
+          number: screening.screen.number,
         },
       },
-    })),
-  };
+    },
+  }))
 
-  await prisma.movie.update({
-    where: { id },
-    data: {
-      screenings: {
-        deleteMany: {},
-      },
-    },
-    include: {
-      screenings: { include: { screen: true } },
-    },
-  });
+  updatedData.screenings = {
+    deleteMany: {},
+    create: newScreenings
+  };
 
   const result = await prisma.movie.update({
     where: {
