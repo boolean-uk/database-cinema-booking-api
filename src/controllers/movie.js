@@ -1,9 +1,11 @@
 const {
     getMoviesDB,
     createMovieDB,
-    getMovieDB,
+    getMovieByIdDB,
+    getMovieByTitleDB,
     updateMovieDB,
 } = require("../domains/movie.js");
+const { get } = require("../routers/movie.js");
 
 const getMovies = async (req, res) => {
     const filter = {
@@ -40,33 +42,61 @@ const createMovie = async (req, res) => {
 };
 
 const getMovie = async (req, res) => {
-    const id = Number(req.params.id);
+    const identifier = req.params.identifier;
 
+    if (isNaN(identifier)) {
+        const foundMovie = await getMovieByTitleDB(identifier);
+        return res.status(200).json({ movie: foundMovie });
+    }
+
+    const id = Number(req.params.identifier);
     if (!id) {
         return res.status(400).json("Please provide an ID");
     }
 
-    const foundMovie = await getMovieDB(id);
+    const foundMovie = await getMovieByIdDB(id);
     if (foundMovie === null) {
         return res.status(404).json(`No movie found with id: ${req.params.id}`);
     }
-
     res.status(200).json({ movie: foundMovie });
 };
 
 const updateMovie = async (req, res) => {
-    const id = Number(req.params.id);
+    let movieToUpdate;
+    const filter = {
+        title: req.body.title,
+        runtimeMins: req.body.runtimeMins,
+        screenings: req.body.screenings,
+    };
+
+    const identifier = req.params.identifier;
+
+    if (!isNaN(identifier)) {
+        const id = Number(identifier);
+        try {
+            movieToUpdate = await getMovieByIdDB(id);
+        } catch (err) {
+            return res
+                .status(404)
+                .json(`Movie with id ${identifier} does not exist.`);
+        }
+    } else {
+        try {
+            movieToUpdate = await getMovieByTitleDB(identifier);
+        } catch (err) {
+            return res
+                .status(409)
+                .json(`Movie with title ${identifier} does not exist.`);
+        }
+    }
+
     try {
-        const { title, runtimeMins, screenings } = req.body;
-        const updatedMovie = await updateMovieDB(
-            id,
-            title,
-            runtimeMins,
-            screenings
-        );
+        const updatedMovie = await updateMovieDB(movieToUpdate, filter);
         res.status(201).json({ movie: updatedMovie });
     } catch (err) {
-        res.status(404).json(`Movie with id ${id} does not exist.`);
+        res.status(400).json(
+            `Missing fields required. Only ${filter} was entered.`
+        );
     }
 };
 
