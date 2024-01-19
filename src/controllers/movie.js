@@ -55,12 +55,19 @@ const getMovie = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-
     const id = Number(req.params.id);
-    
-    const { title, runtimeMins, screenings} = req.body;
-    const updatedMovie = await updateMovieDB(id, title, runtimeMins, screenings);
-    res.status(201).json({ movie: updatedMovie });
+    try {
+        const { title, runtimeMins, screenings } = req.body;
+        const updatedMovie = await updateMovieDB(
+            id,
+            title,
+            runtimeMins,
+            screenings
+        );
+        res.status(201).json({ movie: updatedMovie });
+    } catch (err) {
+        res.status(404).json(`Movie with id ${id} does not exist.`);
+    }
 };
 
 module.exports = {
