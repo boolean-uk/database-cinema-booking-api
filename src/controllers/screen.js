@@ -8,17 +8,6 @@ const createScreen = async (req, res) => {
   res.status(201).json({ screen: screen });
 };
 
-const findOrCreateScreenIn = async (array) =>
-  await array.map(async (screening) => {
-    const screen = screening.screen;
-    const num = screen.number;
-    const foundScreen = await getScreensByDb(num);
-    if (foundScreen.length === 0) {
-      createScreenDb(screen);
-    }
-  });
-
 module.exports = {
   createScreen,
-  findOrCreateScreenIn,
 };

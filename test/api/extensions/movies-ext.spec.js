@@ -60,7 +60,7 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(400);
       expect(response.body.error).toEqual("Missing fiels in request body");
     });
-   fit("adds screenings for the movie when these are provided by the CLI", async () => {
+   it("adds screenings for the movie when these are provided by the CLI", async () => {
       const request = {
         title: "The Grand Budapest Hotel",
         runtimeMins: 146,
@@ -152,6 +152,10 @@ describe("Movie Endpoint", () => {
       expect(response.status).toEqual(400);
       expect(response.body.error).toEqual("Missing fiels in request body");
     });
+
+  // passes if run in isolation from the rest
+  // seems to clash with createMovieWithScreeningsDb
+  // -> findOrCreateScreenIn() might not work as intended 
     it("when there are screenings, it replaces them", async () => {
       const screen = await createScreen(1)
       const originalMovie = await createMovie("Dodgeball", 120, screen);

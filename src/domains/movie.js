@@ -1,6 +1,4 @@
-const { findOrCreateScreenIn } = require("../controllers/screen");
 const prisma = require("../utils/prisma");
-const { getScreensByDb, createScreenDb } = require("./screen");
 
 const getMoviesDb = async () =>
   await prisma.movie.findMany({ include: { screenings: true } });
@@ -61,18 +59,22 @@ const createMovieWithScreeningsDb = async (title, runtimeMins, screenings) => {
       screenings: true,
     },
   };
-  await findOrCreateScreenIn(screenings)
   movieData.data.screenings = {
     create: screenings.map((screening) => ({
       startsAt: screening.startsAt,
       screen: {
-        connect: {
-          number: screening.screen.number,
+        connectOrCreate: {
+          where: {
+            number: screening.screen.number,
+          },
+          create: {
+            number: screening.screen.number,
+          },
         },
       },
     })),
   };
-    return await prisma.movie.create(movieData);
+  return await prisma.movie.create(movieData);
 };
 
 const getMovieByIdDb = async (id) =>
@@ -110,41 +112,43 @@ const updateMovieWithScreeningsDb = async (id, data) => {
     runtimeMins: data.runtimeMins,
   };
 
-  await findOrCreateScreenIn(data.screenings)
-
   updatedData.screenings = {
     create: data.screenings.map((screening) => ({
       startsAt: screening.startsAt,
       screen: {
-        connect: {
-          number: screening.screen.number,
+        connectOrCreate: {
+          where: {
+            number: screening.screen.number,
+          },
+          create: {
+            number: screening.screen.number,
+          },
         },
       },
     })),
   };
 
   await prisma.movie.update({
-      where: { id },
-      data: {
-        screenings: {
-          deleteMany: {}
-        },
+    where: { id },
+    data: {
+      screenings: {
+        deleteMany: {},
       },
-      include: {
-        screenings: { include: { screen: true } },
-      },
-    });
- 
+    },
+    include: {
+      screenings: { include: { screen: true } },
+    },
+  });
 
-  const  result = await prisma.movie.update({
-      where: {
-        id: id,
-      },
-      data: updatedData,
-      include: {
-        screenings: true,
-      },
-    });
+  const result = await prisma.movie.update({
+    where: {
+      id: id,
+    },
+    data: updatedData,
+    include: {
+      screenings: true,
+    },
+  });
 
   return result;
 };
