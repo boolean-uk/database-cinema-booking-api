@@ -7,25 +7,22 @@ const moviesList = async (req, res) => {
 }
 
 const newMovie = async (req, res) => {
-    const createdMovie = await createMovieDb(req, res)
-    return res.status(201).json({ createdMovie })
-}
+    const { title, runtimeMins } = req.body;
+    const newMovie = await createMovieDb(title, runtimeMins);
+    res.status(201).json({ movie: newMovie });
+};
 
 const getMovieById = async (req, res) => {
-    const id = Number(req.params.id)
-
-    if(!id) {
-       res.status(404).json({error: "you must provide a valid id"})
-    }
-
     const movie = await getMovieByIdDb(req, res)
-    return res.json({ movie })
+    res.json({ movie })
 }
 
 const updateMovieById = async (req, res) => {
-    const updatedMovie = await updateMovieByIdDb(req, res)
-    return res.status(201).json({ updatedMovie })
-}
+    const id = Number(req.params.id);
+    const { title, runtimeMins } = req.body;
+    const updatedMovie = await updateMovieByIdDb(id, title, runtimeMins);
+    res.status(201).json({ movie: updatedMovie });
+};
 
 module.exports = {
     moviesList,
@@ -33,4 +30,6 @@ module.exports = {
     getMovieById,
     updateMovieById
 }
+
+
 
