@@ -9,9 +9,9 @@ const {
 } = require("../controllers/movie.js");
 
 router.get("/", getMovies);
-router.get("/:id", getMovie);
+router.get("/:identifier", getMovie);
 router.post("/", createMovie);
-router.put("/:id", updateMovie);
+router.put("/:identifier", updateMovie);
 
 
 module.exports = router;
