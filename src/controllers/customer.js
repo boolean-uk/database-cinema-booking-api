@@ -49,8 +49,21 @@ const udpateCustomer = async (req, res) => {
   const { id } = req.params
   const idNum = Number(id)
   const data = req.body
-  const updatedCustomer = await udpateCustomerDb(idNum, data)
-  res.status(201).json({customer: updatedCustomer})
+  const {name, contact} = data
+
+  try{
+    const updatedCustomer = await udpateCustomerDb(idNum, data)
+    if (!name || !contact || !contact.email || !contact.phone) {
+      return res.status(400).json({
+        error: "Missing fields in request body"
+      })
+    }
+    res.status(201).json({customer: updatedCustomer})
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError && e.code === "P2025") {
+      res.status(404).json({error: "customer not found"})
+    }
+  }
 }
 
 module.exports = {
