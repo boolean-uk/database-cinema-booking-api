@@ -153,9 +153,6 @@ describe("Movie Endpoint", () => {
       expect(response.body.error).toEqual("Missing fiels in request body");
     });
 
-  // passes if run in isolation from the rest
-  // seems to clash with createMovieWithScreeningsDb
-  // -> findOrCreateScreenIn() might not work as intended 
     it("when there are screenings, it replaces them", async () => {
       const screen = await createScreen(1)
       const originalMovie = await createMovie("Dodgeball", 120, screen);
@@ -181,7 +178,29 @@ describe("Movie Endpoint", () => {
       expect(response.body.movie.screenings[0]).not.toBeUndefined()
       expect(response.body.movie.screenings.length).toEqual(3)
     })
-    // it("when there are no screenings, it adds them", async () => {
-    // })
+    it("when there are no screenings, it adds them", async () => {
+      const originalMovie = await createMovie("Sweeney Todd", 137);
+      const data = {
+        title: "Sweeney Todd",
+        runtimeMins: 122,
+        screenings: [
+          {
+            startsAt: "2017-06-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+          {
+            startsAt: "2017-08-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+          {
+            startsAt: "2017-09-11T18:30:00.000Z",
+            screen: { number: 2 },
+          },
+        ],
+      };
+      const response = await supertest(app).put(`/movies/${originalMovie.id}`).send(data);
+      expect(response.body.movie.screenings[0]).not.toBeUndefined()
+      expect(response.body.movie.screenings.length).toEqual(3)
+    })
   });
 });
