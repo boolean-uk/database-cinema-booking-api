@@ -48,15 +48,15 @@ const getMovie = async (req, res) => {
         const foundMovie = await getMovieByTitleDB(identifier);
         return res.status(200).json({ movie: foundMovie });
     }
-
+    
     const id = Number(req.params.identifier);
     if (!id) {
         return res.status(400).json("Please provide an ID");
     }
-
+    
     const foundMovie = await getMovieByIdDB(id);
     if (foundMovie === null) {
-        return res.status(404).json(`No movie found with id: ${req.params.id}`);
+        return res.status(404).json(`No movie found with id: ${id}`);
     }
     res.status(200).json({ movie: foundMovie });
 };
