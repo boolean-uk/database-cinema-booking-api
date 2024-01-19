@@ -127,7 +127,7 @@ const updateMovie = async (req, res) => {
   }
 
   try {
-    if(data.screenings) {
+    if (data.screenings) {
       updatedMovie = await updateMovieWithScreeningsDb(idNum, data)
       res.status(201).json({ movie: updatedMovie });
       return
