@@ -1,3 +1,4 @@
+const { all } = require('../server');
 const prisma = require('../utils/prisma')
 
 /**
@@ -21,6 +22,47 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   }
 })
 
+
+const updateCustomerByIdDb = async (id, name) => {
+  const Upcustomer =  await prisma.customer.update({
+    where: {
+      id: id
+    },
+    data: {
+      name: name
+    },
+    include: {
+      contact: true
+    }
+  })
+
+  return Upcustomer;
+}
+
+
+const updateCustomerWithContactByIdDb = async (id, name, phone, email) => {
+  const updatedCustomer = await prisma.customer.update({
+    where: {
+      id: id
+    },
+    data: {
+      name: name,
+      contact: {
+        update: {
+          phone: phone,
+          email: email
+        }
+      }
+    },
+    include: {
+      contact: true
+    }
+  })
+}
+
+
 module.exports = {
-  createCustomerDb
+  createCustomerDb,
+  updateCustomerByIdDb,
+  updateCustomerWithContactByIdDb
 }
