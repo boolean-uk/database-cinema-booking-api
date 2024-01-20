@@ -6,6 +6,17 @@ const getAllMoviesDb = async () => {
   return movies
 }
 
+const createMovieDb = async () => {
+  const newMovie = await movie.create({
+    data:{
+      title,
+      runtimeMins
+    },
+  })
+  return newMovie
+}
+
 module.exports = {
-  getAllMoviesDb
+  getAllMoviesDb,
+  createMovieDb
 }
