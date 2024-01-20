@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client");
-const { getAllMoviesDb } = require("../domains/movies.js");
+const { getAllMoviesDb, getMovieByIdDb, createMovieDb } = require("../domains/movies.js");
 
 const getAllMovies = async (req, res) => {
   const { id, title } = req.query;
@@ -24,6 +24,35 @@ const getAllMovies = async (req, res) => {
   }
 };
 
+const getMovieById = async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Missing fields in query parameters",
+    });
+  }
+
+  try {
+    const movie = await getMovieByIdDb(id);
+
+    if (!movie) {
+      return res.status(404).json({
+        error: "Movie not found",
+      });
+    }
+
+    res.status(200).json({ movie });
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(409).json({ error: "This movie does not exist" });
+      }
+    }
+
+    res.status(500).json({ error: e.message });
+  }
+};
 
 const createMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
@@ -48,5 +77,6 @@ const createMovie = async (req, res) => {
 
 module.exports = {
   getAllMovies,
+  getMovieById,
   createMovie
 };
