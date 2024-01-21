@@ -1,3 +1,4 @@
+const { PrismaClientKnownRequestError } = require("@prisma/client");
 const { getMovieListDb } = require("../domains/movie.js");
 
 const getMovieList = async (req, res) => {
