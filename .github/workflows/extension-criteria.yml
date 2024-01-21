@@ -36,7 +36,6 @@ jobs:
           - 5432:5432
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test?schema=prisma
-      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test?schema=prisma
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -45,5 +44,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm run test:migration
+    - run: npx prisma migrate reset --force --skip-seed
     - run: npx jest --bail -i test/api/extensions
