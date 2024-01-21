@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon ./src/index.js",
+    "test:migration": "node test/testDbMigration.js",
     "test": "npx jest -i test/api/routes",
     "test-extensions": "npx jest -i test/api/extensions --forceExit"
   },
