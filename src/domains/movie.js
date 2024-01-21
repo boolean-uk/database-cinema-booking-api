@@ -1,5 +1,6 @@
 const prisma = require("../utils/prisma.js");
 
+//get movies
 const getMovieListDb = async () =>
   await prisma.movie.findMany({
     include: {
@@ -7,4 +8,16 @@ const getMovieListDb = async () =>
     },
   });
 
-module.exports = { getMovieListDb };
+  //create movies
+const postMovieDb = async (title, runtimeMins) =>
+  await prisma.movie.create({
+    data: {
+      title,
+      runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+
+module.exports = { getMovieListDb, postMovieDb };
