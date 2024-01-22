@@ -9,7 +9,7 @@ const getAllMoviesDb = async () => {
 const getMovieByIdDb = async () =>{
   const foundMovie = await movie.findUnique({
     where: {
-      id: movieId,
+      id: id,
     },
   });
 
@@ -26,8 +26,20 @@ const createMovieDb = async () => {
   return newMovie
 }
 
+const updateMovieDb = async (movieId, updatedData) => {
+  const updatedMovie = await movie.update({
+    where: {
+      id: movieId,
+    },
+    data: updatedData,
+  });
+
+  return updatedMovie;
+};
+
 module.exports = {
   getAllMoviesDb,
   getMovieByIdDb,
-  createMovieDb
+  createMovieDb,
+  updateMovieDb
 }
