@@ -3,6 +3,7 @@ const {
   getMovieListDb,
   postMovieDb,
   getMovieByIdDb,
+  updateMovieDb,
 } = require("../domains/movie.js");
 
 //Get Movies
@@ -25,4 +26,12 @@ const getMovieById = async (req, res) => {
   res.status(200).json({ movie: foundMovie });
 };
 
-module.exports = { getMovieList, postMovie, getMovieById };
+//update movie by id
+const updateMovieById = async (req, res) => {
+  const id = Number(req.params.id);
+  const { title, runtimeMins } = req.body;
+  const updatedMovie = await updateMovieDb(id,title,runtimeMins);
+  res.status(201).json({movie:updatedMovie})
+};
+
+module.exports = { getMovieList, postMovie, getMovieById, updateMovieById };
