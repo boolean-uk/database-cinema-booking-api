@@ -20,6 +20,6 @@ const screenRouter = require("./routers/screen.js");
 
 app.use('/customers', customerRouter);
 app.use("/movies", movieRouter);
-app.use("/screen", screenRouter);
+app.use("/screens", screenRouter);
 
 module.exports = app
