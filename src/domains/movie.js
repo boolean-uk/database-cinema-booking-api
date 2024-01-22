@@ -1,37 +1,53 @@
-const { movie } = require('../utils/prisma')
+const prisma = require("../utils/prisma");
 
-const getAllMoviesDb = async () => {
-  const movies = await movie.findMany()
-
-  return movies
-}
-
-const getMovieByIdDb = async () =>{
-  const foundMovie = await movie.findUnique({
+const getAllMoviesDb = async (runtimeMins) => {
+  const movies = await prisma.movie.findMany({
     where: {
-      id: id,
+      runtimeMins,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+
+  return movies;
+};
+
+const getMovieByIdDb = async (id) => { // Added id as a parameter
+  const foundMovie = await prisma.movie.findUnique({
+    where: {
+      id: id, // Use the provided id parameter
+    },
+    include: {
+      screenings: true,
     },
   });
 
   return foundMovie;
 };
 
-const createMovieDb = async () => {
-  const newMovie = await movie.create({
-    data:{
-      title,
-      runtimeMins
+const createMovieDb = async (title, runtimeMins) => {
+  const newMovie = await prisma.movie.create({
+    data: {
+      title: title,
+      runtimeMins: runtimeMins,
     },
-  })
-  return newMovie
-}
+    include: {
+      screenings: true,
+    },
+  });
+  return newMovie;
+};
 
-const updateMovieDb = async (movieId, updatedData) => {
-  const updatedMovie = await movie.update({
+const updateMovieDb = async (id, title, runtimeMins) => { // Added title and runtimeMins as parameters
+  const updatedMovie = await prisma.movie.update({
     where: {
-      id: movieId,
+      id: id,
     },
-    data: updatedData,
+    data: {
+      title: title,
+      runtimeMins: runtimeMins,
+    },
   });
 
   return updatedMovie;
@@ -41,5 +57,5 @@ module.exports = {
   getAllMoviesDb,
   getMovieByIdDb,
   createMovieDb,
-  updateMovieDb
-}
+  updateMovieDb,
+};

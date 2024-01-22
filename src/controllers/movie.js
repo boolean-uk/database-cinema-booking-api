@@ -1,56 +1,39 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client");
-const { getAllMoviesDb, getMovieByIdDb, createMovieDb, updateMovieDb } = require("../domains/movies.js");
+const {
+  getAllMoviesDb,
+  getMovieByIdDb,
+  createMovieDb,
+  updateMovieDb,
+} = require("../domains/movies");
 
 const getAllMovies = async (req, res) => {
-  const { id, title } = req.query;
-  if (!id || !title) {
-    return res.status(400).json({
-      error: "Missing fields in query parameters",
-    });
-  }
-
+  const { runtimeMins } = req.query;
   try {
-    const allMovies = await getAllMoviesDb(id, title);
-
+    const allMovies = await getAllMoviesDb(runtimeMins);
     res.status(200).json({ movies: allMovies });
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        return res.status(409).json({ error: "This movie does not exist" });
-      }
-    }
-
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getMovieById = async (req, res) => {
-  const { id } = req.query;
-
-  if (!id) {
-    return res.status(400).json({
-      error: "Missing fields in query parameters",
-    });
-  }
-
   try {
-    const movie = await getMovieByIdDb(id);
+    const { id } = req.params;
+    const movieFound = await getMovieByIdDb(id);
 
-    if (!movie) {
-      return res.status(404).json({
-        error: "Movie not found",
-      });
+    if (!movieFound) {
+      return res.status(404).json({ error: 'Movie not found' });
     }
 
-    res.status(200).json({ movie });
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        return res.status(409).json({ error: "This movie does not exist" });
+    return res.status(200).json({ movie: movieFound });
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return res.status(400).json({ error: 'Invalid movie ID' });
       }
     }
 
-    res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -59,24 +42,26 @@ const createMovie = async (req, res) => {
 
   if (!title || !runtimeMins) {
     return res.status(400).json({
-      error:'Missing fields in request body',
-    })
+      error: 'Missing fields in request body',
+    });
   }
-  try{
-    const newMovie = await createMovieDb(title, runtimeMins)
-    res.status(201).json({ movie: newMovie })
+  try {
+    const newMovie = await createMovieDb(title, runtimeMins);
+    res.status(201).json({ movie: newMovie });
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === 'P2002') {
-        return res.status(409).json({ error: 'A movie with the same title already exists' });
+        return res
+          .status(409)
+          .json({ error: 'A movie with the same title already exists' });
       }
     }
     res.status(500).json({ error: e.message });
   }
-}
+};
 
 const updateMovie = async (req, res) => {
-  const { id } = req.params;  // Assuming the movie ID is in the route parameters
+  const { id } = req.params;
   const { title, runtimeMins } = req.body;
 
   if (!id || !title || !runtimeMins) {
@@ -107,9 +92,10 @@ const updateMovie = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
 module.exports = {
   getAllMovies,
   getMovieById,
   createMovie,
-  updateMovie
+  updateMovie,
 };
