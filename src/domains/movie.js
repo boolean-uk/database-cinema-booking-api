@@ -48,6 +48,9 @@ const updateMovieDb = async (id, title, runtimeMins) => { // Added title and run
       title: title,
       runtimeMins: runtimeMins,
     },
+    include: {
+      screenings: true
+    }
   });
 
   return updatedMovie;

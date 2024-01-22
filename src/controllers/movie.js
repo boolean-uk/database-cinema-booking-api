@@ -17,8 +17,8 @@ const getAllMovies = async (req, res) => {
 };
 
 const getMovieById = async (req, res) => {
+  const id = Number(req.params.id)
   try {
-    const { id } = req.params;
     const movieFound = await getMovieByIdDb(id);
 
     if (!movieFound) {
@@ -61,37 +61,17 @@ const createMovie = async (req, res) => {
 };
 
 const updateMovie = async (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id)
   const { title, runtimeMins } = req.body;
-
-  if (!id || !title || !runtimeMins) {
-    return res.status(400).json({
-      error: 'Missing fields in request body',
-    });
+  const movieFound = await getMovieByIdDb(id)
+  if(!movieFound){
+    return res.status(400).json({ error: 'Movie not found.' });
   }
+  const updatedMovie = await updateMovieDb (id, title, runtimeMins)
+  return res.status(201).json({movie: updatedMovie})
+}
 
-  try {
-    const existingMovie = await getMovieByIdDb(id);
-
-    if (!existingMovie) {
-      return res.status(404).json({
-        error: 'Movie not found',
-      });
-    }
-
-    const updatedMovie = await updateMovieDb(id, { title, runtimeMins });
-
-    res.status(200).json({ movie: updatedMovie });
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (e.code === 'P2002') {
-        return res.status(409).json({ error: 'This movie does not exist' });
-      }
-    }
-
-    res.status(500).json({ error: e.message });
-  }
-};
+  
 
 module.exports = {
   getAllMovies,
