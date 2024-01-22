@@ -1,5 +1,9 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client");
-const { getMovieListDb, postMovieDb } = require("../domains/movie.js");
+const {
+  getMovieListDb,
+  postMovieDb,
+  getMovieByIdDb,
+} = require("../domains/movie.js");
 
 //Get Movies
 const getMovieList = async (req, res) => {
@@ -14,4 +18,11 @@ const postMovie = async (req, res) => {
   res.status(201).json({ movie: newMovie });
 };
 
-module.exports = { getMovieList, postMovie };
+//get movie by id
+const getMovieById = async (req, res) => {
+  const id = Number(req.params.id);
+  const foundMovie = await getMovieByIdDb(id);
+  res.status(200).json({ movie: foundMovie });
+};
+
+module.exports = { getMovieList, postMovie, getMovieById };
