@@ -4,7 +4,7 @@ const {
   getMovieByIdDb,
   createMovieDb,
   updateMovieDb,
-} = require("../domains/movies");
+} = require("../domains/movie");
 
 const getAllMovies = async (req, res) => {
   const { runtimeMins } = req.query;
