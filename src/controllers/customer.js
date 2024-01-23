@@ -1,5 +1,11 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { 
+  createCustomerDb,
+  getCustomersDb,
+  getCustomerByIdDb,
+  updateCustomerNameDb,
+  updateCustomerContactDb
+} = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +49,76 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const getCustomers = async (req, res) => {
+  const customers = await getCustomersDb()
+  return res.json({ customers })
+}
+
+const getCustomerById = async (req, res) => {
+  const id = Number(req.params.id)
+
+  try {
+    const customer = await getCustomerByIdDb(id)
+    return res.json({ customer })
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code = "P2025") {
+        return res.status(404).json({ error: 'not found'})
+      }
+    }
+    return res.status(404)
+  }
+}
+
+const updateCustomer = async (req, res) => {
+  const id = Number(req.params.id)
+  const { name, phone, email } = req.body
+
+  if (!id) {
+    return res.json(400).json({
+      error: `Supplied id ${id} is not valid`
+    })
+  }
+
+  if (!name) {
+    return res.status(400).json({
+      error: 'Missing fields in request body'
+    })
+  }
+
+  try {
+    const customer = await updateCustomerNameDb(id, name)
+    
+    if (customer.contact) {
+      try {
+        const contact = {}
+        if (phone) contact.phone = phone
+        if (email) contact.email = email
+    
+        const customer = await updateCustomerContactDb(id, contact)
+
+        return res.status(201).json({ customer })
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code = "P2025") {
+            return res.status(404).json({ error: 'not found'})
+          }
+          console.log(`known Prisma error: ${error}`)
+        }
+        res.status(500).json({
+          error: error.message
+        })
+      }
+    }
+
+  } catch (error) {
+    return res.status(404).json({ error: 'customer does not exist' })
+  }
+}
+
 module.exports = {
-  createCustomer
+  createCustomer,
+  getCustomers,
+  getCustomerById,
+  updateCustomer
 }

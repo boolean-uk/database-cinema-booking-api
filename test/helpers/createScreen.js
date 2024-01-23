@@ -9,5 +9,5 @@ const createScreen = async (number) => {
 }
 
 module.exports = {
-  createScreen
+    createScreen
 }
