@@ -43,7 +43,7 @@ const updateMoviebyId = async (req, res) => {
   const movieId = parseInt(req.params.id);
   const { title, runtimeMins } = req.body;
   const movie = await updateMoviebyIdDb(movieId, title, runtimeMins);
-  res.status(200).json({ movie });
+  res.status(201).json({ movie });
 };
 
 module.exports = { getAllMovies, createAMovie, getAMovieById, updateMoviebyId };
