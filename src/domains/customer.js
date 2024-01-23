@@ -40,7 +40,7 @@ const getCustomerByIdDb = async (id) => await prisma.customer.findUnique({
   }
 })
 
-const updateCustomerDb = async (id, name) => await prisma.customer.update({
+const updateCustomerNameDb = async (id, name) => await prisma.customer.update({
   where: {
     id
   },
@@ -52,9 +52,22 @@ const updateCustomerDb = async (id, name) => await prisma.customer.update({
   }
 })
 
+const updateCustomerContactDb = async (id, contact) => await prisma.customer.update({
+  where: {
+    id
+  },
+  data: {
+    contact: contact
+  },
+  include: {
+    contact: true
+  }
+})
+
 module.exports = {
   createCustomerDb,
   getCustomersDb,
   getCustomerByIdDb,
-  updateCustomerDb
+  updateCustomerNameDb,
+  updateCustomerContactDb
 }
