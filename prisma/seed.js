@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function seed() {
@@ -13,28 +13,28 @@ async function seed() {
 async function createCustomer() {
   const customer = await prisma.customer.create({
     data: {
-      name: 'Alice',
+      name: "Alice",
       contact: {
         create: {
-          email: 'alice@boolean.co.uk',
-          phone: '1234567890'
-        }
-      }
+          email: "alice@boolean.co.uk",
+          phone: "1234567890",
+        },
+      },
     },
     include: {
-      contact: true
-    }
+      contact: true,
+    },
   });
 
-  console.log('Customer created', customer);
+  console.log("Customer created", customer);
 
   return customer;
 }
 
 async function createMovies() {
   const rawMovies = [
-    { title: 'The Matrix', runtimeMins: 120 },
-    { title: 'Dodgeball', runtimeMins: 154 },
+    { title: "The Matrix", runtimeMins: 120 },
+    { title: "Dodgeball", runtimeMins: 154 },
   ];
 
   const movies = [];
@@ -44,24 +44,22 @@ async function createMovies() {
     movies.push(movie);
   }
 
-  console.log('Movies created', movies);
+  console.log("Movies created", movies);
 
   return movies;
 }
 
 async function createScreens() {
-  const rawScreens = [
-    { number: 1 }, { number: 2 }
-  ];
+  const rawScreens = [{ number: 1 }, { number: 2 }];
 
   const screens = [];
 
   for (const rawScreen of rawScreens) {
     const screen = await prisma.screen.create({
-      data: rawScreen
+      data: rawScreen,
     });
 
-    console.log('Screen created', screen);
+    console.log("Screen created", screen);
 
     screens.push(screen);
   }
@@ -81,24 +79,24 @@ async function createScreenings(screens, movies) {
           startsAt: screeningDate,
           movie: {
             connect: {
-              id: movies[i].id
-            }
+              id: movies[i].id,
+            },
           },
           screen: {
             connect: {
-              id: screen.id
-            }
-          }
-        }
+              id: screen.id,
+            },
+          },
+        },
       });
 
-      console.log('Screening created', screening);
+      console.log("Screening created", screening);
     }
   }
 }
 
 seed()
-  .catch(async e => {
+  .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
   })
