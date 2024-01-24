@@ -1,3 +1,4 @@
+const { PrismaClientKnownRequestError } = require("@prisma/client");
 const {
   fetchAllMoviesDb,
   insertMovieDb,
@@ -8,90 +9,52 @@ const {
 //Fetching - getting all the movies
 
 const fetchAllMovies = async (request, response) => {
-  try {
-    const allMovies = await fetchAllMoviesDb(request.query);
-
-    return response.status(200).send({ movies: allMovies });
-  } catch (error) {
-    console.error(error.message);
-    return response.status(500).send({ error: error.message });
-  }
+  const allMovies = await fetchAllMoviesDb();
+  return response.status(200).json({ allMovies });
 };
 
 //Retrieving - getting movie by ID
-
 const retrieveMovieById = async (request, response) => {
   const id = Number(request.params.id);
-
   const foundMovie = await retrieveMovieByIdDb(id);
-
   if (foundMovie) {
-    return response.status(200).send({ movie: foundMovie });
+    return response.status(200).json({ movie: foundMovie });
   }
 
   return response
     .status(404)
-    .send({ error: "No movie found with the provided ID" });
+    .json({ error: "No movie found with the provided ID" });
 };
 
 // Inserting a movie - Creating a movie
-
 const insertMovie = async (request, response) => {
+  const { newTitle, newRuntimeMins } = request.body;
+  if (!newTitle && !newRuntimeMins) {
+    return response
+      .status(400)
+      .json({ error: "Missing fields in the request body" });
+  }
   try {
-    const { newTitle, newRuntimeMins } = request.body;
-
-    if (!newTitle && !newRuntimeMins) {
-      return response
-        .status(400)
-        .send({ error: "Missing fields in the request body" });
-    }
-
-    const allMovies = await fetchAllMoviesDb(request.query);
-
-    const titleExists = allMovies.some((movie) => movie.title === newTitle);
-
-    if (titleExists) {
-      return response
-        .status(409)
-        .send({ error: "A movie with the provided title already exists" });
-    }
-
     const createdMovie = await insertMovieDb(newTitle, newRuntimeMins);
-
-    return response.status(201).send({ movie: createdMovie });
+    return response.status(201).json({ movie: createdMovie });
   } catch (error) {
-    console.log(error.message);
-    return response.status(500).json({ error: error.message });
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return response
+          .status(409)
+          .json({ error: "A movie with the provided title already exists" });
+      }
+    }
+    response.status(500).json({ error: error.message });
   }
 };
 
 // Modifying the movie - updating movie by ID
-
 const modifyMovieById = async (request, response) => {
-  try {
-    const id = Number(request.params.id);
-    const { newTitle, newRuntimeMins, newScreenings } = request.body;
-    const movie = await retrieveMovieByIdDb(id);
-
-    if (!newTitle && !newRuntimeMins && !newScreenings) {
-      return response
-        .status(400)
-        .send({ error: "Missing fields in the request body" });
-    }
-
-    if (!movie) {
-      return response
-        .status(404)
-        .send({ error: "No movie with the provided ID" });
-    }
-
-    const updatedMovie = await modifyMovieByIdDb(request.body, id);
-
-    return response.status(201).send({ movie: updatedMovie });
-  } catch (error) {
-    console.log(error.message);
-    return response.status(500).json({ error: error.message });
-  }
+  const id = parseInt(request.params.id);
+  const { newTitle, newRuntimeMins } = request.body;
+  const movie = await retrieveMovieByIdDb(id, newTitle, newRuntimeMins);
+  return response.status(201).json({ movie });
 };
 
 module.exports = {
