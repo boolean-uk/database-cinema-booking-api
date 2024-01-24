@@ -10,9 +10,11 @@ const createTicket = async (req, res) => {
             error: `Missing fields in request body`,
         });
     }
+
     try {
         const newTicket = await createTicketDB(screeningId, customerId);
         res.status(201).json({ ticket: newTicket });
+
     } catch (err) {
         if (err instanceof PrismaClientKnownRequestError) {
             if (err.code === "P2002") {
@@ -21,6 +23,7 @@ const createTicket = async (req, res) => {
                 });
             }
         }
+        
         console.log(err.message);
         res.status(500).json({ error: err.message });
     }
