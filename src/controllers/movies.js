@@ -1,65 +1,86 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client");
 const {
   fetchAllMoviesDb,
-  insertMovieDb,
-  retrieveMovieByIdDb,
-  modifyMovieByIdDb,
+  deployMovieDb,
+  fetchMovieByIdDb,
+  updateByIdDb,
 } = require("../domains/movies.js");
 
-//Fetching - getting all the movies
-
-const fetchAllMovies = async (request, response) => {
-  const allMovies = await fetchAllMoviesDb();
-  return response.status(200).json({ allMovies });
-};
-
-//Retrieving - getting movie by ID
-const retrieveMovieById = async (request, response) => {
-  const id = Number(request.params.id);
-  const foundMovie = await retrieveMovieByIdDb(id);
-  if (foundMovie) {
-    return response.status(200).json({ movie: foundMovie });
-  }
-
-  return response
-    .status(404)
-    .json({ error: "No movie found with the provided ID" });
-};
-
-// Inserting a movie - Creating a movie
-const insertMovie = async (request, response) => {
-  const { newTitle, newRuntimeMins } = request.body;
-  if (!newTitle && !newRuntimeMins) {
-    return response
-      .status(400)
-      .json({ error: "Missing fields in the request body" });
-  }
+const fetchAllMovies = async (req, res) => {
   try {
-    const createdMovie = await insertMovieDb(newTitle, newRuntimeMins);
-    return response.status(201).json({ movie: createdMovie });
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        return response
-          .status(409)
-          .json({ error: "A movie with the provided title already exists" });
-      }
-    }
-    response.status(500).json({ error: error.message });
+    const allMovies = await fetchAllMoviesDb(req.query);
+
+    return res.status(200).send({ movies: allMovies });
+  } catch (e) {
+    console.error(e.message);
+    return res.status(500).send({ error: e.message });
   }
 };
 
-// Modifying the movie - updating movie by ID
-const modifyMovieById = async (request, response) => {
-  const id = parseInt(request.params.id);
-  const { newTitle, newRuntimeMins } = request.body;
-  const movie = await retrieveMovieByIdDb(id, newTitle, newRuntimeMins);
-  return response.status(201).json({ movie });
+const fetchMovieById = async (req, res) => {
+  const id = Number(req.params.id);
+
+  const foundMovie = await fetchMovieByIdDb(id);
+
+  if (foundMovie) {
+    return res.status(200).send({ movie: foundMovie });
+  }
+
+  return res.status(404).send({ error: "No movie found with provided ID" });
+};
+
+const deployMovie = async (req, res) => {
+  try {
+    const { title, runtimeMins } = req.body;
+
+    if (!title && !runtimeMins) {
+      return res.status(400).send({ error: "Missing fields in request body" });
+    }
+
+    const allMovies = await fetchAllMoviesDb(req.query);
+
+    const titleExists = allMovies.some((movie) => movie.title === title);
+
+    if (titleExists) {
+      return res
+        .status(409)
+        .send({ error: "A movie with the provided title already exists" });
+    }
+
+    const createdMovie = await deployMovieDb(title, runtimeMins);
+
+    return res.status(201).send({ movie: createdMovie });
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).json({ error: e.message });
+  }
+};
+
+const updateById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { title, runtimeMins, screenings } = req.body;
+    const movie = await fetchMovieByIdDb(id);
+
+    if (!title && !runtimeMins && !screenings) {
+      return res.status(400).send({ error: "Missing fields in request body" });
+    }
+
+    if (!movie) {
+      return res.status(404).send({ error: "No movie with the provided ID" });
+    }
+
+    const updatedMovie = await updateByIdDb(req.body, id);
+
+    return res.status(201).send({ movie: updatedMovie });
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).json({ error: e.message });
+  }
 };
 
 module.exports = {
   fetchAllMovies,
-  insertMovie,
-  retrieveMovieById,
-  modifyMovieById,
+  deployMovie,
+  fetchMovieById,
+  updateById,
 };

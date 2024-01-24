@@ -1,13 +1,13 @@
 const express = require("express");
 const {
   fetchAllMovies,
-  insertMovie,
-  retrieveMovieById,
-  modifyMovieById,
+  deployMovie,
+  fetchMovieById,
+  updateById,
 } = require("../controllers/movies");
 const router = express.Router();
 router.get("/", fetchAllMovies);
-router.get("/:id", retrieveMovieById);
-router.post("/", insertMovie);
-router.put("/:id", modifyMovieById);
+router.get("/:id", fetchMovieById);
+router.post("/", deployMovie);
+router.put("/:id", updateById);
 module.exports = router;

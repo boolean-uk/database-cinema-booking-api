@@ -1,37 +1,37 @@
 const prisma = require("../utils/prisma");
 
-const fetchAllDisplaysDb = async () => await prisma.display.findMany();
+const fetchAllScreensDb = async () => await prisma.screen.findMany();
 
-const establishDisplayDb = async (requestPayload) => {
-  const { displayNum, projectionsInfo } = requestPayload;
+const deployScreenDb = async (request) => {
+  const { number, screenings } = request;
 
-  const dataToEstablish = {};
+  const dataToCreate = {};
 
-  if (displayNum) {
-    dataToEstablish.displayNum = displayNum;
+  if (number) {
+    dataToCreate.number = number;
   }
 
-  if (projectionsInfo) {
-    dataToEstablish.projectionsInfo = {
+  if (screenings) {
+    dataToCreate.screenings = {
       create: {
-        movieId: projectionsInfo.movieId,
-        displayId: projectionsInfo.displayId,
-        startTime: projectionsInfo.startTime,
+        movieId: screenings.movieId,
+        screenId: screenings.screenId,
+        startsAt: screenings.startsAt,
       },
     };
   }
 
-  const createdDisplay = await prisma.display.create({
-    data: dataToEstablish,
+  const createdScreen = await prisma.screen.create({
+    data: dataToCreate,
     include: {
-      projectionsInfo: true,
+      screenings: true,
     },
   });
 
-  return createdDisplay;
+  return createdScreen;
 };
 
 module.exports = {
-  fetchAllDisplaysDb,
-  establishDisplayDb,
+  fetchAllScreensDb,
+  deployScreenDb,
 };

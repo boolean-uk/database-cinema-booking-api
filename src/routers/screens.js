@@ -1,6 +1,6 @@
 const express = require("express");
-const { addDisplay, retrieveAllDisplays } = require("../controllers/screens");
+const { deployScreen, fetchAllScreens } = require("../controllers/screens");
 const router = express.Router();
-router.get("/", retrieveAllDisplays);
-router.post("/", addDisplay);
+router.get("/", fetchAllScreens);
+router.post("/", deployScreen);
 module.exports = router;

@@ -22,30 +22,47 @@ const createCustomerDb = async (name, phone, email) =>
     },
   });
 
-const modifyCustomerByIdDb = async (identifier, requestPayload) => {
-  // const { newName, newContact } = requestPayload;
-  // const dataToModify = {};
-  // if (newName) {
-  //   dataToModify.name = newName;
-  // }
-  // if (newContact) {
-  //   dataToModify.contact = {
-  //     update: {
-  //       phoneNumber: newContact.phoneNumber,
-  //       emailAddress: newContact.emailAddress,
-  //     },
-  //   };
-  // }
-  const modifiedCustomer = await prisma.customer.update({
-    where: { id: identifier },
-    data: { name: requestPayload },
+const findCustomerByIdDb = async (id) => {
+  const foundCustomer = await prisma.customer.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  return foundCustomer;
+};
+
+const updateCustomerByIdDb = async (request_body, id) => {
+  const { name, contact } = request_body;
+
+  const dataToUpdate = {};
+
+  if (name) {
+    dataToUpdate.name = name;
+  }
+
+  if (contact) {
+    dataToUpdate.contact = {
+      update: {
+        phone: contact.phone,
+        email: contact.email,
+      },
+    };
+  }
+
+  const updatedCustomer = await prisma.customer.update({
+    where: { id: id },
+    data: dataToUpdate,
     include: {
       contact: true,
     },
   });
-  return modifiedCustomer;
+
+  return updatedCustomer;
 };
 
 module.exports = {
   createCustomerDb,
+  findCustomerByIdDb,
+  updateCustomerByIdDb,
 };
