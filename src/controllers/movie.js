@@ -15,7 +15,7 @@ const getMovieList = async (req, res) => {
 //Create Movies
 const postMovie = async (req, res) => {
   const { title, runtimeMins } = req.body;
-  const newMovie = postMovieDb(title, runtimeMins);
+  const newMovie = await postMovieDb(title, runtimeMins);
   res.status(201).json({ movie: newMovie });
 };
 
@@ -30,8 +30,8 @@ const getMovieById = async (req, res) => {
 const updateMovieById = async (req, res) => {
   const id = Number(req.params.id);
   const { title, runtimeMins } = req.body;
-  const updatedMovie = await updateMovieDb(id,title,runtimeMins);
-  res.status(201).json({movie:updatedMovie})
+  const updatedMovie = await updateMovieDb(id, title, runtimeMins);
+  res.status(201).json({ movie: updatedMovie });
 };
 
 module.exports = { getMovieList, postMovie, getMovieById, updateMovieById };
