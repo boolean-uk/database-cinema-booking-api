@@ -47,7 +47,7 @@ const updateCustomerById = async (req, res) => {
   const customerId = parseInt(req.params.id);
   const { name } = req.body;
   const customer = await updateCustomerByIdDb(customerId, name);
-  res.status(200).json({ customer });
+  res.status(201).json({ customer });
 };
 
 module.exports = {
