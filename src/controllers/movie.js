@@ -8,13 +8,14 @@ const {
 const { get } = require("../routers/movie.js");
 
 const getMovies = async (req, res) => {
+    const { title, runtimeMins, runtimeLt, runtimeGt } = req.query;
     const filter = {
-        title: req.query.title,
-        runtimeMins: req.query.runtimeMins,
-        runtimeLt: req.query.runtimeLt,
-        runtimeGt: req.query.runtimeGt,
+        title,
+        runtimeMins,
+        runtimeLt,
+        runtimeGt,
     };
-    console.log(filter);
+
     const movies = await getMoviesDB(filter);
     res.status(200).json({ movies: movies });
 };
@@ -25,7 +26,7 @@ const createMovie = async (req, res) => {
         const filter = { title: title };
         const foundMovie = await getMoviesDB(filter);
 
-        if (foundMovie.length !== 0) {
+        if (!foundMovie.length) {
             return res
                 .status(409)
                 .json(`Failed to create movie: ${title} in use.`);
@@ -48,12 +49,12 @@ const getMovie = async (req, res) => {
         const foundMovie = await getMovieByTitleDB(identifier);
         return res.status(200).json({ movie: foundMovie });
     }
-    
+
     const id = Number(req.params.identifier);
     if (!id) {
         return res.status(400).json("Please provide an ID");
     }
-    
+
     const foundMovie = await getMovieByIdDB(id);
     if (foundMovie === null) {
         return res.status(404).json(`No movie found with id: ${id}`);
