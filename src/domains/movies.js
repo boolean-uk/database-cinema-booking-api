@@ -27,7 +27,10 @@ const getMovieByIdDb = async (id) => {
   return await prisma.movie.findUnique({
     where:{
       id ,
-    }
+    },
+    include: {
+      screenings: true,
+    },
 
   })
 }

@@ -43,12 +43,12 @@ const createNewMovies = async (req, res) => {
 const getMovieById = async (req, res) => {
 
   const id = parseInt(req.params.id)
-  const movieId = await getMovieByIdDb(id)
-  res.status(200).json({ movieId })
+  const movie = await getMovieByIdDb(id)
+  res.status(200).json({ movie })
 
 }
 
-//updae movie by id
+//update movie by id
 const updateMovieById = async (req, res) => {
 
   const id = Number(req.params.id);
