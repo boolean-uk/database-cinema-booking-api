@@ -33,7 +33,7 @@ const {
         return res.status(400).send({ error: "Missing fields in request body" })
       }
       const allMovies = await getAllMoviesDb(req.query)
-      const titleExists = allMovies.some((movie) => movie.title === title)
+    const titleExists = allMovies.some((movie) => movie.title === title)
   
       if (titleExists) {
         return res

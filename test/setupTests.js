@@ -1,4 +1,5 @@
-const prisma = require("../src/utils/prisma");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const deleteTables = async () => {
   try {
@@ -27,3 +28,17 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+// Define an async function and use it
+const runTests = async () => {
+  try {
+    const response = await request.post('/screens').send(request);
+    console.log('Response:', response.body);
+    expect(response.status).toEqual(201);
+  } catch (error) {
+    console.error('Test Error:', error);
+  }
+};
+
+// Run the tests
+runTests();
