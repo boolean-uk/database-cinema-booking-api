@@ -18,9 +18,47 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   // This is like doing RETURNING in SQL
   include: {
     contact: true
-  }
+  },
+})
+// this code added functions to handle db by creating, finding, and updating customer records using Prisma.
+
+// Finding customer by ID
+const findCustomerByIdDb = async (id) => {
+const foundCustomer = await prisma.customer.findUnique({
+  where: {
+    id: id,
+  },
 })
 
+return foundCustomer
+}
+// Update customer by ID
+const updateCustomerByIdDb = async (request_body, id) => {
+const { name, contact } = request_body
+
+let dataToUpdate = {}
+
+if (name) {
+  dataToUpdate.name = name
+}
+
+if (contact) {
+  dataToUpdate.contact = {
+    phone: contact.phone,
+    email: contact.email,
+  }
+}
+
+const updatedCustomer = await prisma.customer.update({
+  where: { id: id },
+  data: dataToUpdate,
+})
+
+return updatedCustomer
+}
+
 module.exports = {
-  createCustomerDb
+createCustomerDb,
+findCustomerByIdDb,
+updateCustomerByIdDb,
 }
