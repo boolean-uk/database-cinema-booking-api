@@ -1,28 +1,29 @@
-const prisma = require("../src/utils/prisma")
+const prisma = require("../src/utils/prisma");
 
-const deleteTables = () => {
-  const deleteTables = [
-    prisma.ticket.deleteMany(),
-    prisma.screening.deleteMany(),
-    prisma.movie.deleteMany(),
-    prisma.screen.deleteMany(),
-    prisma.contact.deleteMany(),
-    prisma.customer.deleteMany(),
-  ];
+const deleteTables = async () => {
+  try {
+    await prisma.$transaction([
+      prisma.ticket.deleteMany(),
+      prisma.screening.deleteMany(),
+      prisma.movie.deleteMany(),
+      prisma.screen.deleteMany(),
+      prisma.contact.deleteMany(),
+      prisma.customer.deleteMany(),
+      prisma.reviews && prisma.reviews.deleteMany(),
+    ]);
+  } catch (error) {
+    console.error("Error deleting tables:", error);
+  }
+};
 
-  // Conditionally delete this table as this will only exist if "Extensions to the Extensions" bullet 2 is implemented
-  prisma.reviews && deleteTables.push(prisma.reviews.deleteMany())
-  return prisma.$transaction(deleteTables)
-}
+beforeAll(async () => {
+  await deleteTables();
+});
 
-global.beforeAll(() => {
-  return deleteTables()
-})
+afterEach(async () => {
+  await deleteTables();
+});
 
-global.afterEach(() => {
-  return deleteTables()
-})
-
-global.afterAll(() => {
-  return prisma.$disconnect()
-})
+afterAll(async () => {
+  await prisma.$disconnect();
+});

@@ -1,4 +1,4 @@
-const { getAllScreensDb, createScreenDb } = require("../domains/screens.js")
+const { getAllScreensDb, createScreenDb } = require("../domains/screens")
 const getAllScreens = async (req, res) => {
   const allScreens = await getAllScreensDb()
   return res.status(200).send({ screens: allScreens })

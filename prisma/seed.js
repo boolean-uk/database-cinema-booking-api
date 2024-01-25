@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+console.log('Connected to DB instance:', prisma);
+
 async function seed() {
   await createCustomer();
   const movies = await createMovies();
@@ -103,3 +105,6 @@ seed()
     await prisma.$disconnect();
   })
   .finally(() => process.exit(1));
+
+
+  module.exports = prisma;

@@ -3,7 +3,7 @@ const {
     createMovieDb,
     getMovieByIdDb,
     updateMovieByIdDb,
-  } = require("../domains/movies.js");
+  } = require("../domains/movies");
   
   const getAllMovies = async (req, res) => {
     try {
