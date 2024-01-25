@@ -4,7 +4,7 @@ const createScreenDB = async (number, screenings) =>
     await prisma.screen.create({
         data: {
             number,
-            screenings: {
+            screenings: screenings && {
                 create: {
                     startsAt: screenings.startsAt,
                     movie: {
