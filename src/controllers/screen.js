@@ -6,8 +6,8 @@ const { createScreenDB } = require("../domains/screen.js");
 const createScreen = async (req, res) => {
     const { number, screenings } = req.body;
 
-    if (!screenings.startsAt) {
-        res.status(400).json({
+    if (!number) {
+      return res.status(400).json({
             error: `Missing fields in request body`,
         });
     }
@@ -22,7 +22,7 @@ const createScreen = async (req, res) => {
                 });
             }
         }
-        console.log(err.message)
+        console.log(err.message);
         res.status(500).json({ error: err.message });
     }
 };
