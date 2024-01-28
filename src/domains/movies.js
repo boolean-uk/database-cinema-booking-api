@@ -21,6 +21,7 @@ const getAllMoviesDb = async ({ runtimeLt, runtimeGt }) => {
   if (runtimeGt) {
     movieQuery.where = {
       runtimeMins: {
+        ...movieQuery.where?.runtimeMins,
         gt: runtimeGt,
       },
     };
