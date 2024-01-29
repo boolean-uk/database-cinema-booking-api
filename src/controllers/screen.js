@@ -1,28 +1,23 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client");
-const { createScreenDb } = require("../domains/screen.js");
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library");
+const { createScreenDb } = require("../domains/screen");
 
 const createScreen = async (req, res) => {
-  const { number, screenings } = req.body;
+  const { number } = req.body;
 
-  if (!screenings){
-    res.status(400).json({
-    error: `Missing fields in request body`
-    })
-  }
-  try{
-    const newScreen = await createScreenDb(number, screenings)
-    res.status(201).json({screen: newScreen})
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
-        return res.status(400).json({ error: 'Cannot create screen' });
+  try {
+    const screen = await createScreenDb(number);
+    res.status(201).json({ screen });
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({ error: "A screen with the provided number already exists" });
       }
     }
 
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
-  createScreen
-}
+  createScreen,
+};

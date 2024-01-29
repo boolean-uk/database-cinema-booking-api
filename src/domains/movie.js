@@ -13,10 +13,10 @@ const getAllMoviesDb = async (runtimeMins) => {
   return movies;
 };
 
-const getMovieByIdDb = async (id) => { // Added id as a parameter
+const getMovieByIdDb = async (id) => {
   const foundMovie = await prisma.movie.findUnique({
     where: {
-      id: id, // Use the provided id parameter
+      id: id, 
     },
     include: {
       screenings: true,
