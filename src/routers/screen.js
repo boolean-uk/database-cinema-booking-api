@@ -1,7 +1,6 @@
 const express = require("express");
+const { deployScreen, fetchAllScreens } = require("../controllers/screen");
 const router = express.Router();
-
-const { createScreen } = require("../controllers/screen");
-router.post("/screens", createScreen);
-
+router.get("/", fetchAllScreens);
+router.post("/", deployScreen);
 module.exports = router;

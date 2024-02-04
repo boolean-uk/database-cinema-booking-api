@@ -1,22 +1,37 @@
-const { prisma } = require("../utils/prisma");
+const prisma = require("../utils/prisma");
 
-const createScreenDb = async (number) => {
-  try {
-    const newScreen = await prisma.screen.create({
-      data: {
-        number: Number(number),
-      },
-      include: {
-        screenings: true,
-      },
-    });
+const fetchAllScreensDb = async () => await prisma.screen.findMany();
 
-    return newScreen;
-  } catch (error) {
-    throw error; 
+const deployScreenDb = async (request) => {
+  const { number, screenings } = request;
+
+  const dataToCreate = {};
+
+  if (number) {
+    dataToCreate.number = number;
   }
+
+  if (screenings) {
+    dataToCreate.screenings = {
+      create: {
+        movieId: screenings.movieId,
+        screenId: screenings.screenId,
+        startsAt: screenings.startsAt,
+      },
+    };
+  }
+
+  const createdScreen = await prisma.screen.create({
+    data: dataToCreate,
+    include: {
+      screenings: true,
+    },
+  });
+
+  return createdScreen;
 };
 
 module.exports = {
-  createScreenDb,
+  fetchAllScreensDb,
+  deployScreenDb,
 };

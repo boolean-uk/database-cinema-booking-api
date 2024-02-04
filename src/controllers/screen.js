@@ -1,23 +1,40 @@
-const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library");
-const { createScreenDb } = require("../domains/screen");
+const { fetchAllScreensDb, deployScreenDb } = require("../domains/screen");
 
-const createScreen = async (req, res) => {
-  const { number } = req.body;
-
+const deployScreen = async (req, res) => {
   try {
-    const screen = await createScreenDb(number);
-    res.status(201).json({ screen });
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        return res.status(409).json({ error: "A screen with the provided number already exists" });
-      }
+    const { number, screenings } = req.body;
+
+    if (!number && !screenings) {
+      return res
+        .status(400)
+        .json({ error: "Missing fields in request body" });
     }
 
-    res.status(500).json({ error: error.message });
+    const allScreens = await fetchAllScreensDb();
+
+    const screenExists = allScreens.some((screen) => screen.number === number);
+
+    if (screenExists) {
+      return response
+        .status(409)
+        .json({ error: "A screen with the provided number already exists" });
+    }
+
+    const createdScreen = await deployScreenDb(req.body);
+
+    return res.status(201).json({ screen: createdScreen });
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).json({ error: e.message });
   }
 };
 
+const fetchAllScreens = async (req, res) => {
+  const allScreens = await fetchAllScreensDb();
+  return res.status(200).json({ screens: allScreens });
+};
+
 module.exports = {
-  createScreen,
+  deployScreen,
+  fetchAllScreens,
 };
