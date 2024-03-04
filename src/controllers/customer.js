@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, updateCustomerDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +43,34 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const updateCustomer = async (req, res) => {
+  const {
+    name,
+    phone,
+    email
+  } = req.body
+  const id = parseInt(req.params.id)
+
+  console.log(req.body, 'update')
+
+  try {
+    const updatedCustomer = await updateCustomerDb(id, name, phone, email)
+
+    res.status(201).json({ customer: updatedCustomer })
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(409).json({ error: "A customer with the provided email already exists" })
+      }
+    }
+
+    console.log(e.message, 'error')
+
+    res.status(500).json({ error: e.message })
+  }
+}
+
 module.exports = {
-  createCustomer
+  createCustomer,
+  updateCustomer
 }

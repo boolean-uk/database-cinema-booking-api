@@ -21,6 +21,25 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   }
 })
 
+const updateCustomerDb = async (id, name, phone, email) => await prisma.customer.update({
+  where: {
+    id: id
+  },
+  data: {
+    name,
+    contact: {
+      update: {
+        phone,
+        email
+      }
+    }
+  },
+  include: {
+    contact: true
+  }
+})
+
 module.exports = {
-  createCustomerDb
+  createCustomerDb,
+  updateCustomerDb
 }
