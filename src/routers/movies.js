@@ -3,7 +3,9 @@ const router = express.Router();
 
 const {
     getMovies,
-    getMovieById
+    getMovieById,
+    createMovie,
+    updateMovie
 } = require('../controllers/movies');
 
 // In index.js, we told express that the /customer route should use this router file
@@ -12,5 +14,7 @@ const {
 
 router.get("/", getMovies);
 router.get("/:id", getMovieById);
+router.post("/", createMovie);
+router.put("/:id", updateMovie);
 
 module.exports = router;
