@@ -22,7 +22,7 @@ app.use('/customers', customerRouter);
 app.use('/movies', movieRouter);
 app.use('/screens', screenRouter);
 
-const { MissingFieldsError, DataAlreadyExistsError } = require("./errors/errors.js")
+const { MissingFieldsError, DataAlreadyExistsError, DataNotFoundError } = require("./errors/errors.js")
 
 
 //Errors
@@ -35,6 +35,12 @@ app.use((error, req, res, next) => {
 
     if (error instanceof DataAlreadyExistsError) {
         return res.status(409).json({
+            error: error.message
+         })
+    }
+
+    if (error instanceof DataNotFoundError) {
+        return res.status(404).json({
             error: error.message
          })
     }

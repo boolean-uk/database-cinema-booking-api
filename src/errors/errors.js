@@ -6,4 +6,8 @@ class DataAlreadyExistsError extends Error {
 
 }
 
-module.exports = { MissingFieldsError, DataAlreadyExistsError }
+class DataNotFoundError extends Error {
+
+}
+
+module.exports = { MissingFieldsError, DataAlreadyExistsError, DataNotFoundError }

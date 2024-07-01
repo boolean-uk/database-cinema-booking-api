@@ -31,6 +31,15 @@ describe("Movies Endpoint", () => {
       expect(response.body.movies.length).toEqual(1);
       expect(response.body.movies[0].runtimeMins).toBeGreaterThan(115);
     });
+
+    describe("GET /movies/:id", () => {
+      it("will throw an error if no movie exists with given id", async () => {
+        const response = await supertest(app).get("/movies/30");
+
+        expect(response.status).toEqual(404);
+        expect(response.body.error).toEqual('No movie found with that ID');
+      });
+    });
   });
 
   describe("POST /movies/", () => {
@@ -46,19 +55,21 @@ describe("Movies Endpoint", () => {
     });
 
     it("will throw an error if a movie already exists with that name", async () => {
-        const screen = await createScreen(1);
-        await createMovie("The Exorcist", 150, screen);
-        await createMovie("Spaceballs", 140, screen);
+      const screen = await createScreen(1);
+      await createMovie("The Exorcist", 150, screen);
+      await createMovie("Spaceballs", 140, screen);
 
-        const request = {
-          title: "Spaceballs",
-          runtimeMins: 140,
-        };
+      const request = {
+        title: "Spaceballs",
+        runtimeMins: 140,
+      };
 
-        const response = await supertest(app).post("/movies").send(request);
+      const response = await supertest(app).post("/movies").send(request);
 
-        expect(response.status).toEqual(409)
-        expect(response.body.error).toEqual("A movie with that title already exists");
-      });
+      expect(response.status).toEqual(409);
+      expect(response.body.error).toEqual(
+        "A movie with that title already exists"
+      );
+    });
   });
 });
