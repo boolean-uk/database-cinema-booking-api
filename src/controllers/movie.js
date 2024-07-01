@@ -1,6 +1,4 @@
 const { getAllMoviesDb, createdMovieDb, getMovieDb, updateMovieDb } = require('../domains/movie.js')
-const { movie } = require('../utils/prisma.js')
-
 
 const getAllMovies = async (req, res) => {
  try {
