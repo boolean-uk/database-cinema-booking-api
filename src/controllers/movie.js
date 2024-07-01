@@ -1,7 +1,10 @@
 const { getAllMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require("../domains/movie")
 
 async function getAllMovies(req, res) {
-    const movies = await getAllMoviesDb()
+    const runtimeLt = Number(req.query.runtimeLt)
+    const runtimeGt = Number(req.query.runtimeGt)
+
+    const movies = await getAllMoviesDb(runtimeLt, runtimeGt)
 
     res.json({
         movies
