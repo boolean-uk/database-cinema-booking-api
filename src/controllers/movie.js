@@ -12,9 +12,9 @@ async function getAllMovies(req, res) {
 }
 
 async function createMovie(req, res) {
-    const { title, runtimeMins } = req.body
+    const { title, runtimeMins, screenings } = req.body
 
-    const createdMovie = await createMovieDb(title, runtimeMins)
+    const createdMovie = await createMovieDb(title, runtimeMins, screenings)
 
     res.status(201).json({
         movie: createdMovie

@@ -2,6 +2,7 @@ const supertest = require("supertest")
 const app = require("../../../src/server.js")
 const { createCustomer } = require("../../helpers/createCustomer.js")
 const { createMovie } = require("../../helpers/createMovie.js")
+const { createScreen } = require("../../helpers/createScreen.js")
 
 describe("Customer Endpoint", () => {
     describe("PUT /customers/:id", () => {
@@ -120,6 +121,41 @@ describe("Movie Endpoint", () => {
 
             expect(movie2.title).toEqual('test3')
             expect(movie2.runtimeMins).toEqual(150)
+        })
+    })
+
+    describe("POST /movies", () => {
+        it("will add a screening if the property exists in the body", async () => {
+            const screen1 = await createScreen(1)
+            const screen2 = await createScreen(2)
+
+            const request = {
+                title: "Minions",
+                runtimeMins: 120,
+                screenings: [
+                    {
+                        movieId: 1,
+                        screenId: screen1.id,
+                        startsAt: "2022-06-11T18:30:00.000Z"
+                    },
+                    {
+                        movieId: 1,
+                        screenId: screen2.id,
+                        startsAt: "2023-06-11T18:30:00.000Z"
+                    }
+                ]
+            }
+
+            const response = await supertest(app)
+                .post('/movies')
+                .send(request)
+
+            expect(response.status).toEqual(201)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie.title).toEqual('Minions')
+            expect(response.body.movie.runtimeMins).toEqual(120)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(2)
         })
     })
 })
