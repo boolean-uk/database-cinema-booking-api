@@ -21,6 +21,7 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   }
 })
 
+
 module.exports = {
   createCustomerDb
 }
