@@ -8,7 +8,8 @@
     "test:migration": "node test/testDbMigration.js",
     "test": "npx jest -i test/api/routes",
     "test-extensions": "npx jest -i test/api/extensions --forceExit",
-    "test-movies": "npx jest -i test/api/routes/movies.spec.js"
+    "test-movies": "npx jest -i test/api/routes/movies.spec.js",
+    "test-customer": "npx jest -i test/api/routes/customer.spec.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
