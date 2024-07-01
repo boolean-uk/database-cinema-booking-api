@@ -1,8 +1,8 @@
 const express = require("express");
 const {
-  createCustomer
+  createCustomer, updateCustomerDetails
 } = require('../controllers/customer.js');
-const { updateCustomerDetails } = require("../controllers/customer.js");
+
 
 const router = express.Router();
 
