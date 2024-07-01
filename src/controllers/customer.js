@@ -1,4 +1,7 @@
-const { PrismaClientKnownRequestError } = require('@prisma/client')
+const {
+    PrismaClientKnownRequestError,
+    NotFoundError,
+} = require('@prisma/client')
 const { createCustomerDb, updateCustomerDb } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
@@ -28,7 +31,7 @@ const createCustomer = async (req, res) => {
 }
 
 const updateCustomer = async (req, res) => {
-    const { name } = req.body
+    const { name, contact } = req.body
 
     const id = Number(req.params.id)
 
@@ -39,10 +42,13 @@ const updateCustomer = async (req, res) => {
     }
 
     try {
-        const updatedCustomer = await updateCustomerDb(id, name)
-        res.status(201).json({ customer: updatedCustomer })
-    } catch(e) {
-      res.status(500).json({ error: e.message })
+        const updatedCustomer = await updateCustomerDb(id, name, contact)
+        return res.status(201).json({ customer: updatedCustomer })
+    } catch (e) {
+        if (e.code === 'P2025') {
+            return res.status(404).json({ error: e.message })
+        }
+        return res.status(500).json({ error: e.message })
     }
 }
 

@@ -2,6 +2,7 @@ const { createScreenDb } = require('../domains/screens.js')
 
 const createScreen = async (req, res) => {
     const number = Number(req.body.number)
+    const {screenings} = req.body
 
     if (!number) {
         return res.status(400).json({
@@ -10,7 +11,7 @@ const createScreen = async (req, res) => {
     }
 
     try {
-        const createdScreen = await createScreenDb(number)
+        const createdScreen = await createScreenDb(number, screenings)
 
         res.status(201).json({ screen: createdScreen })
     } catch (e) {
