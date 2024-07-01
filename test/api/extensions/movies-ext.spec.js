@@ -37,7 +37,7 @@ describe("Movies Endpoint", () => {
         const response = await supertest(app).get("/movies/30");
 
         expect(response.status).toEqual(404);
-        expect(response.body.error).toEqual('No movie found with that ID');
+        expect(response.body.error).toEqual("No movie found with that ID");
       });
     });
   });
@@ -70,6 +70,53 @@ describe("Movies Endpoint", () => {
       expect(response.body.error).toEqual(
         "A movie with that title already exists"
       );
+    });
+
+    describe("PUT /movies/:id", () => {
+      it("will throw an error if no film exists with given ID", async () => {
+        const request = {
+          title: "Top Gun",
+          runtimeMins: 146,
+        };
+
+        const response = await supertest(app).put("/movies/30").send(request);
+
+        expect(response.status).toEqual(404);
+        expect(response.body.error).toEqual("No movie found with that ID");
+      });
+
+      it("will throw an error if film body is missing fields", async () => {
+        const screen = await createScreen(1);
+        const created = await createMovie("Dodgeball", 120, screen);
+
+        const request = {
+          cheese: "cheddar"
+        };
+
+        const response = await supertest(app).put(`/movies/${created.id}`).send(request);
+
+        expect(response.status).toEqual(400);
+        expect(response.body.error).toEqual(
+          "Updating movies requires a title or runtime"
+        );
+      });
+
+      it("will throw an error if a movie already exists with that name", async () => {
+        const screen = await createScreen(1);
+        const created = await createMovie("Dodgeball", 120, screen);
+        const created2 = await createMovie("Signs", 109, screen)
+
+        const request = {
+          title: "Dodgeball"
+        };
+
+        const response = await supertest(app).put(`/movies/${created2.id}`).send(request);
+
+        expect(response.status).toEqual(409);
+        expect(response.body.error).toEqual(
+          "A movie with that title already exists"
+        );
+      });
     });
   });
 });

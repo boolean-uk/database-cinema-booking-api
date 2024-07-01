@@ -46,13 +46,29 @@ async function getMovieById(req, res) {
   if (!movie) {
     throw new DataNotFoundError('No movie found with that ID')
   }
-  
+
   res.status(200).json({ movie });
 }
 
 async function updateMovieById(req, res) {
   const id = Number(req.params.id);
   const updatedProps = req.body;
+  const foundMovie = await getMovieByIdDb(id);
+
+  const movies = await getMoviesDb();
+
+  if (movies.find((movie) => updatedProps.title === movie.title)) {
+    throw new DataAlreadyExistsError("A movie with that title already exists");
+  }
+
+  if (!foundMovie) {
+    throw new DataNotFoundError('No movie found with that ID')
+  }
+
+  if (!updatedProps.title && !updatedProps.runtimeMins) {
+    throw new MissingFieldsError("Updating movies requires a title or runtime");
+  }
+
   const movie = await updateMovieByIdDb(id, updatedProps);
   res.status(201).json({ movie });
 }
