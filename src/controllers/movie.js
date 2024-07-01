@@ -42,7 +42,7 @@ const updateMovie = async (req, res) => {
   try {
     const updatedMovie = await updateMovieDb(id, title, runtimeMins)
     if(!updatedMovie) {
-      res.status(404).jspn({error : 'Movie not found!'})
+      res.status(404).json({error : 'Movie not found!'})
     }
     res.status(201).json({ movie : updatedMovie})
   } catch (error) {
