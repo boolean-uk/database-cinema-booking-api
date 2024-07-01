@@ -21,6 +21,11 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
   }
 })
 
+const getAllCustomersDb = async () => {
+  const allCustomers = await prisma.customer.findMany()
+  return allCustomers
+}
+
 module.exports = {
-  createCustomerDb
+  createCustomerDb, getAllCustomersDb
 }
