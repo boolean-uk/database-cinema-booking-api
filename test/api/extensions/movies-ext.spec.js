@@ -32,4 +32,17 @@ describe("Movies Endpoint", () => {
       expect(response.body.movies[0].runtimeMins).toBeGreaterThan(115);
     });
   });
+
+  describe("POST /movies/", () => {
+    it("will throw an error if fields missing from body", async () => {
+      const request = {
+        title: "Top Gun",
+        runtimeMins: null,
+      };
+      const response = await supertest(app).post("/movies").send(request);
+
+      expect(response.status).toEqual(400);
+      expect(response.body.error).toEqual("Movies require a title and runtime");
+    });
+  });
 });

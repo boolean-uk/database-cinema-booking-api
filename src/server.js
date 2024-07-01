@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+require("express-async-errors")
 
 const cors = require('cors');
 const morgan = require('morgan');
@@ -21,5 +22,16 @@ app.use('/customers', customerRouter);
 app.use('/movies', movieRouter);
 app.use('/screens', screenRouter);
 
+const { MissingFieldsError } = require("./errors/errors.js")
+
+
+//Errors
+app.use((error, req, res, next) => {
+    if (error instanceof MissingFieldsError) {
+        return res.status(400).json({
+            error: error.message
+         })
+    }
+})
 
 module.exports = app

@@ -1,5 +1,6 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { getMoviesDb, createMovieDb, getMovieByIdDb, updateMovieByIdDb, getMoviesWithQueryDb } = require('../domains/movies.js')
+const { MissingFieldsError } = require("../errors/errors.js")
 
 
 async function getMovies(req, res) {
@@ -14,6 +15,12 @@ async function getMovies(req, res) {
 
   async function createMovie(req, res) {
     const newMovie = req.body
+
+    const requiredFields = ['title', 'runtimeMins']
+    if (!requiredFields.every((field) => newMovie[field])) {
+      throw new MissingFieldsError('Movies require a title and runtime')
+    }
+
     const movie = await createMovieDb(newMovie)
     res.status(201).json({ movie })
   }
