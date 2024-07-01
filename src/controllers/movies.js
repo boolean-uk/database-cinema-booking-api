@@ -1,4 +1,3 @@
-const { run } = require('jest')
 const {
     createMovieDb,
     getAllMoviesDb,
@@ -8,9 +7,11 @@ const {
 const { NotFoundError, RecordNotFound } = require('@prisma/client')
 
 const getAllMovies = async (req, res) => {
-    const movies = await getAllMoviesDb()
+    const { runtimeLt, runtimeGt } = req.query
 
-    return res.status(200).json({movies: movies})
+    const movies = await getAllMoviesDb(runtimeLt, runtimeGt)
+
+    return res.status(200).json({ movies: movies })
 }
 
 const createMovie = async (req, res) => {
@@ -27,20 +28,18 @@ const createMovie = async (req, res) => {
 
         res.status(201).json({ movie: createdMovie })
     } catch (e) {
-        res.status(500).json({ error: e.message })
+        return res.status(500).json({ error: e.message })
     }
 }
 
 const findMovieById = async (req, res) => {
-    const id = Number(req.params.id)
-
     try {
-        const searchedMovie = await findMovieByIdDb(id)
+        const searchedMovie = await findMovieByIdDb(req.params.id)
 
         res.status(200).json({ movie: searchedMovie })
     } catch (e) {
         if (e instanceof NotFoundError) {
-            res.status(404).json({ error: e.message })
+            return res.status(404).json({ error: e.message })
         }
 
         res.status(500).json({ error: e.message })
@@ -63,11 +62,11 @@ const updateMovieById = async (req, res) => {
 
         res.status(201).json({ movie: updatedMovie })
     } catch (e) {
-        if (e instanceof RecordNotFound) {
-            res.status(404).json({ error: e.message })
+        if (e.code = 'P2015') {
+            return res.status(404).json({ error: e.message })
         }
 
         res.status(500).json({ error: e.message })
     }
 }
-module.exports = { getAllMovies, createMovie, findMovieById , updateMovieById}
+module.exports = { getAllMovies, createMovie, findMovieById, updateMovieById }

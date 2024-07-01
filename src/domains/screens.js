@@ -6,7 +6,7 @@ const createScreenDb = async (number, screenings) => {
             data: {
                 number: number,
                 screenings: {
-                    create: {
+                    createMany: {
                         data: screenings,
                     },
                 },

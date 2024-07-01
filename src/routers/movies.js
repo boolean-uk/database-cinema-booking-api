@@ -1,5 +1,10 @@
 const express = require('express')
-const {getAllMovies, createMovie, findMovieById, updateMovieById} = require('../controllers/movies')
+const {
+    getAllMovies,
+    createMovie,
+    findMovieById,
+    updateMovieById,
+} = require('../controllers/movies')
 
 const router = express.Router()
 
