@@ -44,9 +44,26 @@ async function updateMovieByIdDb(movieId, updatedProps) {
   return movie;
 }
 
+async function getMoviesWithQueryDb(query) {
+    const { runtimeLt, runtimeGt } = query
+
+    const runTimeLimits = {
+        ...(runtimeLt && { lt: Number(runtimeLt) }),
+        ...(runtimeGt && { gt: Number(runtimeGt) })
+    };
+
+    const movies = await prisma.movie.findMany({
+        where: {
+            runtimeMins: runTimeLimits
+        }
+    })
+    return movies
+}
+
 module.exports = {
   getMoviesDb,
   createMovieDb,
   getMovieByIdDb,
   updateMovieByIdDb,
+  getMoviesWithQueryDb
 };
