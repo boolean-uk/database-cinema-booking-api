@@ -48,7 +48,10 @@ async function updateCustomer(req, res) {
   const { name } = req.body
 
   const updatedCustomer = await updateCustomerDb(customerId, name)
-  res.status(201).json({customer: updatedCustomer})
+  
+  res.status(201).json({
+    customer: updatedCustomer
+  })
 }
 
 module.exports = {
