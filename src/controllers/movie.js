@@ -1,4 +1,4 @@
-const { getAllMoviesDb, createdMovieDb, getMovieDb } = require('../domains/movie.js')
+const { getAllMoviesDb, createdMovieDb, getMovieDb, updateMovieDb } = require('../domains/movie.js')
 const { movie } = require('../utils/prisma.js')
 
 
@@ -31,9 +31,29 @@ const getMovieById = async (req, res) => {
   }
 }
 
+const updateMovie = async (req, res) => {
+  const id = Number(req.params.id)
+  const { title , runtimeMins } = req.body
+
+  if (!id || !title || !runtimeMins) {
+    return res.status(400).json({error: 'Missing fields in request body!'})
+  }
+
+  try {
+    const updatedMovie = await updateMovieDb(id, title, runtimeMins)
+    if(!updatedMovie) {
+      res.status(404).jspn({error : 'Movie not found!'})
+    }
+    res.status(201).json({ movie : updatedMovie})
+  } catch (error) {
+    res.status(500).json({error : 'Could not update the movie!'})
+  }
+}
+
 
 module.exports = {
   getAllMovies,
   createdMovie,
-  getMovieById
+  getMovieById,
+  updateMovie
 }

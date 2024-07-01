@@ -40,8 +40,25 @@ const getMovieDb = async (id) => {
   }
 }
 
+const updateMovieDb = async (id, title, runtimeMins) => {
+  
+  try {
+    const updatedMovie = await prisma.movie.update({
+      where: { id : id },
+      data : {
+        title,
+        runtimeMins
+      }
+    })
+    return updatedMovie
+  } catch (error) {
+    throw new Error ('Failed to update movie at DB!')
+  }
+}
+
 module.exports = {
   getAllMoviesDb,
   createdMovieDb,
-  getMovieDb
+  getMovieDb,
+  updateMovieDb
 }
