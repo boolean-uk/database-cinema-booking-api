@@ -1,24 +1,32 @@
 const prisma = require('../utils/prisma')
 
-/**
- * This will create a Customer AND create a new Contact, then automatically relate them with each other
- * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
- */
 const createMovieDb = async (title, runtimeMins) => {
     return await prisma.movie.create({
         data: {
             title: title,
             runtimeMins: runtimeMins,
         },
+        include: {
+            screenings: true
+        }
     })
 }
 
 const getAllMoviesDb = async () => {
-    return await prisma.movie.findMany()
+    return await prisma.movie.findMany({
+        include: {
+            screenings: true,
+        },
+    })
 }
 
 const findMovieByIdDb = async (id) => {
-    return await prisma.movie.findUniqueOrThrow({ where: { id: id } })
+    return await prisma.movie.findUniqueOrThrow({
+        where: { id: id },
+        include: {
+            screenings: true,
+        },
+    })
 }
 
 const updateMovieByIdDb = async (id, title, runtimeMins) => {
@@ -30,7 +38,15 @@ const updateMovieByIdDb = async (id, title, runtimeMins) => {
             title: title,
             runtimeMins: runtimeMins,
         },
+        include: {
+            screenings: true,
+        },
     })
 }
 
-module.exports = { createMovieDb, getAllMoviesDb, findMovieByIdDb , updateMovieByIdDb}
+module.exports = {
+    createMovieDb,
+    getAllMoviesDb,
+    findMovieByIdDb,
+    updateMovieByIdDb,
+}

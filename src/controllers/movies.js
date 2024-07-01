@@ -10,9 +10,7 @@ const { NotFoundError, RecordNotFound } = require('@prisma/client')
 const getAllMovies = async (req, res) => {
     const movies = await getAllMoviesDb()
 
-    console.log(movies)
-
-    return res.status(200).json(movies)
+    return res.status(200).json({movies: movies})
 }
 
 const createMovie = async (req, res) => {
