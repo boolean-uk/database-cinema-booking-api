@@ -20,19 +20,34 @@ async function createMovieDb(newMovie) {
 }
 
 async function getMovieByIdDb(movieId) {
-    const movie = await prisma.movie.findUnique({
-        where: {
-            id: movieId
-        },
-        include: {
-            screenings: true,
-        }
-    })
-    return movie
+  const movie = await prisma.movie.findUnique({
+    where: {
+      id: movieId,
+    },
+    include: {
+      screenings: true,
+    },
+  });
+  return movie;
+}
+
+async function updateMovieByIdDb(movieId, updatedProps) {
+  console.log(updatedProps);
+  const movie = await prisma.movie.update({
+    where: {
+      id: movieId,
+    },
+    data: updatedProps,
+    include: {
+        screenings: true
+    }
+  });
+  return movie;
 }
 
 module.exports = {
   getMoviesDb,
   createMovieDb,
-  getMovieByIdDb
+  getMovieByIdDb,
+  updateMovieByIdDb,
 };
