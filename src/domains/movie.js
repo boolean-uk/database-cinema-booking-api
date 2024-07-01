@@ -16,8 +16,22 @@ const createMovie = async (req) => await prisma.movie.create({
     }
 })
 
+const updateMovie = async (req) => await prisma.movie.update({
+    where: {
+        id: Number(req.params.id)
+    },
+    data: {
+        title: req.body.title,
+        runtimeMins: req.body.runtimeMins
+    },
+    include: {
+        screenings: true
+    }
+})
+
 
 module.exports = {
     getAllMovies,
-    createMovie
+    createMovie,
+    updateMovie
 }

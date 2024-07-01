@@ -1,4 +1,4 @@
-const { getAllMovies, createMovie } = require('../domains/movie.js')
+const { getAllMovies, createMovie, updateMovie } = require('../domains/movie.js')
 
 
 const getAll = async (req, res) => {
@@ -25,8 +25,16 @@ const findByID = async (req, res) => {
     })
 }
 
+const updateMovieByID = async (req, res) => {
+    const updatedMovie = await updateMovie(req)
+    res.status(201).json({
+        movie: updatedMovie
+    })
+}
+
 module.exports = {
     getAll,
     addMovie,
-    findByID
+    findByID,
+    updateMovieByID
 }
