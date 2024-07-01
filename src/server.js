@@ -24,4 +24,22 @@ const screenRouter = require('./routers/screen')
 app.use('/screens', screenRouter)
 
 
+app.use((error, req, res, next) => {
+    if(error instanceof MissingFields) {
+        return res.status(400).json({
+            message: error.message
+        })
+    }
+    if(error instanceof AlreadyExists) {
+        return res.status(409).json({
+            message: error.message
+        })
+    }
+    if(error instanceof DoesNotExist) {
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+})
+
 module.exports = app
