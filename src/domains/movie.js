@@ -13,6 +13,21 @@ const getAllMoviesDb = async () => {
   }
 }
 
+const createdMovieDb = async (title, runtimeMins) => {
+  try {
+    const newMovie = await prisma.movie.create({
+      data: {
+        title,
+        runtimeMins
+      }
+    })
+    return newMovie
+  } catch (error) {
+    throw new Error('Failed to create a new movie.')
+  }
+}
+
 module.exports = {
-  getAllMoviesDb
+  getAllMoviesDb,
+  createdMovieDb
 }

@@ -1,4 +1,4 @@
-const { getAllMoviesDb } = require('../domains/movie.js')
+const { getAllMoviesDb, createdMovieDb } = require('../domains/movie.js')
 
 
 const getAllMovies = async (req, res) => {
@@ -10,6 +10,18 @@ const getAllMovies = async (req, res) => {
  }
 }
 
+const createdMovie = async (req, res) => {
+  const { title , runtimeMins } = req.body
+  try {
+    const newMovie = await createdMovieDb(title, runtimeMins)
+    res.status(201).json({newMove : newMovie})
+  } catch (error) {
+    es.status(500).json({error : 'coulnt create new Movie at controller!'})
+  }
+}
+
+
 module.exports = {
-  getAllMovies
+  getAllMovies,
+  createdMovie
 }
