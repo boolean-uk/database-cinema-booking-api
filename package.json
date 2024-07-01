@@ -7,7 +7,8 @@
     "start": "npx nodemon ./src/index.js",
     "test:migration": "node test/testDbMigration.js",
     "test": "npx jest -i test/api/routes",
-    "test-extensions": "npx jest -i test/api/extensions --forceExit"
+    "test-extensions": "npx jest -i test/api/extensions --forceExit",
+    "test-movies": "npx jest -i test/api/routes/movies.spec.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
