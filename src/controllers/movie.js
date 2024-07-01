@@ -10,7 +10,7 @@ const getAll = async (req, res) => {
 }
 
 const addMovie = async (req, res) => {
-    const newMovie = (await createMovie(req)).map(m => m)
+    const newMovie = await createMovie(req)
 
     res.status(201).json({
         movie: newMovie
