@@ -44,5 +44,21 @@ describe("Movies Endpoint", () => {
       expect(response.status).toEqual(400);
       expect(response.body.error).toEqual("Movies require a title and runtime");
     });
+
+    it("will throw an error if a movie already exists with that name", async () => {
+        const screen = await createScreen(1);
+        await createMovie("The Exorcist", 150, screen);
+        await createMovie("Spaceballs", 140, screen);
+
+        const request = {
+          title: "Spaceballs",
+          runtimeMins: 140,
+        };
+
+        const response = await supertest(app).post("/movies").send(request);
+
+        expect(response.status).toEqual(409)
+        expect(response.body.error).toEqual("A movie with that title already exists");
+      });
   });
 });

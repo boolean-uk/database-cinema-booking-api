@@ -1,6 +1,6 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { getMoviesDb, createMovieDb, getMovieByIdDb, updateMovieByIdDb, getMoviesWithQueryDb } = require('../domains/movies.js')
-const { MissingFieldsError } = require("../errors/errors.js")
+const { MissingFieldsError, DataAlreadyExistsError } = require("../errors/errors.js")
 
 
 async function getMovies(req, res) {
@@ -15,6 +15,11 @@ async function getMovies(req, res) {
 
   async function createMovie(req, res) {
     const newMovie = req.body
+    const movies = await getMoviesDb()
+
+    if(movies.find((movie) => movie.title === newMovie.title)) {
+      throw new DataAlreadyExistsError('A movie with that title already exists')
+    }
 
     const requiredFields = ['title', 'runtimeMins']
     if (!requiredFields.every((field) => newMovie[field])) {

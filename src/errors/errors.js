@@ -2,4 +2,8 @@ class MissingFieldsError extends Error {
 
 }
 
-module.exports = { MissingFieldsError }
+class DataAlreadyExistsError extends Error {
+
+}
+
+module.exports = { MissingFieldsError, DataAlreadyExistsError }
