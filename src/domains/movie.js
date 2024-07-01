@@ -45,14 +45,28 @@ const createMovieDb = async (title, runtimeMins, screenings) => {
     return await prisma.movie.create(movieData)
 }
 
-const getMovieByIdDb = async (movieId) => await prisma.movie.findUnique({
-    where: {
-        id: movieId
-    },
-    include: {
-        screenings: true
+async function getMovieByIdDb (movieId) {
+
+    if (!isNaN(movieId)) {
+        return await prisma.movie.findUnique({
+            where: {
+                id: Number(movieId)
+            },
+            include: {
+                screenings: true
+            }
+        })
+    } else {
+        return await prisma.movie.findMany({
+            where: {
+                title: movieId
+            },
+            include: {
+                screenings: true
+            }
+        })
     }
-})
+}
 
 const updateMovieDb = async (movieId, title, runtimeMins) => await prisma.movie.update({
     where: {

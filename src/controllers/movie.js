@@ -21,8 +21,8 @@ async function createMovie(req, res) {
     })
 }
 
-async function getMovieById(req, res) {
-    const movieId = Number(req.params.id)
+async function getMovieByIdOrTitle(req, res) {
+    const movieId = req.params.id
 
     const movie = await getMovieByIdDb(movieId)
 
@@ -45,6 +45,6 @@ async function updateMovie(req, res) {
 module.exports = {
     getAllMovies,
     createMovie,
-    getMovieById,
+    getMovieByIdOrTitle,
     updateMovie
   }
