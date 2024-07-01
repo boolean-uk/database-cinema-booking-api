@@ -32,7 +32,6 @@ async function getMovieByIdDb(movieId) {
 }
 
 async function updateMovieByIdDb(movieId, updatedProps) {
-  console.log(updatedProps);
   const movie = await prisma.movie.update({
     where: {
       id: movieId,
