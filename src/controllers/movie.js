@@ -17,7 +17,16 @@ const addMovie = async (req, res) => {
     })
 }
 
+const findByID = async (req, res) => {
+    const id = Number(req.params.id)
+    const found = (await getAllMovies()).find((m) => m.id === id)
+    res.status(200).json({
+        movie: found
+    })
+}
+
 module.exports = {
     getAll,
-    addMovie
+    addMovie,
+    findByID
 }
