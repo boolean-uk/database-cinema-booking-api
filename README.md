@@ -18,12 +18,10 @@ The full database schema and seed file for this exercise has already been implem
 
 **Note: Although we need to create a new primary database, we can reuse a shadow database across multiple projects since Prisma resets it after using it.**
 
-1. Create a new database instance in ElephantSQL and create a schema called 'prisma' in it.
-2. Rename the `.env.example` file to `.env`
-3. Edit the `DATABASE_URL` variable in `.env`, swapping `YOUR_DATABASE_URL` for the URL of the database you just created. Leave `?schema=prisma` at the end.
-4. Edit the `SHADOW_DATABASE_URL` variable in `.env`, swapping `YOUR_SHADOW_DATABASE_URL` for the URL of the shadow database you created in the earlier exercises. Leave `?schema=shadow` at the end.
-5. If you have not previously done so (e.g. for a past exercise), create another separate **TEST** database instance. Make sure you create a schema called 'prisma' in it.
-6. Edit the `TEST_DATABASE_URL` variable in `.env`, swapping `YOUR_TEST_DB_URL` for the URL of the separate **TEST** database instance you just created. Leave `?schema=prisma` at the end.
+1. Rename the `.env.example` file to `.env`
+2. Edit the `DATABASE_URL` variable in `.env`, swapping `YOUR_DATABASE_URL` for the URL of your database
+3. Create another separate **TEST** database instance; you may need to use a different cloud provider as some only allow one instance per free account. [Supabase](https://supabase.com/) may be a good option
+4. Edit the `TEST_DATABASE_URL` variable in `.env`, swapping `YOUR_TEST_DB_URL` for the URL of the separate **TEST** database instance you just created
 7. Run `npm ci` to install the project dependencies.
 8. Run `npx prisma migrate reset` to execute the existing migrations & data seed. Press `y` when it asks if you're sure.
 
