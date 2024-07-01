@@ -1,4 +1,5 @@
-const { getAllMoviesDb, createdMovieDb } = require('../domains/movie.js')
+const { getAllMoviesDb, createdMovieDb, getMovieDb } = require('../domains/movie.js')
+const { movie } = require('../utils/prisma.js')
 
 
 const getAllMovies = async (req, res) => {
@@ -16,12 +17,23 @@ const createdMovie = async (req, res) => {
     const newMovie = await createdMovieDb(title, runtimeMins)
     res.status(201).json({newMove : newMovie})
   } catch (error) {
-    es.status(500).json({error : 'coulnt create new Movie at controller!'})
+      res.status(500).json({error : 'coulnt create new Movie at controller!'})
+  }
+}
+
+const getMovieById = async (req, res) => {
+  const id = Number(req.params.id)
+  try {
+    const movie = await getMovieDb(id)
+    res.status(200).json({movie : movie})
+  } catch (error) {
+      res.status(500).json({error: 'could not found the movie!'})
   }
 }
 
 
 module.exports = {
   getAllMovies,
-  createdMovie
+  createdMovie,
+  getMovieById
 }

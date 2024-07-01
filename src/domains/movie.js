@@ -27,7 +27,21 @@ const createdMovieDb = async (title, runtimeMins) => {
   }
 }
 
+const getMovieDb = async (id) => {
+  try {
+    const movieFound = await prisma.movie.findFirst({
+      include : {
+        screenings : true
+      }
+    })
+    return movieFound
+  } catch (error) {
+    throw new Error ('Failed to fetch movie from database.')
+  }
+}
+
 module.exports = {
   getAllMoviesDb,
-  createdMovieDb
+  createdMovieDb,
+  getMovieDb
 }
