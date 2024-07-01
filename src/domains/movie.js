@@ -7,7 +7,17 @@ const getAllMoviesDb = async () => {
     return allMovies
 }
 
+const getMovieByIdDb = async (id) => {
+    const foundMovie = await prisma.movie.findUnique({
+			where: {
+				id: id
+			},
+		})
+    return foundMovie
+}
+
 
 module.exports = {
-    getAllMoviesDb
+	getAllMoviesDb,
+	getMovieByIdDb,
 }
