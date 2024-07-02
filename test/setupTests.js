@@ -1,18 +1,13 @@
 const prisma = require("../src/utils/prisma")
 
-const deleteTables = () => {
-  const deleteTables = [
-    prisma.ticket.deleteMany(),
-    prisma.screening.deleteMany(),
-    prisma.movie.deleteMany(),
-    prisma.screen.deleteMany(),
-    prisma.contact.deleteMany(),
-    prisma.customer.deleteMany(),
-  ];
-
-  // Conditionally delete this table as this will only exist if "Extensions to the Extensions" bullet 2 is implemented
-  prisma.reviews && deleteTables.push(prisma.reviews.deleteMany())
-  return prisma.$transaction(deleteTables)
+const deleteTables = async () => {
+  await prisma.review.deleteMany()
+  await prisma.ticket.deleteMany()
+  await prisma.screening.deleteMany()
+  await prisma.movie.deleteMany()
+  await prisma.screen.deleteMany()
+  await prisma.contact.deleteMany()
+  await prisma.customer.deleteMany()
 }
 
 global.beforeAll(() => {

@@ -66,6 +66,13 @@ const updateCostumerDb = async (paramsId, name, contact) => {
     data: dataClause,
     include: {
       contact: true,
+      reviews: {
+        select: {
+          id: true,
+          content: true,
+          movie: true
+        }
+      }
     },
   })
 }

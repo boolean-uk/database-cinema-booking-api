@@ -24,11 +24,13 @@ const customerRouter = require("./routers/customer")
 const movieRouter = require("./routers/movie")
 const screenRouter = require("./routers/screen")
 const ticketRouter = require("./routers/ticket")
+const reviewRouter = require("./routers/review")
 
 app.use("/movies", movieRouter)
 app.use("/customers", customerRouter)
 app.use("/screens", screenRouter)
 app.use("/tickets", ticketRouter)
+app.use("/reviews", reviewRouter)
 
 app.use((error, req, res, next) => {
   if (error instanceof BadRequest) {

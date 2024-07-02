@@ -32,6 +32,13 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
     where: whereClause,
     include: {
       screenings: true,
+      reviews: {
+        select: {
+          id: true,
+          content: true,
+          customer: true
+        }
+      }
     },
   })
 
@@ -106,6 +113,13 @@ const getMovieByIdOrTitleDb = async (id, title) => {
     },
     include: {
       screenings: true,
+      reviews: {
+        select: {
+          id: true,
+          content: true,
+          customer: true
+        }
+      }
     },
   })
 
@@ -175,6 +189,13 @@ const updateMovieDb = async (paramsId, title, runtimeMins, screenings) => {
     data: dataClause,
     include: {
       screenings: true,
+      reviews: {
+        select: {
+          id: true,
+          content: true,
+          customer: true
+        }
+      }
     },
   })
 }
