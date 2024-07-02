@@ -1,6 +1,7 @@
 const supertest = require("supertest")
 const app = require("../../../src/server.js")
 const { createMovie } = require("../../helpers/createMovie")
+const { createScreen } = require("../../helpers/createScreen.js")
 
 describe("Screen Endpoint", () => {
     describe("POST /screens", () => {
@@ -41,6 +42,21 @@ describe("Screen Endpoint", () => {
                 .send(request)
 
             expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
+
+        it("will return 409 when a screen with the provided number already exists", async () => {
+            const screen = await createScreen(1)
+
+            const request = {
+                number: screen.number
+            }
+
+            const response = await supertest(app)
+                .post('/screens')
+                .send(request)
+
+            expect(response.status).toEqual(409)
             expect(response.body).toHaveProperty('error')
         })
     })

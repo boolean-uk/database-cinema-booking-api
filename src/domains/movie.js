@@ -70,7 +70,7 @@ async function getMovieByIdDb (movieId) {
         })
     }
 
-    return await prisma.movie.findMany({
+    return await prisma.movie.findUniqueOrThrow({
         where: {
             title: movieId
         },

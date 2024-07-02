@@ -2,6 +2,7 @@ const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/librar
 const { getAllMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require("../domains/movie")
 const MissingFieldsError = require("../errors/missingFieldsError")
 const NotFoundError = require("../errors/notFoundError")
+const NotUniqueError = require("../errors/notUniqueError")
 
 async function getAllMovies(req, res) {
     const runtimeLt = Number(req.query.runtimeLt)
@@ -21,11 +22,21 @@ async function createMovie(req, res) {
         throw new MissingFieldsError('Missing fields in request body')
     }
 
-    const createdMovie = await createMovieDb(title, runtimeMins, screenings)
+    try {
+        const createdMovie = await createMovieDb(title, runtimeMins, screenings)
 
-    res.status(201).json({
-        movie: createdMovie
-    })
+        res.status(201).json({
+            movie: createdMovie
+        })
+    } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+            if (e.code === "P2002") {
+                throw new NotUniqueError('A movie with the provided title already exists')
+            }
+        }
+      
+        res.status(500).json({ error: e.message })
+    }
 }
 
 async function getMovieByIdOrTitle(req, res) {
@@ -33,10 +44,6 @@ async function getMovieByIdOrTitle(req, res) {
 
     try {
         const movie = await getMovieByIdDb(movieId)
- 
-        if(movie.length === 0) {
-            throw new NotFoundError
-        }
 
         res.json({
             movie

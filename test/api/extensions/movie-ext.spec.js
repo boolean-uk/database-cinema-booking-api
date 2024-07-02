@@ -114,6 +114,23 @@ describe("Movie Endpoint", () => {
             expect(response.status).toEqual(400)
             expect(response.body).toHaveProperty('error')
         })
+
+        it("will return 409 when a movie with the provided title already exists", async () => {
+            const screen = await createScreen(1)
+            const movie = await createMovie("test1", 130, screen)
+
+            const request = {
+                title: movie.title,
+                runtimeMins: movie.runtimeMins
+            }
+
+            const response = await supertest(app)
+                .post('/movies')
+                .send(request)
+
+            expect(response.status).toEqual(409)
+            expect(response.body).toHaveProperty('error')
+        })
     })
 
     describe("GET /movies/title", () => {
@@ -125,10 +142,10 @@ describe("Movie Endpoint", () => {
 
             expect(response.status).toEqual(200)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie[0].title).toEqual('Dodgeball')
-            expect(response.body.movie[0].runtimeMins).toEqual(120)
-            expect(response.body.movie[0].screenings).not.toEqual(undefined)
-            expect(response.body.movie[0].screenings.length).toEqual(1)
+            expect(response.body.movie.title).toEqual('Dodgeball')
+            expect(response.body.movie.runtimeMins).toEqual(120)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(1)
         })
 
         it('will return 404 if the movie is not found by id', async () => {
