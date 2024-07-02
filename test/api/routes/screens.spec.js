@@ -5,7 +5,7 @@ describe("Screens Endpoint", () => {
     describe("POST /screens", () => {
         it("will create a new screen", async () => {
             const request = {
-                number: 10
+                number: 11
             }
 
             const response = await supertest(app)
@@ -14,7 +14,7 @@ describe("Screens Endpoint", () => {
 
             expect(response.status).toEqual(201)
             expect(response.body.screen).not.toEqual(undefined)
-            expect(response.body.screen.number).toEqual(10)
+            expect(response.body.screen.number).toEqual(11)
         })
     })
 })

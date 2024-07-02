@@ -1,5 +1,5 @@
-const { getAllMovies, createMovie, updateMovie, getAllMoviesByRuntimeLt, getAllMoviesByRuntimeGt } = require('../domains/movie.js')
-
+const { getAllMovies, createMovie, updateMovie, getAllMoviesByRuntimeLt, getAllMoviesByRuntimeGt, getMovieByTitle } = require('../domains/movie.js')
+const { MissingFields, AlreadyExists, DoesNotExist } = require('../errorClasses/index.js')
 
 
 const getAll = async (req, res) => {
@@ -22,15 +22,15 @@ const getAll = async (req, res) => {
 const addMovie = async (req, res) => {
     if (
         req.body.title === undefined ||
-        req.body.title === "" ||
+        req.body.title === "" &&
         req.body.runtimeMins === undefined ||
         req.body.runtimeMins === ""
     ) {
         throw new MissingFields("Movie title or runtimeMins field missing")
     }
-    if (findMovieByTitle(req.body.title)) {
-        throw new AlreadyExists("Movie already exists, please choose another to add")
-    }
+    // if (getMovieByTitle(req)) {
+    //     throw new AlreadyExists("Movie already exists, please choose another to add")
+    // }
     const newMovie = await createMovie(req)
 
     res.status(201).json({
@@ -40,10 +40,11 @@ const addMovie = async (req, res) => {
 
 const findByID = async (req, res) => {
     const id = Number(req.params.id)
-    const found = (await getAllMovies()).find((m) => m.id === id)
+    const found = await findMovieByID(id)
     if (!found) {
         throw new DoesNotExist("Could not find this movies")
     }
+
     res.status(200).json({
         movie: found
     })
@@ -52,16 +53,16 @@ const findByID = async (req, res) => {
 const updateMovieByID = async (req, res) => {
     if (
         req.body.title === "" ||
-        req.body.title === undefined ||
+        req.body.title === undefined &&
         req.body.runtimeMins === "" ||
         req.body.runtimeMins === undefined
     ) {
         throw new MissingFields("Movie title or runtimeMins field missing")
     }
-    if (!findByID(req)) {
+    if (!findMovieByID(req.params.id)) {
         throw new DoesNotExist("Could not find this movies")
     }
-    if (findMovieByTitle) {
+    if (findMovieByTitle(req.body.title)) {
         throw new AlreadyExists("Movie already exists, please choose another to add")
     }
     const updatedMovie = await updateMovie(req)
@@ -70,8 +71,14 @@ const updateMovieByID = async (req, res) => {
     })
 }
 
+const findMovieByID = async (id) => {
+    const found = (await getAllMovies()).find((m) => m.id === id)
+    return found
+}
+
 const findMovieByTitle = async (title) => {
     const found = (await getAllMovies()).find((m) => m.title === title)
+    return found
 }
 
 module.exports = {

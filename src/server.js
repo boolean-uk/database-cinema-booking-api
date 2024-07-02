@@ -23,7 +23,10 @@ app.use('/movies', movieRouter)
 const screenRouter = require('./routers/screen')
 app.use('/screens', screenRouter)
 
+const ticketRouter = require('./routers/ticket')
+app.use('/tickets', ticketRouter)
 
+const { MissingFields, AlreadyExists, DoesNotExist } = require('./errorClasses/index.js')
 app.use((error, req, res, next) => {
     if(error instanceof MissingFields) {
         return res.status(400).json({

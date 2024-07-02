@@ -9,12 +9,9 @@ const createScreen = async (req) => await prisma.screen.create({
     }
 })
 
-const findScreen = async (req) => await prisma.screen.findUnique({
+const findScreen = async (req) => await prisma.screen.findFirst({
     where: {
         number: req.body.number
-    },
-    include: {
-        screenings: true
     }
 })
 
