@@ -30,11 +30,16 @@ const createCustomer = async (req, res) => {
 };
 
 async function updateCustomerById(req, res) {
-  console.log('in')
   const id = Number(req.params.id);
   const newProps = req.body;
+  try {
   const customer = await updateCustomerByIdDb(id, newProps);
   res.status(201).json({ customer });
+  } catch (e) {
+    if (e.code === 'P2025') {
+      return res.status(404).json({ error: e.message })
+    }
+  }
 }
 
 module.exports = {
