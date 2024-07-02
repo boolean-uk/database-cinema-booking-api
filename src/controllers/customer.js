@@ -55,7 +55,7 @@ const updateCustomer = async (req, res) => {
     if(!updatedCustomer) {
       return res.status(404).json('Customer didnt Find!')
     }
-    res.status(201).json({costumer : updatedCustomer})
+    res.status(201).json({customer : updatedCustomer})
   } catch (error) {
     res.status(500).json({error : 'something Went Wrong!'})
   }

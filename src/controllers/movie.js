@@ -3,7 +3,7 @@ const { getAllMoviesDb, createdMovieDb, getMovieDb, updateMovieDb } = require('.
 const getAllMovies = async (req, res) => {
  try {
   const movies = await getAllMoviesDb()
-  res.status(200).json(movies)
+  res.status(200).json({movies : movies})
  } catch (e) {
   res.status(500).json({error : 'something went Wrong!'})
  }
@@ -13,7 +13,7 @@ const createdMovie = async (req, res) => {
   const { title , runtimeMins } = req.body
   try {
     const newMovie = await createdMovieDb(title, runtimeMins)
-    res.status(201).json({newMove : newMovie})
+    res.status(201).json({movie : newMovie})
   } catch (error) {
       res.status(500).json({error : 'coulnt create new Movie at controller!'})
   }

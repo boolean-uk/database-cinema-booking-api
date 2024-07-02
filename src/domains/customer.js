@@ -27,6 +27,9 @@ const updateCustomerDb = async (id, name) => {
       where : {id : id},
       data : {
         name
+      },
+      include : {
+        contact : true
       }
     })
     return updatedCustomer

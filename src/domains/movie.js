@@ -19,6 +19,9 @@ const createdMovieDb = async (title, runtimeMins) => {
       data: {
         title,
         runtimeMins
+      },
+      include : {
+        screenings : true
       }
     })
     return newMovie
@@ -48,6 +51,9 @@ const updateMovieDb = async (id, title, runtimeMins) => {
       data : {
         title,
         runtimeMins
+      },
+      include : {
+        screenings : true
       }
     })
     return updatedMovie
