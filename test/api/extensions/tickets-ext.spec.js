@@ -12,13 +12,35 @@ describe("Tickets Endpoint", () => {
       const request = {};
 
       const response = await supertest(app).post(`/tickets`).send(request);
+      expect(response.status).toEqual(400);
+      expect(response.body.error).toEqual(
+        "Tickets require a screening ID and a customer ID"
+      );
     });
 
     it("should create new tickets", async () => {
-      const customer = createCustomer("Will Baxter", "999", "will@baxter.com");
-      const screen = createScreen(5);
-      const movie = createMovie("The Legend of Bagger Vance", 120);
-      const screening = createScreening(movie, screen, new Date());
+      const date = new Date();
+      const customer = await createCustomer(
+        "Will Baxter",
+        "999",
+        "will@baxter.com"
+      );
+      const screen = await createScreen(5);
+      const movie = await createMovie("The Legend of Bagger Vance", 120);
+      const screening = await createScreening(movie, screen, date);
+
+      request = {
+        screeningId: screening.id,
+        customerId: customer.id,
+      };
+
+      const response = await supertest(app).post(`/tickets`).send(request);
+
+      expect(response.status).toEqual(201)
+      expect(response.body.ticket.id).not.toBe(undefined)
+      expect(response.body.ticket.customer).not.toBe(undefined)
+      expect(response.body.ticket.screen).not.toBe(undefined)
+      expect(response.body.ticket.movie).not.toBe(undefined)
     });
   });
 });
