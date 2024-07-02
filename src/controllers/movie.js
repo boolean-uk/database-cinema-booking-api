@@ -21,44 +21,48 @@ const getAllMovies = async (req, res) => {
 	res.status(200).json({ movies: allMovies })
 }
 
-const createMovie = async (req, res) => {
+const createMovie = async (req, res, next) => {
 	const { title, runtimeMins } = req.body
 
-	if (!title || !runtimeMins) {
-		throw new MissingFieldsError(
-			"Title and duration in minutes must be provided in order to add a movie"
-		)
+	try {
+		if (!title || !runtimeMins) {
+			throw new MissingFieldsError(
+				"Title and duration in minutes must be provided in order to add a movie"
+			)
+		}
+
+		const moviesList = await getAllMoviesDb()
+		const existingMovie = moviesList.find((mv) => mv.title === title)
+
+		if (existingMovie) {
+			throw new ExistingDataError(
+				"A movie with the provided title already exists"
+			)
+		}
+
+		const createdMovie = await createMovieDb(title, runtimeMins)
+		res.status(201).json({ movie: createdMovie })
+	} catch (e) {
+		console.log(e)
+		next(e)
 	}
-
-	const moviesList = await getAllMoviesDb()
-	const existingMovie = moviesList.find((mv) => mv.title === title)
-
-	if (existingMovie) {
-		throw new ExistingDataError(
-			"A movie with the provided title already exists"
-		)
-	}
-
-	const createdMovie = await createMovieDb(title, runtimeMins)
-	res.status(201).json({ movie: createdMovie })
 }
 
 const getMovieById = async (req, res, next) => {
 	const idOrTitle = req.params.idOrTitle
 
 	try {
-		const movie = await getMovieByIdDb(idOrTitle)
-		if (!movie) {
-			throw new DataNotFoundError(
-				"No movie with the provided id or title exists"
-			)
-		}
-		res.status(200).json({ movie: movie })
+	const movie = await getMovieByIdDb(idOrTitle)
+	if (!movie) {
+		throw new DataNotFoundError(
+			"No movie with the provided id or title exists"
+		)
+	}
+	res.status(200).json({ movie: movie })
 	} catch (e) {
 		console.log(e)
 		next(e)
 	}
-
 }
 
 const updateMovie = async (req, res) => {
