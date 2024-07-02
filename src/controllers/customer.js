@@ -5,10 +5,10 @@ const {
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body
-  const createdCustomer = await createCustomerDb(name, phone, email)
+  const customer = await createCustomerDb(name, phone, email)
 
   res.status(201).json({
-    customer: createdCustomer,
+    customer,
   })
 }
 
@@ -18,7 +18,7 @@ const updateCostumer = async (req, res) => {
   const customer = await updateCostumerDb(paramsId, name, contact)
 
   res.status(201).json({
-    customer: customer,
+    customer,
   })
 }
 

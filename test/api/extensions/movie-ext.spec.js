@@ -75,7 +75,7 @@ describe("Movie Endpoint", () => {
   })
 
   describe("GET /movies:idOrTitle", () => {
-    it("can retrieve movie by an id or a title", async () => {
+    it("can retrieve a movie by an id or a title", async () => {
       const screen = await createScreen(1)
       await createMovie("Dodgeball", 120, screen)
 

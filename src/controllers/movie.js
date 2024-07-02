@@ -11,7 +11,7 @@ const getAllMovies = async (req, res) => {
   const movies = await getAllMoviesDb(runtimeLt, runtimeGt)
 
   res.json({
-    movies: movies,
+    movies,
   })
 }
 
@@ -20,7 +20,7 @@ const createMovie = async (req, res) => {
   const movie = await createMovieDb(title, runtimeMins, screenings)
 
   res.status(201).json({
-    movie: movie,
+    movie,
   })
 }
 
@@ -36,7 +36,7 @@ const getMovieByIdOrTitle = async (req, res) => {
   const movie = await getMovieByIdOrTitleDb(id, title)
 
   res.json({
-    movie: movie,
+    movie,
   })
 }
 
@@ -46,7 +46,7 @@ const updateMovie = async (req, res) => {
   const movie = await updateMovieDb(paramsId, title, runtimeMins, screenings)
 
   res.status(201).json({
-    movie: movie,
+    movie,
   })
 }
 

@@ -5,7 +5,7 @@ const createScreen = async (req, res) => {
   const screen = await createSceenDb(number, screenings)
 
   res.status(201).json({
-    screen: screen
+    screen,
   })
 }
 

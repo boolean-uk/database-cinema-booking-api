@@ -14,7 +14,7 @@ const getAllReviews = async (req, res) => {
   })
 }
 
-const creteReview = async (req, res) => {
+const createReview = async (req, res) => {
   const { customerId, movieId, content } = req.body
 
   const review = await createReviewDb(customerId, movieId, content)
@@ -55,7 +55,7 @@ const deleteReview = async (req, res) => {
 
 module.exports = {
   getAllReviews,
-  creteReview,
+  createReview,
   getReviewById,
   updateReview,
   deleteReview,

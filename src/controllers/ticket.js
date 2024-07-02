@@ -5,7 +5,7 @@ const createTicket = async (req, res) => {
   const ticket = await createTicketDb(screeningId, customerId)
 
   res.status(201).json({
-    ticket: ticket,
+    ticket,
   })
 }
 
