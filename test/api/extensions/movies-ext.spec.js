@@ -8,8 +8,8 @@ describe('Movies Endpoint', () => {
     describe('GET /movies', () => {
         it('will retrieve a list of movies, but not include any without screenings in the future', async () => {
             const screen = await createScreen(1)
-            const movie = await createMovie('Dodgeball', 120, screen)
-            const secondMovie = await createMovie('Scream', 113, screen)
+            const movie = await createMovie('Dodgeball', 120)
+            const secondMovie = await createMovie('Scream', 113)
 
             await createScreening(
                 screen.id,

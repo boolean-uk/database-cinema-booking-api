@@ -1,8 +1,7 @@
 const prisma = require('../utils/prisma')
-const { PrismaClientKnownRequestError } = require('@prisma/client')
 
 const createTicketDb = async (screeningId, customerId) => {
-    const screening = await prisma.screening.findUnique({
+    await prisma.screening.findUniqueOrThrow({
         where: { id: screeningId },
         include: {
             movie: true,
@@ -10,20 +9,12 @@ const createTicketDb = async (screeningId, customerId) => {
         },
     })
 
-    if (!screening) {
-        throw Error('P2015')
-    }
-
-    const customer = await prisma.customer.findUnique({
+    await prisma.customer.findUniqueOrThrow({
         where: { id: customerId },
         include: {
             contact: true,
         },
     })
-
-    if (!customer) {
-        throw Error('P2015')
-    }
 
     return await prisma.ticket.create({
         data: {

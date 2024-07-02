@@ -25,4 +25,7 @@ app.use('/screens', screenRouter)
 const ticketRouter = require('./routers/tickets')
 app.use('/tickets', ticketRouter)
 
+const reviewRouter = require('./routers/reviews')
+app.use('/reviews', reviewRouter)
+
 module.exports = app

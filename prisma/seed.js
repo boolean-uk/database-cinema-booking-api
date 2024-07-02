@@ -98,8 +98,18 @@ async function createScreenings(screens, movies) {
 
 async function createReviews(customer, movies) {
     const rawReviews = [
-        { customerId: customer.id, movieId: movies[0].id, rating: 5 , content:"It was okay"},
-        { customerId: customer.id, movieId: movies[1].id, rating: 9 , content:"I liked this"},
+        {
+            customerId: customer.id,
+            movieId: movies[0].id,
+            rating: 5,
+            content: 'It was okay',
+        },
+        {
+            customerId: customer.id,
+            movieId: movies[1].id,
+            rating: 9,
+            content: 'I liked this',
+        },
     ]
 
     const reviews = []

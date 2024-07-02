@@ -62,7 +62,7 @@ const updateMovieById = async (req, res) => {
 
         res.status(201).json({ movie: updatedMovie })
     } catch (e) {
-        if (e.code = 'P2015') {
+        if ((e.code = 'P2015')) {
             return res.status(404).json({ error: e.message })
         }
 

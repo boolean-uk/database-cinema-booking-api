@@ -39,6 +39,7 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
                         startsAt: { gt: new Date(Date.now()).toISOString() },
                     },
                 },
+                reviews: true,
             },
             where: {
                 runtimeMins: { lt: runtimeLt || 999999, gt: runtimeGt || 0 },
@@ -55,6 +56,7 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
             screenings: {
                 where: { startsAt: { gt: new Date(Date.now()).toISOString() } },
             },
+            reviews: true,
         },
         where: {
             screenings: {
