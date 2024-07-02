@@ -3,6 +3,7 @@ const {
   createCustomerDb,
   updateCustomerByIdDb,
 } = require("../domains/customer.js");
+const { DataNotFoundError, MissingFieldsError } = require("../errors/errors.js");
 
 const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body;
@@ -31,7 +32,15 @@ const createCustomer = async (req, res) => {
 
 async function updateCustomerById(req, res) {
   const id = Number(req.params.id);
+  if (isNaN(id)) {
+    throw new DataNotFoundError('No customer found with that ID')
+  }
+
   const newProps = req.body;
+  if (!newProps.name) {
+    throw new MissingFieldsError('Customers require a name')
+  }
+
   try {
   const customer = await updateCustomerByIdDb(id, newProps);
   res.status(201).json({ customer });
