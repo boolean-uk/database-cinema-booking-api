@@ -95,9 +95,9 @@ async function updateMovieDb(movieId, title, runtimeMins, screenings){
     return await prisma.movie.update(movieData)
 }
   
-  module.exports = {
-    getAllMoviesDb,
-    createMovieDb,
-    getMovieByIdDb,
-    updateMovieDb
-  }
+module.exports = {
+getAllMoviesDb,
+createMovieDb,
+getMovieByIdDb,
+updateMovieDb
+}

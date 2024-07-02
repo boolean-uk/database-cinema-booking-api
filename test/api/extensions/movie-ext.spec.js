@@ -108,9 +108,9 @@ describe("Movie Endpoint", () => {
     describe("GET /movies/title", () => {
         it("will get movies by title", async () => {
             const screen = await createScreen(1)
-            const created = await createMovie('Dodgeball', 120, screen)
+            const movie = await createMovie('Dodgeball', 120, screen)
 
-            const response = await supertest(app).get(`/movies/${created.title}`)
+            const response = await supertest(app).get(`/movies/${movie.title}`)
 
             expect(response.status).toEqual(200)
             expect(response.body.movie).not.toEqual(undefined)
