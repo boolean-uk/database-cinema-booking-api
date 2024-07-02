@@ -45,10 +45,10 @@ const createCustomer = async (req, res) => {
 
 async function updateCustomer(req, res) {
   const customerId = Number(req.params.id)
-  const { name } = req.body
+  const { name, contact } = req.body
 
-  const updatedCustomer = await updateCustomerDb(customerId, name)
-  
+  const updatedCustomer = await updateCustomerDb(customerId, name, contact)
+
   res.status(201).json({
     customer: updatedCustomer
   })

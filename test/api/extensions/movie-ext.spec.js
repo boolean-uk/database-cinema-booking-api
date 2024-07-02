@@ -132,12 +132,10 @@ describe("Movie Endpoint", () => {
                 runtimeMins: 113,
                 screenings: [
                     {
-                        movieId: 1,
                         screenId: screen1.id,
                         startsAt: "2022-06-11T18:30:00.000Z"
                     },
                     {
-                        movieId: 1,
                         screenId: screen2.id,
                         startsAt: "2023-06-11T18:30:00.000Z"
                     }

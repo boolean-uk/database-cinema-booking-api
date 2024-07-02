@@ -1,9 +1,9 @@
 const { createScreenDb } = require("../domains/screen")
 
 async function createScreen(req, res) {
-    const { number } = req.body
+    const { number, screenings } = req.body
 
-    const createdScreen = await createScreenDb(number)
+    const createdScreen = await createScreenDb(number, screenings)
 
     res.status(201).json({
         screen: createdScreen
