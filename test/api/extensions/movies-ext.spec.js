@@ -34,10 +34,12 @@ describe("Movies Endpoint", () => {
 
     describe("GET /movies/:id", () => {
       it("will throw an error if no movie exists with given id", async () => {
-        const response = await supertest(app).get("/movies/30");
+        const response = await supertest(app).get("/movies/450");
+        console.log(response.body)
 
         expect(response.status).toEqual(404);
         expect(response.body.error).toEqual("No movie found with that ID");
+        
       });
     });
   });

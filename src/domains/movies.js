@@ -20,7 +20,7 @@ async function createMovieDb(newMovie) {
 }
 
 async function getMovieByIdDb(movieId) {
-  const movie = await prisma.movie.findUnique({
+  const movie = await prisma.movie.findUniqueOrThrow({
     where: {
       id: movieId,
     },

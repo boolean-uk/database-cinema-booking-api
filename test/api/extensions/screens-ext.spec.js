@@ -15,7 +15,6 @@ describe("Screens Endpoint", () => {
 
         it('should reject post requests where given screen number already exists', async () => {
             const screen = await createScreen(1);
-            console.log(screen)
             const request = {number: screen.number}
 
             const response = await supertest(app).post("/screens").send(request);

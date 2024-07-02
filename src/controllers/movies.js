@@ -8,8 +8,6 @@ const {
 } = require("../domains/movies.js");
 const {
   MissingFieldsError,
-  DataAlreadyExistsError,
-  DataNotFoundError
 } = require("../errors/errors.js");
 
 async function getMovies(req, res) {
@@ -24,11 +22,6 @@ async function getMovies(req, res) {
 
 async function createMovie(req, res) {
   const newMovie = req.body;
-  // const movies = await getMoviesDb();
-
-  // if (movies.find((movie) => movie.title === newMovie.title)) {
-  //   throw new DataAlreadyExistsError("A movie with that title already exists");
-  // }
 
   const requiredFields = ["title", "runtimeMins"];
   if (!requiredFields.every((field) => newMovie[field])) {
@@ -39,45 +32,44 @@ async function createMovie(req, res) {
     const movie = await createMovieDb(newMovie);
     res.status(201).json({ movie });
   } catch (e) {
-    if(e.code === 'P2002') {
-      res.status(409).json({ error: "A movie with that title already exists"})
+    if (e.code === "P2002") {
+      res.status(409).json({ error: "A movie with that title already exists" });
     }
   }
-  
 }
 
 async function getMovieById(req, res) {
   const id = Number(req.params.id);
-  const movie = await getMovieByIdDb(id);
 
-  if (!movie) {
-    throw new DataNotFoundError('No movie found with that ID')
+  try {
+    const movie = await getMovieByIdDb(id);
+    res.status(200).json({ movie });
+  } catch (e) {
+    if (e.code === "P2025") {
+      res.status(404).json({ error: "No movie found with that ID" });
+    }
   }
-
-  res.status(200).json({ movie });
 }
 
 async function updateMovieById(req, res) {
   const id = Number(req.params.id);
   const updatedProps = req.body;
-  const foundMovie = await getMovieByIdDb(id);
-
-  const movies = await getMoviesDb();
-
-  if (movies.find((movie) => updatedProps.title === movie.title)) {
-    throw new DataAlreadyExistsError("A movie with that title already exists");
-  }
-
-  if (!foundMovie) {
-    throw new DataNotFoundError('No movie found with that ID')
-  }
 
   if (!updatedProps.title && !updatedProps.runtimeMins) {
     throw new MissingFieldsError("Updating movies requires a title or runtime");
   }
 
-  const movie = await updateMovieByIdDb(id, updatedProps);
-  res.status(201).json({ movie });
+  try {
+    const movie = await updateMovieByIdDb(id, updatedProps);
+    res.status(201).json({ movie });
+  } catch (e) {
+    if (e.code === "P2025") {
+      res.status(404).json({ error: "No movie found with that ID" });
+    }
+    if (e.code === "P2002") {
+      res.status(409).json({ error: "A movie with that title already exists" });
+    }
+  }
 }
 
 module.exports = {
