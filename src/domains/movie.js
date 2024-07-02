@@ -46,7 +46,6 @@ const createMovieDb = async (title, runtimeMins, screenings) => {
 }
 
 async function getMovieByIdDb (movieId) {
-
     if (!isNaN(movieId)) {
         return await prisma.movie.findUnique({
             where: {
@@ -68,17 +67,33 @@ async function getMovieByIdDb (movieId) {
     })
 }
 
-const updateMovieDb = async (movieId, title, runtimeMins) => await prisma.movie.update({
-    where: {
-        id: movieId
-    }, data: {
-        title: title,
-        runtimeMins: runtimeMins
-    },
-    include: {
-        screenings: true
+async function updateMovieDb(movieId, title, runtimeMins, screenings){
+    const movieData = {
+        where: {
+            id: movieId
+        }, data: {
+            title: title,
+            runtimeMins: runtimeMins
+        },
+        include: {
+            screenings: true
+        }
     }
-})
+
+    if(screenings) {
+        movieData.data.screenings = {
+            deleteMany: {},
+            createMany: {
+                    data: screenings.map((screening) => ({
+                    startsAt: screening.startsAt,
+                    screenId: screening.screenId
+                }))
+            }
+        }
+    }
+
+    return await prisma.movie.update(movieData)
+}
   
   module.exports = {
     getAllMoviesDb,

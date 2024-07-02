@@ -120,4 +120,40 @@ describe("Movie Endpoint", () => {
             expect(response.body.movie[0].screenings.length).toEqual(1)
         })
     })
+
+    describe("PUT /movies/:id", () => {
+        it("will update a movie by id and the screeninsg when provided", async () => {
+            const screen1 = await createScreen(1)
+            const screen2 = await createScreen(2)
+            const created = await createMovie('Dodgeball', 120, screen1)
+
+            const request = {
+                title: 'Scream',
+                runtimeMins: 113,
+                screenings: [
+                    {
+                        movieId: 1,
+                        screenId: screen1.id,
+                        startsAt: "2022-06-11T18:30:00.000Z"
+                    },
+                    {
+                        movieId: 1,
+                        screenId: screen2.id,
+                        startsAt: "2023-06-11T18:30:00.000Z"
+                    }
+                ]
+            }
+
+            const response = await supertest(app)
+                .put(`/movies/${created.id}`)
+                .send(request)
+
+            expect(response.status).toEqual(201)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie.title).toEqual('Scream')
+            expect(response.body.movie.runtimeMins).toEqual(113)
+            expect(response.body.movie.screenings).not.toEqual(undefined)
+            expect(response.body.movie.screenings.length).toEqual(2)
+        })
+    })
 })

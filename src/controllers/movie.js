@@ -33,9 +33,9 @@ async function getMovieByIdOrTitle(req, res) {
 
 async function updateMovie(req, res) {
     const movieId = Number(req.params.id)
-    const { title, runtimeMins } = req.body
+    const { title, runtimeMins, screenings } = req.body
 
-    const updatedMovie = await updateMovieDb(movieId, title, runtimeMins)
+    const updatedMovie = await updateMovieDb(movieId, title, runtimeMins, screenings)
 
     res.status(201).json({
         movie: updatedMovie
