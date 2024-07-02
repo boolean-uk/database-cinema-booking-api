@@ -74,12 +74,46 @@ const getMovieById = async (req, res, next) => {
 	}
 }
 
-const updateMovie = async (req, res) => {
+const updateMovie = async (req, res, next) => {
 	const reqId = Number(req.params.id)
 	const updateInfo = req.body
+	//  const screenings = updateInfo.screenings
 
-	const updatedMovie = await updateMovieDb(reqId, updateInfo)
-	res.status(201).json({ movie: updatedMovie })
+	const moviesList = await getAllMoviesDb()
+	const existingTitle = moviesList.find(
+		(mv) => mv.title === updateInfo.title
+	)
+	const existingId = moviesList.find((mv) => mv.id === reqId)
+
+	try {
+		if (!existingId) {
+			throw new DataNotFoundError(
+				"No movie with the provided ID exists"
+			)
+		}
+
+		if (!updateInfo.title || !updateInfo.runtimeMins) {
+			throw new MissingFieldsError(
+				"Title and duration in minutes must be provided in order to add a movie"
+			)
+		}
+
+		if (existingTitle) {
+			throw new ExistingDataError(
+				"A movie with the provided title already exists"
+			)
+		}
+
+		const updatedMovie = await updateMovieDb(
+			reqId,
+			updateInfo,
+			updateInfo.screenings
+		)
+		res.status(201).json({ movie: updatedMovie })
+	} catch (e) {
+		console.log(e)
+		next(e)
+	}
 }
 
 module.exports = {
