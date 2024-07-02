@@ -14,8 +14,6 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
       }
     }
   },
-  // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-  // This is like doing RETURNING in SQL
   include: {
     contact: true
   }
@@ -26,6 +24,30 @@ const getAllCustomersDb = async () => {
   return allCustomers
 }
 
-module.exports = {
-  createCustomerDb, getAllCustomersDb
+const updateCustomerDb = async (reqId, updateInfo) => {
+
+  const updatedCustomer = await prisma.customer.update({
+		where: {
+			id: reqId,
+		},
+		data: {
+			name: updateInfo,
+    },
+    include: {
+      contact: true
+    }
+	})
+  return updatedCustomer
 }
+
+
+module.exports = {
+  createCustomerDb, getAllCustomersDb, updateCustomerDb
+}
+
+
+
+
+
+// We add an `include` outside of the `data` object to make sure the new contact is returned in the result
+// This is like doing RETURNING in SQL
