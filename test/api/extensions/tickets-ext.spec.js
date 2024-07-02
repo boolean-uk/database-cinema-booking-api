@@ -36,35 +36,11 @@ describe("Tickets Endpoint", () => {
 
       const response = await supertest(app).post(`/tickets`).send(request);
 
-      expect(response.status).toEqual(201);
-      expect(response.body.ticket.id).not.toBe(undefined);
-      expect(response.body.ticket.customer).not.toBe(undefined);
-      expect(response.body.ticket.screen).not.toBe(undefined);
-      expect(response.body.ticket.movie).not.toBe(undefined);
-    });
-
-    it("should throw an error if customerId or screeningId do not exist", async () => {
-      request = {
-        screeningId: 999,
-        customerId: 999,
-      };
-
-      const response = await supertest(app).post(`/tickets`).send(request);
-      expect(response.body.error).toEqual(
-        "No data found for: screening customer"
-      );
-    });
-
-    it("should throw an error if screen ID or customer ID are the wrong data type", async () => {
-      request = {
-        screeningId: "cheese",
-        customerId: 999,
-      };
-
-      const response = await supertest(app).post(`/tickets`).send(request);
-      expect(response.body.error).toEqual(
-        "No data found for screening or customer ID"
-      );
+      expect(response.status).toEqual(201)
+      expect(response.body.ticket.id).not.toBe(undefined)
+      expect(response.body.ticket.customer).not.toBe(undefined)
+      expect(response.body.ticket.screen).not.toBe(undefined)
+      expect(response.body.ticket.movie).not.toBe(undefined)
     });
   });
 });

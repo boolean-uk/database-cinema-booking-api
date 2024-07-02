@@ -1,6 +1,5 @@
 const { createTicketDb } = require("../domains/tickets");
-const { MissingFieldsError, DataNotFoundError } = require("../errors/errors");
-const prisma = require("../utils/prisma");
+const { MissingFieldsError } = require("../errors/errors");
 
 async function createTicket(req, res) {
   const ticketData = req.body;
@@ -10,38 +9,6 @@ async function createTicket(req, res) {
       "Tickets require a screening ID and a customer ID"
     );
   }
-
-  if (
-    isNaN(Number(ticketData.screeningId)) ||
-    isNaN(Number(ticketData.customerId))
-  ) {
-    throw new DataNotFoundError("No data found for screening or customer ID");
-  }
-
-  [screening, customer] = await prisma.$transaction([
-    prisma.screening.findUnique({
-      where: {
-        id: Number(ticketData.screeningId),
-      },
-    }),
-    prisma.customer.findUnique({
-      where: {
-        id: Number(ticketData.customerId),
-      },
-    }),
-  ]);
-
-  if (!screening || !customer) {
-    let errorString = "No data found for: ";
-    if (!screening) {
-      errorString += "screening ";
-    }
-    if (!customer) {
-      errorString += "customer";
-    }
-    throw new DataNotFoundError(errorString);
-  }
-
   const ticket = await createTicketDb(ticketData);
 
   const result = {
