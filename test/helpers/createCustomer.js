@@ -15,5 +15,5 @@ const createCustomer = async (name, phone, email) => {
 }
 
 module.exports = {
-    createCustomer
+  createCustomer
 }
