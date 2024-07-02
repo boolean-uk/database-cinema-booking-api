@@ -22,7 +22,7 @@ const getAllMovies = async (req, res) => {
 }
 
 const createMovie = async (req, res, next) => {
-	const { title, runtimeMins } = req.body
+	const { title, runtimeMins, screenings } = req.body
 
 	try {
 		if (!title || !runtimeMins) {
@@ -40,6 +40,15 @@ const createMovie = async (req, res, next) => {
 			)
 		}
 
+		if (screenings) {
+			const createdMovie = await createMovieDb(
+				title,
+				runtimeMins,
+				screenings
+			)
+			res.status(201).json({ movie: createdMovie })
+		}
+
 		const createdMovie = await createMovieDb(title, runtimeMins)
 		res.status(201).json({ movie: createdMovie })
 	} catch (e) {
@@ -52,13 +61,13 @@ const getMovieById = async (req, res, next) => {
 	const idOrTitle = req.params.idOrTitle
 
 	try {
-	const movie = await getMovieByIdDb(idOrTitle)
-	if (!movie) {
-		throw new DataNotFoundError(
-			"No movie with the provided id or title exists"
-		)
-	}
-	res.status(200).json({ movie: movie })
+		const movie = await getMovieByIdDb(idOrTitle)
+		if (!movie) {
+			throw new DataNotFoundError(
+				"No movie with the provided id or title exists"
+			)
+		}
+		res.status(200).json({ movie: movie })
 	} catch (e) {
 		console.log(e)
 		next(e)

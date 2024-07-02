@@ -23,7 +23,27 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
 	return allMovies
 }
 
-const createMovieDb = async (title, minutes) => {
+const createMovieDb = async (title, minutes, screenings) => {
+
+	if (screenings) {
+		const newMovie = await prisma.movie.create({
+			data: {
+				title: title,
+				runtimeMins: minutes,
+				screenings: {
+					create: screenings.map((scr) => ({
+						startsAt: new Date(scr.startsAt),
+						screenId: scr.screenId
+						
+					}) ),
+				},
+			},
+			include: {
+				screenings: true,
+			},
+		})
+		return newMovie
+	}
 	const newMovie = await prisma.movie.create({
 		data: {
 			title: title,
@@ -51,7 +71,7 @@ const getMovieByTitleDb = async (title) => {
 
 const getMovieByIdDb = async (reqId) => {
 	const reqType = Number(reqId)
-	
+
 	if (isNaN(reqType)) {
 		return await getMovieByTitleDb(reqId)
 	}
