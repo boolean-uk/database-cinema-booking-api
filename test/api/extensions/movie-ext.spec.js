@@ -104,4 +104,20 @@ describe("Movie Endpoint", () => {
             expect(response.body.movie.screenings.length).toEqual(2)
         })
     })
+
+    describe("GET /movies/title", () => {
+        it("will get movies by title", async () => {
+            const screen = await createScreen(1)
+            const created = await createMovie('Dodgeball', 120, screen)
+
+            const response = await supertest(app).get(`/movies/${created.title}`)
+
+            expect(response.status).toEqual(200)
+            expect(response.body.movie).not.toEqual(undefined)
+            expect(response.body.movie[0].title).toEqual('Dodgeball')
+            expect(response.body.movie[0].runtimeMins).toEqual(120)
+            expect(response.body.movie[0].screenings).not.toEqual(undefined)
+            expect(response.body.movie[0].screenings.length).toEqual(1)
+        })
+    })
 })

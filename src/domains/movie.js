@@ -56,16 +56,16 @@ async function getMovieByIdDb (movieId) {
                 screenings: true
             }
         })
-    } else {
-        return await prisma.movie.findMany({
-            where: {
-                title: movieId
-            },
-            include: {
-                screenings: true
-            }
-        })
     }
+
+    return await prisma.movie.findMany({
+        where: {
+            title: movieId
+        },
+        include: {
+            screenings: true
+        }
+    })
 }
 
 const updateMovieDb = async (movieId, title, runtimeMins) => await prisma.movie.update({
