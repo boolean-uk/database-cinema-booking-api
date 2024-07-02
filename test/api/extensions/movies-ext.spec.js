@@ -60,7 +60,7 @@ describe("Movies Endpoint", () => {
       await createMovie("Spaceballs", 140, screen);
 
       const request = {
-        title: "Spaceballs",
+        title: "The Exorcist",
         runtimeMins: 140,
       };
 

@@ -24,19 +24,26 @@ async function getMovies(req, res) {
 
 async function createMovie(req, res) {
   const newMovie = req.body;
-  const movies = await getMoviesDb();
+  // const movies = await getMoviesDb();
 
-  if (movies.find((movie) => movie.title === newMovie.title)) {
-    throw new DataAlreadyExistsError("A movie with that title already exists");
-  }
+  // if (movies.find((movie) => movie.title === newMovie.title)) {
+  //   throw new DataAlreadyExistsError("A movie with that title already exists");
+  // }
 
   const requiredFields = ["title", "runtimeMins"];
   if (!requiredFields.every((field) => newMovie[field])) {
     throw new MissingFieldsError("Movies require a title and runtime");
   }
 
-  const movie = await createMovieDb(newMovie);
-  res.status(201).json({ movie });
+  try {
+    const movie = await createMovieDb(newMovie);
+    res.status(201).json({ movie });
+  } catch (e) {
+    if(e.code === 'P2002') {
+      res.status(409).json({ error: "A movie with that title already exists"})
+    }
+  }
+  
 }
 
 async function getMovieById(req, res) {
