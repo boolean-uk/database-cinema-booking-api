@@ -1,46 +1,58 @@
-const { getAllMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require("../domains/movie")
+const {
+  getAllMoviesDb,
+  createMovieDb,
+  getMovieByIdOrTitleDb,
+  updateMovieDb,
+} = require("../domains/movie")
 
 const getAllMovies = async (req, res) => {
-    const movies = await getAllMoviesDb()
+  const runtimeLt = Number(req.query.runtimeLt)
+  const runtimeGt = Number(req.query.runtimeGt)
+  const movies = await getAllMoviesDb(runtimeLt, runtimeGt)
 
-    res.json({
-        movies: movies
-    })
+  res.json({
+    movies: movies,
+  })
 }
 
 const createMovie = async (req, res) => {
-    const { title, runtimeMins } = req.body
+  const { title, runtimeMins, screenings } = req.body
+  const movie = await createMovieDb(title, runtimeMins, screenings)
 
-    const movie = await createMovieDb(title, runtimeMins)
-    
-    res.status(201).json({
-        movie: movie
-    })
+  res.status(201).json({
+    movie: movie,
+  })
 }
 
-const getMovieById = async (req, res) => {
-    const id = Number(req.params.id)
-    const movie = await getMovieByIdDb(id)
-    
-    res.json({
-        movie: movie
-    })
+const getMovieByIdOrTitle = async (req, res) => {
+  let id = Number(req.params.idOrTitle)
+  let title = undefined
+
+  if (isNaN(id)) {
+    title = req.params.idOrTitle
+    id = undefined
+  }
+
+  const movie = await getMovieByIdOrTitleDb(id, title)
+
+  res.json({
+    movie: movie,
+  })
 }
 
 const updateMovie = async (req, res) => {
-    const id = Number(req.params.id)
-    const { title, runtimeMins } = req.body
+  const paramsId = Number(req.params.id)
+  const { title, runtimeMins, screenings } = req.body
+  const movie = await updateMovieDb(paramsId, title, runtimeMins, screenings)
 
-    const movie = await updateMovieDb(id, title, runtimeMins)
-    
-    res.status(201).json({
-        movie: movie
-    })
+  res.status(201).json({
+    movie: movie,
+  })
 }
 
 module.exports = {
-    getAllMovies,
-    createMovie,
-    getMovieById,
-    updateMovie
+  getAllMovies,
+  createMovie,
+  getMovieByIdOrTitle,
+  updateMovie,
 }
