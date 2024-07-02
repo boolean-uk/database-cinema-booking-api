@@ -1,7 +1,6 @@
 const prisma = require("../utils/prisma");
 
-async function createTicketDb(ticketData) {
-  const { screeningId, customerId } = ticketData;
+async function createTicketDb(screeningId, customerId) {
 
   const request = {
     data: {
@@ -27,7 +26,7 @@ async function createTicketDb(ticketData) {
   try {
     ticket = await prisma.ticket.create(request);
   } catch (e) {
-    console.log(e);
+    throw Error('P2003')
   }
 
   return ticket;

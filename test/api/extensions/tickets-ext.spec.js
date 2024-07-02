@@ -1,6 +1,5 @@
 const supertest = require("supertest");
 const app = require("../../../src/server.js");
-const { createTicket } = require("../../helpers/createTicket.js");
 const { createCustomer } = require("../../helpers/createCustomer.js");
 const { createScreening } = require("../../helpers/createScreening.js");
 const { createScreen } = require("../../helpers/createScreen.js");
@@ -42,5 +41,16 @@ describe("Tickets Endpoint", () => {
       expect(response.body.ticket.screen).not.toBe(undefined)
       expect(response.body.ticket.movie).not.toBe(undefined)
     });
+
+    it('should throw an error if screening or customer ID cannot be found', async () => {
+      request = {
+        screeningId: 2343452,
+        customerId: 123313
+      }
+
+      const response = await supertest(app).post(`/tickets`).send(request);
+      expect(response.status).toEqual(400)
+      expect(response.body.error).toEqual('Screen or customer ID cannot be found')
+    })
   });
 });

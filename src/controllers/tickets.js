@@ -2,14 +2,22 @@ const { createTicketDb } = require("../domains/tickets");
 const { MissingFieldsError } = require("../errors/errors");
 
 async function createTicket(req, res) {
-  const ticketData = req.body;
+  const { screeningId, customerId } = req.body;
 
-  if (!ticketData.screeningId || !ticketData.customerId) {
+  if (!screeningId || !customerId) {
     throw new MissingFieldsError(
       "Tickets require a screening ID and a customer ID"
     );
   }
-  const ticket = await createTicketDb(ticketData);
+
+  let ticket
+  try {
+   ticket = await createTicketDb(screeningId, customerId);
+  } catch (e) {
+    if(e.message === 'P2003') {
+      res.status(400).json({ error: 'Screen or customer ID cannot be found'})
+    }
+  }
 
   const result = {
     id: ticket.id,
