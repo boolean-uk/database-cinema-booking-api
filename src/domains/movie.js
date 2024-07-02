@@ -28,12 +28,16 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
     })
   }
 
-  return await prisma.movie.findMany({
+  const movies = await prisma.movie.findMany({
     where: whereClause,
     include: {
       screenings: true,
     },
   })
+
+  const moviesWithScreenings = movies.filter(movie => movie.screenings.length >= 1)
+
+  return moviesWithScreenings
 }
 
 const createMovieDb = async (title, runtimeMins, screenings) => {
