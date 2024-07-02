@@ -34,8 +34,6 @@ async function createMovie(req, res) {
                 throw new NotUniqueError('A movie with the provided title already exists')
             }
         }
-      
-        res.status(500).json({ error: e.message })
     }
 }
 
@@ -54,12 +52,6 @@ async function getMovieByIdOrTitle(req, res) {
             throw new NotFoundError('Movie with that id or title does not exist')
           }
         }
-
-        if (e instanceof NotFoundError) {
-            throw new NotFoundError('Movie with that id or title does not exist')
-        }
-  
-        res.status(500).json({ error: e.message })
     }
 
 }
@@ -84,8 +76,6 @@ async function updateMovie(req, res) {
             throw new NotFoundError('Movie with that id or title does not exist')
           }
         }
-  
-        res.status(500).json({ error: e.message })
     }
 }
 
@@ -94,4 +84,4 @@ module.exports = {
     createMovie,
     getMovieByIdOrTitle,
     updateMovie
-  }
+}

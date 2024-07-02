@@ -24,6 +24,6 @@ async function createScreenDb(number, screenings) {
     return await prisma.screen.create(screenData)
 } 
 
-  module.exports = {
-    createScreenDb
-  }
+module.exports = {
+createScreenDb
+}

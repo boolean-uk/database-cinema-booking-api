@@ -22,11 +22,9 @@ async function createScreen(req, res) {
                 throw new NotUniqueError('A screen with the provided number already exists')
             }
         }
-      
-        res.status(500).json({ error: e.message })
     }
 }
 
 module.exports = {
     createScreen
-  }
+}
