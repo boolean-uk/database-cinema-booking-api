@@ -6,15 +6,38 @@ const {
 	updateMovieDb,
 } = require("../domains/movie")
 
+const {
+	MissingFieldsError,
+	ExistingDataError,
+} = require("../errors/errors")
+
 const getAllMovies = async (req, res) => {
-	const allMovies = await getAllMoviesDb()
+	const { runtimeLt, runtimeGt } = req.query
+
+	const allMovies = await getAllMoviesDb(runtimeLt, runtimeGt)
+
 	res.status(200).json({ movies: allMovies })
 }
 
 const createMovie = async (req, res) => {
-    const movieToAdd = req.body
+	const { title, runtimeMins } = req.body
 
-	const createdMovie = await createMovieDb(movieToAdd)
+	if (!title || !runtimeMins) {
+		throw new MissingFieldsError(
+			"Title and duration in minutes must be provided in order to add a movie"
+		)
+	}
+
+	const moviesList = await getAllMoviesDb()
+	const existingMovie = moviesList.find((mv) => mv.title === title)
+
+	if (existingMovie) {
+		throw new ExistingDataError(
+			"A movie with the provided title already exists"
+		)
+	}
+
+	const createdMovie = await createMovieDb(title, runtimeMins)
 	res.status(201).json({ movie: createdMovie })
 }
 
