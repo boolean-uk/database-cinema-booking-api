@@ -1,60 +1,76 @@
 const prisma = require('../utils/prisma')
 
 const createMovieDb = async (title, runtimeMins, screenings) => {
-    if(screenings) {
+    if (screenings) {
         return await prisma.movie.create({
             data: {
                 title: title,
                 runtimeMins: runtimeMins,
                 screenings: {
                     createMany: {
-                        data: screenings
-                    }
-                }
+                        data: screenings,
+                    },
+                },
             },
             include: {
-                screenings: true
-            }
+                screenings: true,
+            },
         })
     }
-    
+
     return await prisma.movie.create({
         data: {
             title: title,
             runtimeMins: runtimeMins,
         },
         include: {
-            screenings: true
-        }
+            screenings: true,
+        },
     })
 }
 
 const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
     const hasRuntimes = runtimeLt || runtimeGt
-    if(hasRuntimes) {
+    if (hasRuntimes) {
         return await prisma.movie.findMany({
             include: {
-                screenings: true,
+                screenings: {
+                    where: {
+                        startsAt: { gt: new Date(Date.now()).toISOString() },
+                    },
+                },
             },
-            where:{
-                runtimeMins:{lt:runtimeLt, gt:runtimeGt}
-            }
+            where: {
+                runtimeMins: { lt: runtimeLt || 999999, gt: runtimeGt || 0 },
+                screenings: {
+                    some: {
+                        startsAt: { gt: new Date(Date.now()).toISOString() },
+                    },
+                },
+            },
         })
     }
     return await prisma.movie.findMany({
         include: {
-            screenings: true,
+            screenings: {
+                where: { startsAt: { gt: new Date(Date.now()).toISOString() } },
+            },
+        },
+        where: {
+            screenings: {
+                some: { startsAt: { gt: new Date(Date.now()).toISOString() } },
+            },
         },
     })
 }
 
 const findMovieByIdDb = async (id) => {
     const parsedId = Number(id)
-    
-    if(isNaN(parsedId)) {
+
+    if (isNaN(parsedId)) {
         return findMovieByTitleDb(id)
     }
-    
+
     return await prisma.movie.findUniqueOrThrow({
         where: { id: parsedId },
         include: {
@@ -65,7 +81,7 @@ const findMovieByIdDb = async (id) => {
 
 const findMovieByTitleDb = async (title) => {
     return await prisma.movie.findUniqueOrThrow({
-        where: { title:title },
+        where: { title: title },
         include: {
             screenings: true,
         },

@@ -1,44 +1,49 @@
-const supertest = require("supertest")
-const app = require("../../../src/server.js")
-const { createMovie } = require("../../helpers/createMovie.js")
-const { createScreen } = require("../../helpers/createScreen.js")
+const supertest = require('supertest')
+const app = require('../../../src/server.js')
+const { createMovie } = require('../../helpers/createMovie.js')
+const { createScreen } = require('../../helpers/createScreen.js')
+const { createScreening } = require('../../helpers/createScreening.js')
 
-describe("Movies Endpoint", () => {
-    describe("GET /movies", () => {
-        it("will retrieve a list of movies", async () => {
+describe('Movies Endpoint', () => {
+    describe('GET /movies', () => {
+        it('will retrieve a list of movies, but not include any without screenings in the future', async () => {
             const screen = await createScreen(1)
-            await createMovie('Dodgeball', 120, screen)
-            await createMovie('Scream', 113, screen)
+            const movie = await createMovie('Dodgeball', 120, screen)
+            const secondMovie = await createMovie('Scream', 113, screen)
+
+            await createScreening(
+                screen.id,
+                movie.id,
+                new Date(Date.now() + 86400).toISOString()
+            )
+            await createScreening(
+                screen.id,
+                secondMovie.id,
+                new Date(Date.now() - 86400).toISOString()
+            )
 
             const response = await supertest(app).get('/movies')
 
             expect(response.status).toEqual(200)
             expect(response.body.movies).not.toEqual(undefined)
-            expect(response.body.movies.length).toEqual(2)
+            expect(response.body.movies.length).toEqual(1)
 
-            const [movie1, movie2] = response.body.movies
+            const [movie1] = response.body.movies
             expect(movie1.title).toEqual('Dodgeball')
             expect(movie1.runtimeMins).toEqual(120)
             expect(movie1.screenings).not.toEqual(undefined)
             expect(movie1.screenings.length).toEqual(1)
-
-            expect(movie2.title).toEqual('Scream')
-            expect(movie2.runtimeMins).toEqual(113)
-            expect(movie2.screenings).not.toEqual(undefined)
-            expect(movie2.screenings.length).toEqual(1)
         })
     })
 
-    describe("POST /movies", () => {
-        it("will create a movie", async () => {
+    describe('POST /movies', () => {
+        it('will create a movie', async () => {
             const request = {
-                title: "Top Gun",
-                runtimeMins: 110
+                title: 'Top Gun',
+                runtimeMins: 110,
             }
 
-            const response = await supertest(app)
-                .post("/movies")
-                .send(request)
+            const response = await supertest(app).post('/movies').send(request)
 
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
@@ -48,22 +53,22 @@ describe("Movies Endpoint", () => {
             expect(response.body.movie.screenings.length).toEqual(0)
         })
 
-        it("will return 400 if fields are missing", async () => {
+        it('will return 400 if fields are missing', async () => {
             const request = {
-                title: "Top Gun"
+                title: 'Top Gun',
             }
 
-            const response = await supertest(app)
-                .post("/movies")
-                .send(request)
+            const response = await supertest(app).post('/movies').send(request)
 
             expect(response.status).toEqual(400)
-            expect(response.body.error).toEqual('Missing fields in request body')
+            expect(response.body.error).toEqual(
+                'Missing fields in request body'
+            )
         })
     })
 
-    describe("GET /movies/:id", () => {
-        it("will get a movie by id", async () => {
+    describe('GET /movies/:id', () => {
+        it('will get a movie by id', async () => {
             const screen = await createScreen(1)
             const created = await createMovie('Dodgeball', 120, screen)
 
@@ -77,7 +82,7 @@ describe("Movies Endpoint", () => {
             expect(response.body.movie.screenings.length).toEqual(1)
         })
 
-        it("will return 404 if movie is not found", async () => {
+        it('will return 404 if movie is not found', async () => {
             const response = await supertest(app).get(`/movies/9999`)
 
             expect(response.status).toEqual(404)
@@ -85,14 +90,14 @@ describe("Movies Endpoint", () => {
         })
     })
 
-    describe("PUT /movies/:id", () => {
-        it("will update a movie by id", async () => {
+    describe('PUT /movies/:id', () => {
+        it('will update a movie by id', async () => {
             const screen = await createScreen(1)
             const created = await createMovie('Dodgeball', 120, screen)
 
             const request = {
                 title: 'Scream',
-                runtimeMins: 113
+                runtimeMins: 113,
             }
 
             const response = await supertest(app)
@@ -107,12 +112,12 @@ describe("Movies Endpoint", () => {
             expect(response.body.movie.screenings.length).toEqual(1)
         })
 
-        it("will return 400 if fields are missing", async () => {
+        it('will return 400 if fields are missing', async () => {
             const screen = await createScreen(1)
             const created = await createMovie('Dodgeball', 120, screen)
 
             const request = {
-                title: 'Scream'
+                title: 'Scream',
             }
 
             const response = await supertest(app)
@@ -120,13 +125,15 @@ describe("Movies Endpoint", () => {
                 .send(request)
 
             expect(response.status).toEqual(400)
-            expect(response.body.error).toEqual('Missing fields in request body')
+            expect(response.body.error).toEqual(
+                'Missing fields in request body'
+            )
         })
 
-        it("will return 404 if movie is not found", async () => {
+        it('will return 404 if movie is not found', async () => {
             const request = {
                 title: 'Scream',
-                runtimeMins: 113
+                runtimeMins: 113,
             }
 
             const response = await supertest(app)
