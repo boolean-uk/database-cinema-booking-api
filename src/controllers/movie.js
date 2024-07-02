@@ -4,11 +4,13 @@ const {
 	getMovieByIdDb,
 	createMovieDb,
 	updateMovieDb,
+	getMovieByTitleDb,
 } = require("../domains/movie")
 
 const {
 	MissingFieldsError,
 	ExistingDataError,
+	DataNotFoundError,
 } = require("../errors/errors")
 
 const getAllMovies = async (req, res) => {
@@ -41,10 +43,22 @@ const createMovie = async (req, res) => {
 	res.status(201).json({ movie: createdMovie })
 }
 
-const getMovieById = async (req, res) => {
-	const reqId = Number(req.params.id)
-	const movie = await getMovieByIdDb(reqId)
-	res.status(200).json({ movie: movie })
+const getMovieById = async (req, res, next) => {
+	const idOrTitle = req.params.idOrTitle
+
+	try {
+		const movie = await getMovieByIdDb(idOrTitle)
+		if (!movie) {
+			throw new DataNotFoundError(
+				"No movie with the provided id or title exists"
+			)
+		}
+		res.status(200).json({ movie: movie })
+	} catch (e) {
+		console.log(e)
+		next(e)
+	}
+
 }
 
 const updateMovie = async (req, res) => {
