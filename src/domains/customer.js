@@ -1,26 +1,83 @@
-const prisma = require('../utils/prisma')
+const prisma = require("../utils/prisma")
+const BadRequest = require("../errors/BadRequest")
+const NotFound = require("../errors/NotFound")
 
-/**
- * This will create a Customer AND create a new Contact, then automatically relate them with each other
- * @tutorial https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#create-a-related-record
- */
-const createCustomerDb = async (name, phone, email) => await prisma.customer.create({
-  data: {
-    name,
-    contact: {
-      create: {
-        phone,
-        email
-      }
-    }
-  },
-  // We add an `include` outside of the `data` object to make sure the new contact is returned in the result
-  // This is like doing RETURNING in SQL
-  include: {
-    contact: true
+const createCustomerDb = async (name, phone, email) => {
+  if (!name || !phone || !email) {
+    throw new BadRequest("Missing fields in request body")
   }
-})
+
+  return await prisma.customer.create({
+    data: {
+      name,
+      contact: {
+        create: {
+          phone,
+          email,
+        },
+      },
+    },
+    include: {
+      contact: true,
+    },
+  })
+}
+
+const updateCostumerDb = async (paramsId, name, contact) => {
+  const customer = await prisma.customer.findUnique({
+    where: {
+      id: paramsId,
+    },
+  })
+
+  if (!customer) {
+    throw new NotFound("Customer with that id does not exist")
+  }
+
+  if (!name) {
+    throw new BadRequest("Missing fields in request body")
+  }
+
+  let dataClause = {
+    name: name,
+  }
+
+  if (contact) {
+    const { phone, email } = contact
+
+    if (!phone || !email) {
+      throw new BadRequest("Missing fields in request body")
+    }
+
+    dataClause.contact = {
+      update: {
+        data: {
+          phone: phone,
+          email: email,
+        },
+      },
+    }
+  }
+
+  return await prisma.customer.update({
+    where: {
+      id: paramsId,
+    },
+    data: dataClause,
+    include: {
+      contact: true,
+      reviews: {
+        select: {
+          id: true,
+          content: true,
+          movie: true
+        }
+      }
+    },
+  })
+}
 
 module.exports = {
-  createCustomerDb
+  createCustomerDb,
+  updateCostumerDb,
 }
