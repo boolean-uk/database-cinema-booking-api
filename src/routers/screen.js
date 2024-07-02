@@ -1,7 +1,9 @@
 const express = require("express")
-const { createScreen } = require('../controllers/screen')
+const { createScreen, getAllScreens } = require('../controllers/screen')
 
 const router = express.Router()
+
+router.get('/', getAllScreens)
 
 router.post('/', createScreen)
 
