@@ -103,6 +103,17 @@ describe("Movie Endpoint", () => {
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(2)
         })
+
+        it("will return 400 when there are missing fields in the request body", async () => {
+            const request = {}
+
+            const response = await supertest(app)
+                .post('/movies')
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
     })
 
     describe("GET /movies/title", () => {
@@ -122,7 +133,7 @@ describe("Movie Endpoint", () => {
     })
 
     describe("PUT /movies/:id", () => {
-        it("will update a movie by id and the screeninsg when provided", async () => {
+        it("will update a movie by id and the screenings when provided", async () => {
             const screen1 = await createScreen(1)
             const screen2 = await createScreen(2)
             const created = await createMovie('Dodgeball', 120, screen1)
@@ -152,6 +163,20 @@ describe("Movie Endpoint", () => {
             expect(response.body.movie.runtimeMins).toEqual(113)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(2)
+        })
+
+        it("will return 400 when there are missing fields in the request body", async () => {
+            const screen = await createScreen(1)
+            const movie = await createMovie('Dodgeball', 120, screen)
+
+            const request = {}
+
+            const response = await supertest(app)
+                .put(`/movies/${movie.id}`)
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
         })
     })
 })

@@ -33,5 +33,16 @@ describe("Ticket Endpoint", () => {
             expect(response.body.ticket.screening.movie.title).toEqual("Dodgeball")
             expect(response.body.ticket.screening.movie.runtimeMins).toEqual(120)
         })
+
+        it("will return 400 when there are missing fields in the request body", async () => {
+            const request = {}
+
+            const response = await supertest(app)
+                .post('/tickets')
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
     })
 })

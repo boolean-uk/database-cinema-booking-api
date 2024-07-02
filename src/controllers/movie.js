@@ -1,4 +1,5 @@
 const { getAllMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require("../domains/movie")
+const MissingFieldsError = require("../errors/missingFieldsError")
 
 async function getAllMovies(req, res) {
     const runtimeLt = Number(req.query.runtimeLt)
@@ -13,6 +14,10 @@ async function getAllMovies(req, res) {
 
 async function createMovie(req, res) {
     const { title, runtimeMins, screenings } = req.body
+
+    if (!title || !runtimeMins) {
+        throw new MissingFieldsError('Missing fields in request body')
+    }
 
     const createdMovie = await createMovieDb(title, runtimeMins, screenings)
 
@@ -34,6 +39,10 @@ async function getMovieByIdOrTitle(req, res) {
 async function updateMovie(req, res) {
     const movieId = Number(req.params.id)
     const { title, runtimeMins, screenings } = req.body
+
+    if (!title || !runtimeMins) {
+        throw new MissingFieldsError('Missing fields in request body')
+    }
 
     const updatedMovie = await updateMovieDb(movieId, title, runtimeMins, screenings)
 

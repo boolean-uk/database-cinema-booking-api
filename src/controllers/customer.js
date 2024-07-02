@@ -1,5 +1,6 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
 const { createCustomerDb, updateCustomerDb } = require('../domains/customer.js')
+const MissingFieldsError = require("../errors/missingFieldsError.js")
 
 const createCustomer = async (req, res) => {
   const {
@@ -46,6 +47,10 @@ const createCustomer = async (req, res) => {
 async function updateCustomer(req, res) {
   const customerId = Number(req.params.id)
   const { name, contact } = req.body
+
+  if (!name || !contact.phone || !contact.email) {
+    throw new MissingFieldsError('Missing fields in request body')
+  }
 
   const updatedCustomer = await updateCustomerDb(customerId, name, contact)
 

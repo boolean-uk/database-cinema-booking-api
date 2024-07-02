@@ -32,5 +32,16 @@ describe("Screen Endpoint", () => {
             expect(response.body.screen.screenings).not.toEqual(undefined)
             expect(response.body.screen.screenings.length).toEqual(2)
         })
+
+        it("will return 400 when there are missing fields in the request body", async () => {
+            const request = {}
+
+            const response = await supertest(app)
+                .post('/movies')
+                .send(request)
+
+            expect(response.status).toEqual(400)
+            expect(response.body).toHaveProperty('error')
+        })
     })
 })
