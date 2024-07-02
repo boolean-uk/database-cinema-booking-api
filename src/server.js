@@ -28,6 +28,7 @@ const ticketRouter = require('./routers/ticket.js');
 app.use('/tickets', ticketRouter)
 
 const MissingFieldsError = require('./errors/missingFieldsError.js');
+const NotFoundError = require('./errors/notFoundError.js');
 
 app.use((error, req, res, next) => {
     if (error instanceof MissingFieldsError) {
@@ -36,11 +37,11 @@ app.use((error, req, res, next) => {
         })
     }
 
-    // if (error instanceof NotFoundError) {
-    //     return res.status(404).json({
-    //         error: error.message
-    //     })
-    // }
+    if (error instanceof NotFoundError) {
+        return res.status(404).json({
+            error: error.message
+        })
+    }
 
     // if (error instanceof NotUniqueError) {
     //     return res.status(409).json({
@@ -49,7 +50,7 @@ app.use((error, req, res, next) => {
     // }
 
     res.status(500).json({
-        message: 'Something went wrong'
+        error: error.message
     })
 })
 

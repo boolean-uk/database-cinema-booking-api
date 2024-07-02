@@ -1,3 +1,4 @@
+const NotFoundError = require('../errors/notFoundError')
 const prisma = require('../utils/prisma')
 
 /**
@@ -43,8 +44,7 @@ async function updateCustomerDb(customerId, name, contact) {
     }
   }
 
-
-return await prisma.customer.update(customerData)
+  return await prisma.customer.update(customerData)
 } 
 
 module.exports = {

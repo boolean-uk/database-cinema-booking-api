@@ -1,27 +1,40 @@
 const prisma = require('../utils/prisma')
 
-const getAllMoviesDb = async (runtimeLt, runtimeGt) => await prisma.movie.findMany({
-    where: {
-        OR: [
-            {
-            ...(runtimeLt ? {
-            runtimeMins: {
-                lt: runtimeLt
+async function getAllMoviesDb(runtimeLt, runtimeGt) {
+    let movieData = null
+    
+    if (runtimeLt || runtimeGt) {
+        movieData = {
+            where: {
+            OR: [
+                {
+                ...(runtimeLt ? {
+                runtimeMins: {
+                    lt: runtimeLt
+                }
+            } : {})},
+            {...(runtimeGt ? {
+                runtimeMins: {
+                    gt: runtimeGt
+                }
+            } : {})}
+        ]
+        },
+        include: {
+            screenings: true
+        }
+    }} else {
+        movieData = {
+            include: {
+                screenings: true
             }
-        } : {})},
-        {...(runtimeGt ? {
-            runtimeMins: {
-                gt: runtimeGt
-            }
-        } : {})}
-    ]
-    },
-    include: {
-        screenings: true
+        }
     }
-})
 
-const createMovieDb = async (title, runtimeMins, screenings) => {
+    return prisma.movie.findMany(movieData)
+} 
+
+async function createMovieDb(title, runtimeMins, screenings) {
     const movieData = {
         data: {
         title: title,
@@ -47,7 +60,7 @@ const createMovieDb = async (title, runtimeMins, screenings) => {
 
 async function getMovieByIdDb (movieId) {
     if (!isNaN(movieId)) {
-        return await prisma.movie.findUnique({
+        return await prisma.movie.findUniqueOrThrow({
             where: {
                 id: Number(movieId)
             },
@@ -67,7 +80,7 @@ async function getMovieByIdDb (movieId) {
     })
 }
 
-async function updateMovieDb(movieId, title, runtimeMins, screenings){
+async function updateMovieDb(movieId, title, runtimeMins, screenings) {
     const movieData = {
         where: {
             id: movieId

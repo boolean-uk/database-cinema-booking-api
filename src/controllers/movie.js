@@ -1,5 +1,7 @@
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library")
 const { getAllMoviesDb, createMovieDb, getMovieByIdDb, updateMovieDb } = require("../domains/movie")
 const MissingFieldsError = require("../errors/missingFieldsError")
+const NotFoundError = require("../errors/notFoundError")
 
 async function getAllMovies(req, res) {
     const runtimeLt = Number(req.query.runtimeLt)
@@ -29,11 +31,30 @@ async function createMovie(req, res) {
 async function getMovieByIdOrTitle(req, res) {
     const movieId = req.params.id
 
-    const movie = await getMovieByIdDb(movieId)
+    try {
+        const movie = await getMovieByIdDb(movieId)
+ 
+        if(movie.length === 0) {
+            throw new NotFoundError
+        }
 
-    res.json({
-        movie
-    })
+        res.json({
+            movie
+        })
+    } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          if (e.code === "P2025") {
+            throw new NotFoundError('Movie with that id or title does not exist')
+          }
+        }
+
+        if (e instanceof NotFoundError) {
+            throw new NotFoundError('Movie with that id or title does not exist')
+        }
+  
+        res.status(500).json({ error: e.message })
+    }
+
 }
 
 async function updateMovie(req, res) {
@@ -44,11 +65,21 @@ async function updateMovie(req, res) {
         throw new MissingFieldsError('Missing fields in request body')
     }
 
-    const updatedMovie = await updateMovieDb(movieId, title, runtimeMins, screenings)
+    try {
+        const updatedMovie = await updateMovieDb(movieId, title, runtimeMins, screenings)
 
-    res.status(201).json({
-        movie: updatedMovie
-    })
+        res.status(201).json({
+            movie: updatedMovie
+        })
+    } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          if (e.code === "P2025") {
+            throw new NotFoundError('Movie with that id or title does not exist')
+          }
+        }
+  
+        res.status(500).json({ error: e.message })
+    }
 }
 
 module.exports = {

@@ -1,6 +1,6 @@
 const prisma = require('../utils/prisma')
 
-const createTicketDb = async (screeningId, customerId) => {
+async function createTicketDb(screeningId, customerId) {
     const ticketData = {
         data: {
         screeningId: screeningId,

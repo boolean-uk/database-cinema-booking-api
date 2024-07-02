@@ -130,6 +130,22 @@ describe("Movie Endpoint", () => {
             expect(response.body.movie[0].screenings).not.toEqual(undefined)
             expect(response.body.movie[0].screenings.length).toEqual(1)
         })
+
+        it('will return 404 if the movie is not found by id', async () => {
+            const response = await supertest(app)
+                .get('/movies/10000')
+
+            expect(response.status).toEqual(404)
+            expect(response.body).toHaveProperty('error')
+        })
+
+        it('will return 404 if the movie is not found by title', async () => {
+            const response = await supertest(app)
+                .get('/movies/bkdscjcd')
+
+            expect(response.status).toEqual(404)
+            expect(response.body).toHaveProperty('error')
+        })
     })
 
     describe("PUT /movies/:id", () => {
