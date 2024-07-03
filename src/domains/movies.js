@@ -2,7 +2,7 @@ const prisma = require("../utils/prisma");
 
 async function getMoviesDb() {
   let now = new Date();
-  console.log(now)
+  
     const movies = await prisma.movie.findMany({
       where: {
         screenings: {
@@ -14,8 +14,8 @@ async function getMoviesDb() {
         },
       },
       include: {
-        screenings: true,
-      },
+        screenings: true
+      }
     });
     return movies;
 }

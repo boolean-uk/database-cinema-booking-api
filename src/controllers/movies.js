@@ -15,6 +15,7 @@ async function getMovies(req, res) {
   if (Object.keys(req.query).length > 0) {
     movies = await getMoviesWithQueryDb(req.query);
   } else {
+    
     movies = await getMoviesDb();
   }
   res.status(200).json({ movies });
