@@ -40,7 +40,7 @@ const createCustomer = async (req, res) => {
 const updateCustomer = async (req, res, next) => {
 	const reqId = Number(req.params.id)
 	const updateInfo = req.body
-	console.log(updateInfo)
+
 
 	const customersList = await getAllCustomersDb()
 	const existingCustomer = customersList.find(
@@ -64,7 +64,6 @@ const updateCustomer = async (req, res, next) => {
 			updateInfo.phone,
 			updateInfo.email
 		)
-		console.log(updatedCustomer)
 		res.status(201).json({ customer: updatedCustomer })
 	} catch (e) {
 		console.log(e)

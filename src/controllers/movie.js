@@ -78,12 +78,10 @@ const getMovieById = async (req, res, next) => {
 const updateMovie = async (req, res, next) => {
 	const reqId = Number(req.params.id)
 	const updateInfo = req.body
-	//  const screenings = updateInfo.screenings
+	const screenings = updateInfo.screenings
+
 
 	const moviesList = await getAllMoviesDb()
-	const existingTitle = moviesList.find(
-		(mv) => mv.title === updateInfo.title
-	)
 	const existingId = moviesList.find((mv) => mv.id === reqId)
 
 	try {
@@ -101,8 +99,9 @@ const updateMovie = async (req, res, next) => {
 
 		const updatedMovie = await updateMovieDb(
 			reqId,
-			updateInfo,
-			updateInfo.screenings
+			updateInfo.title,
+			updateInfo.runtimeMins,
+			screenings
 		)
 		res.status(201).json({ movie: updatedMovie })
 	} catch (e) {

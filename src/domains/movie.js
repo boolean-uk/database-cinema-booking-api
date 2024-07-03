@@ -87,15 +87,16 @@ const getMovieByIdDb = async (reqId) => {
 	return foundMovie
 }
 
-const updateMovieDb = async (reqId, updateInfo, screenings) => {
+const updateMovieDb = async (reqId, title, minutes, screenings) => {
+
 	const updateData = {
-		title: updateInfo.title,
-		runtimeMins: updateInfo.minutes,
+		title: title,
+		runtimeMins: minutes,
 	}
 
 	if (screenings) {
 		updateData.screenings = {
-			// deleteMany: {}, 
+			deleteMany: {},
 			create: screenings.map((scr) => ({
 				startsAt: new Date(scr.startsAt),
 				screen: {
@@ -106,7 +107,6 @@ const updateMovieDb = async (reqId, updateInfo, screenings) => {
 			})),
 		}
 	}
-
 	const movieToUpdate = await prisma.movie.update({
 		where: {
 			id: reqId,
