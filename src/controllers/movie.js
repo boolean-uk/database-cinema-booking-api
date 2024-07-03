@@ -1,4 +1,4 @@
-const { getAllMovies, createMovie, updateMovie, getAllMoviesByRuntimeLt, getAllMoviesByRuntimeGt, getMovieByTitle } = require('../domains/movie.js')
+const { getAllMovies, createMovie, updateMovie, getAllMoviesByRuntimeLt, getAllMoviesByRuntimeGt, getMovieByTitle, getMovieById } = require('../domains/movie.js')
 const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library')
 
 const getAll = async (req, res) => {
@@ -41,22 +41,26 @@ const addMovie = async (req, res) => {
             movie: newMovie
         })
     } catch(e) {
-        if(e.code === "P2002") {
-            return res.status(409).json({
-                error: "Movie already exists, please choose another to add"
+        if(e instanceof PrismaClientKnownRequestError) {
+            if(e.code === "P2002") {
+                return res.status(409).json({
+                    error: "Movie already exists, please choose another to add"
+                })
+            }
+            res.status(500).json({
+                error: e.message
             })
-        }
-        res.status(500).json({
-            error: e.message
-        })
+        }   
     }
 }
 
 const findByID = async (req, res) => {
     const id = Number(req.params.id)
-    const found = await findMovieByID(id)
+    const found = await getMovieById(id)
     if (!found) {
-        throw new DoesNotExist("Could not find this movie")
+        return res.status(404).json({
+            error: "Could not find this movies, try another ID"
+        })
     } else {
         res.status(200).json({
             movie: found
@@ -69,12 +73,13 @@ const updateMovieByID = async (req, res) => {
         title,
         runtimeMins
     } = req.body
+    const id = Number(req.params.id)
     if (!title || !runtimeMins) {
         return res.status(400).json({
             error: "Movie title or runtimeMins field missing"
         })
     } 
-    if (!findMovieByID(req.params.id)) {
+    if (!getMovieById(id)) {
         return res.status(404).json({
             error: "Could not find this movies, try another ID"
         })
@@ -101,21 +106,10 @@ const updateMovieByID = async (req, res) => {
                 })
             }
         }
-
         res.status(500).json({
             error: e.message
         })
     }
-}
-
-const findMovieByID = async (id) => {
-    const found = (await getAllMovies()).find((m) => m.id === id)
-    return found
-}
-
-const findMovieByTitle = async (title) => {
-    const found = (await getAllMovies()).find((m) => m.title === title)
-    return found
 }
 
 module.exports = {

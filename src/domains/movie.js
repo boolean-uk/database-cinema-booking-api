@@ -51,9 +51,21 @@ const getAllMoviesByRuntimeLt = async (query) => await prisma.movie.findMany({
     }
 })
 
+const getMovieById = async (id) => await prisma.movie.findUnique({
+    where: {
+        id: id
+    },
+    include: {
+        screenings: true
+    }
+})
+
 const getMovieByTitle = async (title) => await prisma.movie.findFirst({
     where: {
         title: title
+    },
+    include: {
+        screenings: true
     }
 })
 
@@ -63,5 +75,6 @@ module.exports = {
     updateMovie,
     getAllMoviesByRuntimeGt,
     getAllMoviesByRuntimeLt,
+    getMovieById,
     getMovieByTitle
 }

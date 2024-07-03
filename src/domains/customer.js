@@ -22,16 +22,16 @@ const createCustomerDb = async (name, phone, email) => await prisma.customer.cre
 })
 
 
-const updateCustomer = async (req) => await prisma.customer.update({
+const updateCustomer = async (id, name, phone, email) => await prisma.customer.update({
   where: {
-    id: Number(req.params.id)
+    id: id
   },
   data: {
-    name: req.body.name,
+    name: name,
     contact: {
       update: {
-        phone: req.body.phone,
-        email: req.body.email
+        phone: phone,
+        email: email
       }
     }
   },
@@ -43,6 +43,9 @@ const updateCustomer = async (req) => await prisma.customer.update({
 const getCustomerByID = async (id) => await prisma.customer.findUnique({
   where: {
     id: id
+  },
+  include: {
+    contact: true
   }
 })
 
