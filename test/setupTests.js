@@ -2,6 +2,7 @@ const prisma = require("../src/utils/prisma")
 
 const deleteTables = () => {
   const deleteTables = [
+    prisma.review.deleteMany(),
     prisma.ticket.deleteMany(),
     prisma.screening.deleteMany(),
     prisma.movie.deleteMany(),
@@ -10,8 +11,6 @@ const deleteTables = () => {
     prisma.customer.deleteMany(),
   ];
 
-  // Conditionally delete this table as this will only exist if "Extensions to the Extensions" bullet 2 is implemented
-  prisma.reviews && deleteTables.push(prisma.reviews.deleteMany())
   return prisma.$transaction(deleteTables)
 }
 
