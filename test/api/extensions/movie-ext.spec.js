@@ -79,7 +79,7 @@ describe("Movies endpoin", () => {
 					{
 						movieId: 1,
 						screenId: scr1.id,
-						startsAt: "2022-06-11T18:30:00.000Z",
+						startsAt: Date.now(),
 					},
 					// {
 					// 	movieId: 1,
@@ -151,6 +151,131 @@ describe("Movies endpoin", () => {
 			expect(response.body).toHaveProperty("error")
 			expect(response.body.error).toEqual(
 				"A movie with the provided title already exists"
+			)
+		})
+	})
+
+	describe("GET /movies/:idOrTitle", () => {
+		it("will get a movie by title if it exists", async () => {
+			const screen = await createScreen(1)
+			const movie = await createMovie("Movie 1", 111, screen)
+
+			const response = await supertest(app).get(
+				`/movies/${movie.title}`
+			)
+
+			expect(response.status).toEqual(200)
+			expect(response.body.movie).not.toEqual(undefined)
+			expect(response.body.movie.title).toEqual("Movie 1")
+			expect(response.body.movie.runtimeMins).toEqual(111)
+			expect(response.body.movie.screenings).not.toEqual(undefined)
+			expect(response.body.movie.screenings.length).toEqual(1)
+		})
+
+		it("will have status 404 if a movie with the provided title does not exist", async () => {
+			const movie = await createMovie("Movie 1", 111)
+
+			const response = await supertest(app).get("/movies/WrongTitle")
+
+			expect(response.status).toEqual(404)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"No movie with the provided id or title exists"
+			)
+		})
+
+		it("will have status 404 if a movie with the provided id does not exist", async () => {
+			const movie = await createMovie("Movie 1", 111)
+
+			const response = await supertest(app).get("/movies/11111")
+
+			expect(response.status).toEqual(404)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"No movie with the provided id or title exists"
+			)
+		})
+	})
+
+	describe("PUT /movies/:id", () => {
+		it("will update a movie by id and add screenings if provided", async () => {
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const movie = await createMovie("Movie 1", 123, scr1)
+
+			const request = {
+				title: "Movie 2",
+				runtimeMins: 111,
+				screenings: [
+					{
+						screenId: scr2.id,
+						startsAt: Date.now(),
+					},
+				],
+			}
+
+			const response = await supertest(app)
+				.put(`/movies/${movie.id}`)
+				.send(request)
+
+			expect(response.status).toEqual(201)
+			expect(response.body.movie).not.toEqual(undefined)
+			expect(response.body.movie.title).toEqual("Movie 2")
+			expect(response.body.movie.runtimeMins).toEqual(111)
+			expect(response.body.movie.screenings).not.toEqual(undefined)
+			expect(response.body.movie.screenings.length).toEqual(1)
+		})
+
+		it("will have status 404 if trying to update a non existing movie", async () => {
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const movie = await createMovie("Movie 1", 123, scr1)
+
+			const request = {
+				title: "Movie 2",
+				runtimeMins: 111,
+				screenings: [
+					{
+						screenId: scr2.id,
+						startsAt: Date.now(),
+					},
+				],
+			}
+
+			const response = await supertest(app)
+				.put(`/movies/3`)
+				.send(request)
+
+			expect(response.status).toEqual(404)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"No movie with the provided ID exists"
+			)
+		})
+
+		it("will return 400 and return an error if the request is missing fields", async () => {
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const movie = await createMovie("Movie 1", 123, scr1)
+
+			const request = {
+				title: "Movie 2",
+				screenings: [
+					{
+						screenId: scr2.id,
+						startsAt: Date.now(),
+					},
+				],
+			}
+
+			const response = await supertest(app)
+				.put(`/movies/${movie.id}`)
+				.send(request)
+
+			expect(response.status).toEqual(400)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"Title and duration in minutes must be provided in order to update a movie"
 			)
 		})
 	})

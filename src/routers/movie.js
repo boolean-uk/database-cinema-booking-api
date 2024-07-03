@@ -12,7 +12,7 @@ router.get("/", getAllMovies)
 
 router.post("/", createMovie)
 
-router.get("/:idOrTitle", getMovieById)
+router.get("/:id", getMovieById)
 
 router.put("/:id", updateMovie)
 

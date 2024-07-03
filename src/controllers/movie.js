@@ -59,7 +59,7 @@ const createMovie = async (req, res, next) => {
 }
 
 const getMovieById = async (req, res, next) => {
-	const idOrTitle = req.params.idOrTitle
+	const idOrTitle = req.params.id
 
 	try {
 		const movie = await getMovieByIdDb(idOrTitle)
@@ -93,7 +93,7 @@ const updateMovie = async (req, res, next) => {
 
 		if (!updateInfo.title || !updateInfo.runtimeMins) {
 			throw new MissingFieldsError(
-				"Title and duration in minutes must be provided in order to add a movie"
+				"Title and duration in minutes must be provided in order to update a movie"
 			)
 		}
 
