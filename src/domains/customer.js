@@ -36,6 +36,7 @@ const updateCustomerDb = async (reqId, updateInfo, contactInfo) => {
 			email: contactInfo.email,
 		}
 	}
+	console.log("Domain after if", updateData.contact)
 	const updatedCustomer = await prisma.customer.update({
 		where: {
 			id: reqId,

@@ -41,18 +41,20 @@ const createMovieDb = async (title, minutes, screenings) => {
 			},
 		})
 		return newMovie
+	} else {
+		
+		const newMovie = await prisma.movie.create({
+			data: {
+				title: title,
+				runtimeMins: minutes,
+			},
+			include: {
+				screenings: true,
+			},
+		})
+		
+		return newMovie
 	}
-	const newMovie = await prisma.movie.create({
-		data: {
-			title: title,
-			runtimeMins: minutes,
-		},
-		include: {
-			screenings: true,
-		},
-	})
-
-	return newMovie
 }
 
 const getMovieByTitleDb = async (title) => {

@@ -47,6 +47,7 @@ const createMovie = async (req, res, next) => {
 				screenings
 			)
 			res.status(201).json({ movie: createdMovie })
+			return
 		}
 
 		const createdMovie = await createMovieDb(title, runtimeMins)
