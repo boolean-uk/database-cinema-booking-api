@@ -1,6 +1,8 @@
 const prisma = require("../../src/utils/prisma")
+const { addDays } = require("date-fns")
 
 const createMovie = async (title, runtimeMins, screen = null) => {
+    const date = addDays(new Date(), 10)
     const movieData = {
         data: {
             title: title,
@@ -15,7 +17,7 @@ const createMovie = async (title, runtimeMins, screen = null) => {
         movieData.data.screenings = {
             create: [
                 {
-                    startsAt: "2022-06-11T18:30:00.000Z",
+                    startsAt: date,
                     screenId: screen.id
                 }
             ]

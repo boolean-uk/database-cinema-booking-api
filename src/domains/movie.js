@@ -2,6 +2,7 @@ const prisma = require('../utils/prisma')
 
 async function getAllMoviesDb(runtimeLt, runtimeGt) {
     let movieData = null
+    const currentDate = new Date()
     
     if (runtimeLt || runtimeGt) {
         movieData = {
@@ -25,6 +26,15 @@ async function getAllMoviesDb(runtimeLt, runtimeGt) {
         }
     }} else {
         movieData = {
+            where: {
+                screenings: {
+                    some: {
+                        startsAt: {
+                            gt: currentDate
+                        }
+                    }
+                }
+            },
             include: {
                 screenings: true
             }
