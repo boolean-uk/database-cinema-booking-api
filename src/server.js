@@ -24,6 +24,9 @@ app.use('/screens', screenRouter)
 const ticketRouter = require('./routers/ticket.js')
 app.use('/tickets', ticketRouter)
 
+const reviewRouter = require('./routers/review.js')
+app.use('/reviews', reviewRouter)
+
 const MissingFieldsError = require('./errors/missingFieldsError.js')
 const NotFoundError = require('./errors/notFoundError.js')
 const NotUniqueError = require('./errors/notUniqueError.js')

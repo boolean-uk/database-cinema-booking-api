@@ -4,6 +4,7 @@ const deleteTables = () => {
   const deleteTables = [
     prisma.ticket.deleteMany(),
     prisma.screening.deleteMany(),
+    prisma.review.deleteMany(),
     prisma.movie.deleteMany(),
     prisma.screen.deleteMany(),
     prisma.contact.deleteMany(),
