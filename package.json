@@ -13,7 +13,8 @@
     "test-movies-extensions": "npx jest -i test/api/extensions/movies-ext.spec.js --forceExit",
     "test-customer-extensions": "npx jest -i test/api/extensions/customer-ext.spec.js --forceExit",
     "test-screens-extensions": "npx jest -i test/api/extensions/screens-ext.spec.js --forceExit",
-    "test-tickets-extensions": "npx jest -i test/api/extensions/tickets-ext.spec.js --forceExit"
+    "test-tickets-extensions": "npx jest -i test/api/extensions/tickets-ext.spec.js --forceExit",
+    "test-reviews-extensions": "npx jest -i test/api/extensions/reviews-ext.spec.js --forceExit"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

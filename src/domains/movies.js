@@ -1,12 +1,23 @@
 const prisma = require("../utils/prisma");
 
 async function getMoviesDb() {
-  const movies = await prisma.movie.findMany({
-    include: {
-      screenings: true,
-    },
-  });
-  return movies;
+  let now = new Date();
+  console.log(now)
+    const movies = await prisma.movie.findMany({
+      where: {
+        screenings: {
+          some: {
+            startsAt: {
+              gt: now,
+            },
+          },
+        },
+      },
+      include: {
+        screenings: true,
+      },
+    });
+    return movies;
 }
 
 async function createMovieDb(newMovie) {
@@ -38,26 +49,26 @@ async function updateMovieByIdDb(movieId, updatedProps) {
     },
     data: updatedProps,
     include: {
-        screenings: true
-    }
+      screenings: true,
+    },
   });
   return movie;
 }
 
 async function getMoviesWithQueryDb(query) {
-    const { runtimeLt, runtimeGt } = query
+  const { runtimeLt, runtimeGt } = query;
 
-    const runTimeLimits = {
-        ...(runtimeLt && { lt: Number(runtimeLt) }),
-        ...(runtimeGt && { gt: Number(runtimeGt) })
-    };
+  const runTimeLimits = {
+    ...(runtimeLt && { lt: Number(runtimeLt) }),
+    ...(runtimeGt && { gt: Number(runtimeGt) }),
+  };
 
-    const movies = await prisma.movie.findMany({
-        where: {
-            runtimeMins: runTimeLimits
-        }
-    })
-    return movies
+  const movies = await prisma.movie.findMany({
+    where: {
+      runtimeMins: runTimeLimits,
+    },
+  });
+  return movies;
 }
 
 module.exports = {
@@ -65,5 +76,5 @@ module.exports = {
   createMovieDb,
   getMovieByIdDb,
   updateMovieByIdDb,
-  getMoviesWithQueryDb
+  getMoviesWithQueryDb,
 };

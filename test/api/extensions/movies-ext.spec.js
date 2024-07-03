@@ -3,8 +3,26 @@ const app = require("../../../src/server.js");
 
 const { createMovie } = require("../../helpers/createMovie.js");
 const { createScreen } = require("../../helpers/createScreen.js");
+const { createScreening } = require("../../helpers/createScreening.js")
 
 describe("Movies Endpoint", () => {
+
+  describe('GET /movies', () => {
+    it("will only return movies with a screening that has a start time in the future", async () => {
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+     
+
+      const screen = await createScreen(1)
+      const movie = await createMovie("Dodgeball", 120, screen)
+      const screening = await createScreening(movie, screen, yesterday)
+
+      const response = await supertest(app).get("/movies")
+      expect(response.body.movies.length).toEqual(0)
+
+    })
+  })
+
   describe("GET /movies/runtimeLt", () => {
     it("will return movies less than a certain runtime", async () => {
       const screen = await createScreen(1);
@@ -16,6 +34,7 @@ describe("Movies Endpoint", () => {
       expect(response.status).toEqual(200);
       expect(response.body.movies.length).toEqual(1);
       expect(response.body.movies[0].runtimeMins).toBeLessThan(115);
+      
     });
   });
 
@@ -35,11 +54,9 @@ describe("Movies Endpoint", () => {
     describe("GET /movies/:id", () => {
       it("will throw an error if no movie exists with given id", async () => {
         const response = await supertest(app).get("/movies/450");
-        console.log(response.body)
 
         expect(response.status).toEqual(404);
         expect(response.body.error).toEqual("No movie found with that ID");
-        
       });
     });
   });
@@ -92,10 +109,12 @@ describe("Movies Endpoint", () => {
         const created = await createMovie("Dodgeball", 120, screen);
 
         const request = {
-          cheese: "cheddar"
+          cheese: "cheddar",
         };
 
-        const response = await supertest(app).put(`/movies/${created.id}`).send(request);
+        const response = await supertest(app)
+          .put(`/movies/${created.id}`)
+          .send(request);
 
         expect(response.status).toEqual(400);
         expect(response.body.error).toEqual(
@@ -106,13 +125,15 @@ describe("Movies Endpoint", () => {
       it("will throw an error if a movie already exists with that name", async () => {
         const screen = await createScreen(1);
         const created = await createMovie("Dodgeball", 120, screen);
-        const created2 = await createMovie("Signs", 109, screen)
+        const created2 = await createMovie("Signs", 109, screen);
 
         const request = {
-          title: "Dodgeball"
+          title: "Dodgeball",
         };
 
-        const response = await supertest(app).put(`/movies/${created2.id}`).send(request);
+        const response = await supertest(app)
+          .put(`/movies/${created2.id}`)
+          .send(request);
 
         expect(response.status).toEqual(409);
         expect(response.body.error).toEqual(

@@ -19,10 +19,12 @@ const customerRouter = require('./routers/customer');
 const movieRouter = require('./routers/movies')
 const screenRouter = require('./routers/screens')
 const ticketsRouter = require('./routers/tickets.js')
+const reviewsRouter = require("./routers/reviews.js")
 app.use('/customers', customerRouter);
 app.use('/movies', movieRouter);
 app.use('/screens', screenRouter);
 app.use('/tickets', ticketsRouter);
+app.use('/reviews', reviewsRouter)
 
 const { MissingFieldsError, DataAlreadyExistsError, DataNotFoundError } = require("./errors/errors.js")
 
