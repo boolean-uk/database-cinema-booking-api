@@ -29,8 +29,6 @@ const updateCustomerDb = async (reqId, updateInfo, contactInfo) => {
 	const updateData = {
 		name: updateInfo,
 	}
-	console.log("D-1", updateData)
-	console.log("D-2", contactInfo)
 
 	if (contactInfo) {
 		updateData.contact = {
@@ -40,7 +38,7 @@ const updateCustomerDb = async (reqId, updateInfo, contactInfo) => {
 			},
 		}
 	}
-	console.log("D3", updateData)
+
 	const updatedCustomer = await prisma.customer.update({
 		where: {
 			id: reqId,

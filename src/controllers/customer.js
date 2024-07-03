@@ -63,7 +63,6 @@ const updateCustomer = async (req, res, next) => {
 			name,
 			contact
 		)
-		console.log("CCC---ccc-ed", updatedCustomer)
 		res.status(201).json({ customer: updatedCustomer })
 	} catch (e) {
 		console.log(e)
