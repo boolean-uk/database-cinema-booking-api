@@ -25,7 +25,7 @@ describe("Movies endpoin", () => {
 			expect(movie2.runtimeMins).toEqual(222)
 		})
 	})
-    
+
 	describe("GET /movies?runtimeGt", () => {
 		it("will get a list of movies filterd by provided_runtimeMins > runtimeGt", async () => {
 			await createMovie("Movie 1", 111)
@@ -47,7 +47,7 @@ describe("Movies endpoin", () => {
 			expect(movie2.runtimeMins).toEqual(333)
 		})
 	})
-    
+
 	describe("GET /movies?runtimeLt&runtimeGt", () => {
 		it("will get a list of movies filterd by runtimeLt > provided_runtimeMins > runtimeGt", async () => {
 			await createMovie("Movie 1", 111)
@@ -65,6 +65,93 @@ describe("Movies endpoin", () => {
 			const [movie1] = response.body.movies
 			expect(movie1.title).toEqual("Movie 2")
 			expect(movie1.runtimeMins).toEqual(222)
+		})
+	})
+
+	describe("POST /movies", () => {
+		it("will add a movie with screenings if provided", async () => {
+			const scr1 = await createScreen(1)
+
+			const request = {
+				title: "Movie 1",
+				runtimeMins: 111,
+				screenings: [
+					{
+						movieId: 1,
+						screenId: scr1.id,
+						startsAt: "2022-06-11T18:30:00.000Z",
+					},
+					// {
+					// 	movieId: 1,
+					// 	screenId: screen2.id,
+					// 	startsAt: "2023-06-11T18:30:00.000Z",
+					// },
+				],
+			}
+
+			const response = await supertest(app)
+				.post("/movies")
+				.send(request)
+
+			expect(response.status).toEqual(201)
+			expect(response.body.movie).not.toEqual(undefined)
+			expect(response.body.movie.title).toEqual("Movie 1")
+			expect(response.body.movie.runtimeMins).toEqual(111)
+			expect(response.body.movie.screenings).not.toEqual(undefined)
+			expect(response.body.movie.screenings.length).toEqual(1)
+		})
+
+		it("will be still able to add a movie if screenings are not provided", async () => {
+			const request = {
+				title: "Movie 1",
+				runtimeMins: 111,
+			}
+
+			const response = await supertest(app)
+				.post("/movies")
+				.send(request)
+
+			expect(response.status).toEqual(201)
+			expect(response.body.movie).not.toEqual(undefined)
+			expect(response.body.movie.title).toEqual("Movie 1")
+			expect(response.body.movie.runtimeMins).toEqual(111)
+			expect(response.body.movie.screenings).not.toEqual(undefined)
+			expect(response.body.movie.screenings.length).toEqual(0)
+		})
+
+		it("will have status 400 and return an error if the request is missing fields", async () => {
+			const request = {
+				title: "Movie 1",
+			}
+
+			const response = await supertest(app)
+				.post("/movies")
+				.send(request)
+
+			expect(response.status).toEqual(400)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"Title and duration in minutes must be provided in order to add a movie"
+			)
+		})
+
+		it("will have status 409 and return an error if adding existing movie", async () => {
+			const movie = await createMovie("Movie 1", 120)
+
+			const request = {
+				title: "Movie 1",
+				runtimeMins: 111,
+			}
+
+			const response = await supertest(app)
+				.post("/movies")
+				.send(request)
+
+			expect(response.status).toEqual(409)
+			expect(response.body).toHaveProperty("error")
+			expect(response.body.error).toEqual(
+				"A movie with the provided title already exists"
+			)
 		})
 	})
 })
