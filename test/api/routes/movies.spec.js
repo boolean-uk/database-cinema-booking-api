@@ -1,14 +1,26 @@
-const supertest = require("supertest")
-const app = require("../../../src/server.js")
-const { createMovie } = require("../../helpers/createMovie.js")
-const { createScreen } = require("../../helpers/createScreen.js")
+const supertest = require('supertest')
+const app = require('../../../src/server.js')
+const { createMovie } = require('../../helpers/createMovie.js')
+const { createScreen } = require('../../helpers/createScreen.js')
+const { createScreening } = require('../../helpers/createScreening.js')
 
-describe("Movies Endpoint", () => {
-    describe("GET /movies", () => {
-        it("will retrieve a list of movies", async () => {
+describe('Movies Endpoint', () => {
+    describe('GET /movies', () => {
+        it('will retrieve a list of movies', async () => {
             const screen = await createScreen(1)
-            await createMovie('Dodgeball', 120, screen)
-            await createMovie('Scream', 113, screen)
+            const movie = await createMovie('Dodgeball', 120)
+            const secondMovie = await createMovie('Scream', 113)
+
+            await createScreening(
+                screen.id,
+                movie.id,
+                new Date(Date.now() + 86400).toISOString()
+            )
+            await createScreening(
+                screen.id,
+                secondMovie.id,
+                new Date(Date.now() + 86400).toISOString()
+            )
 
             const response = await supertest(app).get('/movies')
 
@@ -29,16 +41,14 @@ describe("Movies Endpoint", () => {
         })
     })
 
-    describe("POST /movies", () => {
-        it("will create a movie", async () => {
+    describe('POST /movies', () => {
+        it('will create a movie', async () => {
             const request = {
-                title: "Top Gun",
-                runtimeMins: 110
+                title: 'Top Gun',
+                runtimeMins: 110,
             }
 
-            const response = await supertest(app)
-                .post("/movies")
-                .send(request)
+            const response = await supertest(app).post('/movies').send(request)
 
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
@@ -49,8 +59,8 @@ describe("Movies Endpoint", () => {
         })
     })
 
-    describe("GET /movies/:id", () => {
-        it("will get a movie by id", async () => {
+    describe('GET /movies/:id', () => {
+        it('will get a movie by id', async () => {
             const screen = await createScreen(1)
             const created = await createMovie('Dodgeball', 120, screen)
 
@@ -65,14 +75,14 @@ describe("Movies Endpoint", () => {
         })
     })
 
-    describe("PUT /movies/:id", () => {
-        it("will update a movie by id", async () => {
+    describe('PUT /movies/:id', () => {
+        it('will update a movie by id', async () => {
             const screen = await createScreen(1)
             const created = await createMovie('Dodgeball', 120, screen)
 
             const request = {
                 title: 'Scream',
-                runtimeMins: 113
+                runtimeMins: 113,
             }
 
             const response = await supertest(app)

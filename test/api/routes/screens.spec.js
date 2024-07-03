@@ -1,16 +1,14 @@
-const supertest = require("supertest")
-const app = require("../../../src/server.js")
+const supertest = require('supertest')
+const app = require('../../../src/server.js')
 
-describe("Screens Endpoint", () => {
-    describe("POST /screens", () => {
-        it("will create a new screen", async () => {
+describe('Screens Endpoint', () => {
+    describe('POST /screens', () => {
+        it('will create a new screen', async () => {
             const request = {
-                number: 10
+                number: 10,
             }
 
-            const response = await supertest(app)
-                .post("/screens")
-                .send(request)
+            const response = await supertest(app).post('/screens').send(request)
 
             expect(response.status).toEqual(201)
             expect(response.body.screen).not.toEqual(undefined)
