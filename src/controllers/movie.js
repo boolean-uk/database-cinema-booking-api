@@ -99,12 +99,6 @@ const updateMovie = async (req, res, next) => {
 			)
 		}
 
-		if (existingTitle) {
-			throw new ExistingDataError(
-				"A movie with the provided title already exists"
-			)
-		}
-
 		const updatedMovie = await updateMovieDb(
 			reqId,
 			updateInfo,
