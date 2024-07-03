@@ -51,9 +51,9 @@ const getAllMoviesByRuntimeLt = async (query) => await prisma.movie.findMany({
     }
 })
 
-const getMovieByTitle = async (req) => await prisma.movie.findFirst({
+const getMovieByTitle = async (title) => await prisma.movie.findFirst({
     where: {
-        title: req.body.title
+        title: title
     }
 })
 

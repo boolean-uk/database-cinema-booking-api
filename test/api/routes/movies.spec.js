@@ -33,7 +33,7 @@ describe("Movies Endpoint", () => {
     describe("POST /movies", () => {
         it("will create a movie", async () => {
             const request = {
-                title: "Top Gun",
+                title: "Full Metal Jacket",
                 runtimeMins: 110
             }
 
@@ -43,7 +43,7 @@ describe("Movies Endpoint", () => {
             
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie.title).toEqual('Top Gun')
+            expect(response.body.movie.title).toEqual('Full Metal Jacket')
             expect(response.body.movie.runtimeMins).toEqual(110)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(0)
@@ -69,7 +69,7 @@ describe("Movies Endpoint", () => {
     describe("PUT /movies/:id", () => {
         it("will update a movie by id", async () => {
             const screen = await createScreen(1)
-            const created = await createMovie('Batman Returns', 118, screen)
+            const created = await createMovie('King of Comedy', 118, screen)
 
             const request = {
                 title: 'Scary Movie',
