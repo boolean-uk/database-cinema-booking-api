@@ -39,8 +39,8 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res, next) => {
 	const reqId = Number(req.params.id)
-	const updateInfo = req.body
-
+	const {name, contact} = req.body
+	
 
 	const customersList = await getAllCustomersDb()
 	const existingCustomer = customersList.find(
@@ -53,17 +53,17 @@ const updateCustomer = async (req, res, next) => {
 				"No customer with the provided ID exists"
 			)
 		}
-		if (!updateInfo.name) {
+		if (!name) {
 			throw new MissingFieldsError(
 				"A name must be provided in order to update the customer"
 			)
 		}
 		const updatedCustomer = await updateCustomerDb(
 			reqId,
-			updateInfo.name,
-			updateInfo.phone,
-			updateInfo.email
+			name,
+			contact
 		)
+		console.log("CCC---ccc-ed", updatedCustomer)
 		res.status(201).json({ customer: updatedCustomer })
 	} catch (e) {
 		console.log(e)
