@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }))
 const customerRouter = require("./routers/customer")
 const moviesRouter = require("./routers/movie")
 const screensRouter = require("./routers/screen")
+const ticketsRouter = require('./routers/ticket')
 
 const {
 	MissingFieldsError,
@@ -26,6 +27,7 @@ const {
 app.use("/customers", customerRouter)
 app.use("/movies", moviesRouter)
 app.use("/screens", screensRouter)
+app.use("/tickets", ticketsRouter)
 
 app.use((error, req, res, next) => {
 	if (error instanceof MissingFieldsError) {
