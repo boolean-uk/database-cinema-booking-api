@@ -14,7 +14,8 @@ async function getAllMoviesDb(runtimeLt, runtimeGt) {
                     lt: runtimeLt
                 }
             } : {})},
-            {...(runtimeGt ? {
+                {
+                ...(runtimeGt ? {
                 runtimeMins: {
                     gt: runtimeGt
                 }
