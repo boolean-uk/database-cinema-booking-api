@@ -4,7 +4,7 @@ const {
     findMovieByIdDb,
     updateMovieByIdDb,
 } = require('../domains/movies.js')
-const { NotFoundError, RecordNotFound } = require('@prisma/client')
+const { NotFoundError} = require('@prisma/client')
 
 const getAllMovies = async (req, res) => {
     const { runtimeLt, runtimeGt } = req.query
