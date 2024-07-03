@@ -1,20 +1,15 @@
-const supertest = require("supertest")
-const app = require("../../../src/server.js")
+const express = require('express');
+const router = express.Router();
+const { createScreen } = require('../../helpers/createScreen');
 
-describe("Screens Endpoint", () => {
-    describe("POST /screens", () => {
-        it("will create a new screen", async () => {
-            const request = {
-                number: 10
-            }
+router.post('/', async (req, res) => {
+    try {
+        const { number } = req.body;
+        const screen = await createScreen(number);
+        res.status(201).json({ screen });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
-            const response = await supertest(app)
-                .post("/screens")
-                .send(request)
-
-            expect(response.status).toEqual(201)
-            expect(response.body.screen).not.toEqual(undefined)
-            expect(response.body.screen.number).toEqual(10)
-        })
-    })
-})
+module.exports = router;

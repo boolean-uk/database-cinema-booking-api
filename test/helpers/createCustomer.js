@@ -1,19 +1,63 @@
 const prisma = require("../../src/utils/prisma")
 
-const createCustomer = async (name, phone, email) => {
-  return await prisma.customer.create({
-    data: {
-      name: name,
-      contact: {
-        create: {
-          phone: phone,
-          email: email,
+const createMovie = async (title, runtimeMins, screen = null) => {
+    const movieData = {
+        data: {
+            title: title,
+            runtimeMins: runtimeMins
         },
-      },
-    },
-  })
+        include: {
+            screenings: true
+        }
+    }
+
+    if (screen) {
+        movieData.data.screenings = {
+            create: [
+                {
+                    startsAt: "2022-06-11T18:30:00.000Z",
+                    screenId: screen.id
+                }
+            ]
+        }
+    }
+
+    return await prisma.movie.create(movieData)
+}
+
+const getAllMovies = async () => {
+    return await prisma.movie.findMany({
+        include: {
+            screenings: true
+        }
+    })
+}
+
+const getMovieById = async (id) => {
+    return await prisma.movie.findUnique({
+        where: { id },
+        include: {
+            screenings: true
+        }
+    })
+}
+
+const updateMovie = async (id, title, runtimeMins) => {
+    return await prisma.movie.update({
+        where: { id },
+        data: {
+            title,
+            runtimeMins
+        },
+        include: {
+            screenings: true
+        }
+    })
 }
 
 module.exports = {
-    createCustomer
+    createMovie,
+    getAllMovies,
+    getMovieById,
+    updateMovie
 }
