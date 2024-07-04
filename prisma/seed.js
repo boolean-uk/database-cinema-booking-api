@@ -97,6 +97,30 @@ async function createScreenings(screens, movies) {
   }
 }
 
+async function createReviews(customers, movies) {
+	for (const customer of customers) {
+		for (let i = 0; i < movies.length; i++) {
+			const review = await prisma.review.create({
+				data: {
+					content: "Lorem ipsum great movie",
+					movie: {
+						connect: {
+							id: movies[i].id,
+						},
+					},
+					customer: {
+						connect: {
+							id: customer.id,
+						},
+					},
+				},
+			})
+
+			console.log("Reviews created", review)
+		}
+	}
+}
+
 seed()
   .catch(async e => {
     console.error(e);
