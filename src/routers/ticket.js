@@ -1,8 +1,10 @@
 const express = require("express")
 
-const { createTicket } = require('../controllers/ticket')
+const { createTicket, getAllTickets } = require('../controllers/ticket')
 
 const router = express.Router()
+
+router.get('/', getAllTickets)
 
 router.post('/', createTicket)
 

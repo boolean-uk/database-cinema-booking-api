@@ -54,14 +54,13 @@ const createMovie = async (req, res) => {
 const getMovieById = async (req, res) => {
 	const idOrTitle = req.params.id
 
-		const movie = await getMovieByIdDb(idOrTitle)
-		if (!movie) {
-			throw new DataNotFoundError(
-				"No movie with the provided id or title exists"
-			)
-		}
-		res.status(200).json({ movie: movie })
-
+	const movie = await getMovieByIdDb(idOrTitle)
+	if (!movie) {
+		throw new DataNotFoundError(
+			"No movie with the provided id or title exists"
+		)
+	}
+	res.status(200).json({ movie: movie })
 }
 
 const updateMovie = async (req, res) => {
@@ -71,25 +70,25 @@ const updateMovie = async (req, res) => {
 
 	const moviesList = await getMovieByIdDb(reqId)
 
-		if (!moviesList) {
-			throw new DataNotFoundError(
-				"No movie with the provided ID exists"
-			)
-		}
-
-		if (!updateInfo.title || !updateInfo.runtimeMins) {
-			throw new MissingFieldsError(
-				"Title and duration in minutes must be provided in order to update a movie"
-			)
-		}
-
-		const updatedMovie = await updateMovieDb(
-			reqId,
-			updateInfo.title,
-			updateInfo.runtimeMins,
-			screenings
+	if (!moviesList) {
+		throw new DataNotFoundError(
+			"No movie with the provided ID exists"
 		)
-		res.status(201).json({ movie: updatedMovie })
+	}
+
+	if (!updateInfo.title || !updateInfo.runtimeMins) {
+		throw new MissingFieldsError(
+			"Title and duration in minutes must be provided in order to update a movie"
+		)
+	}
+
+	const updatedMovie = await updateMovieDb(
+		reqId,
+		updateInfo.title,
+		updateInfo.runtimeMins,
+		screenings
+	)
+	res.status(201).json({ movie: updatedMovie })
 }
 
 module.exports = {

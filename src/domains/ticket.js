@@ -12,13 +12,13 @@ const createTicketDB = async (screen, customer) => {
 		},
 		select: {
 			id: true,
-            screening: {
-                select: {
-                    id: true,
-                    movieId: true,
-                    screenId: true,
-                }
-            },
+			screening: {
+				select: {
+					id: true,
+					movieId: true,
+					screenId: true,
+				},
+			},
 			customer: {
 				include: {
 					contact: true,
@@ -35,6 +35,12 @@ const createTicketDB = async (screen, customer) => {
 	return newTicket
 }
 
+const getAllTicketsDb = async () => {
+	const allTickets = await prisma.ticket.findMany()
+	return allTickets
+}
+
 module.exports = {
 	createTicketDB,
+	getAllTicketsDb,
 }
