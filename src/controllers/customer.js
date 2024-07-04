@@ -43,12 +43,19 @@ const createCustomer = async (req, res) => {
 
 const fetchUpdate = async (req, res) => {
   const id = Number(req.params.id);
-  const { name } = req.body;
-  const updated = await update(id, name);
+  const { name, contact } = req.body;
+  
+  if (!name && (!contact.phone || !contact.email)) {
+    return res.status(400).json({
+      error: "Missing fields in request body",
+    });
+  }
+  const updates = req.body;
+  const updated = await update(id, updates);
   res.status(201).json({ customer: updated });
 };
 
 module.exports = {
   createCustomer,
-  fetchUpdate
+  fetchUpdate,
 };
