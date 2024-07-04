@@ -3,11 +3,12 @@ const app = require("../../../src/server.js")
 const { createMovie } = require("../../helpers/createMovie.js")
 const { createScreen } = require("../../helpers/createScreen.js")
 
+
 describe("Movies Endpoint", () => {
     describe("GET /movies", () => {
         it("will retrieve a list of movies", async () => {
             const screen = await createScreen(1)
-            await createMovie('Dodgeball', 120, screen)
+            await createMovie('Superbad', 120, screen)
             await createMovie('Scream', 113, screen)
 
             const response = await supertest(app).get('/movies')
@@ -17,7 +18,7 @@ describe("Movies Endpoint", () => {
             expect(response.body.movies.length).toEqual(2)
 
             const [movie1, movie2] = response.body.movies
-            expect(movie1.title).toEqual('Dodgeball')
+            expect(movie1.title).toEqual('Superbad')
             expect(movie1.runtimeMins).toEqual(120)
             expect(movie1.screenings).not.toEqual(undefined)
             expect(movie1.screenings.length).toEqual(1)
@@ -32,17 +33,17 @@ describe("Movies Endpoint", () => {
     describe("POST /movies", () => {
         it("will create a movie", async () => {
             const request = {
-                title: "Top Gun",
+                title: "Full Metal Jacket",
                 runtimeMins: 110
             }
 
             const response = await supertest(app)
                 .post("/movies")
                 .send(request)
-
+            
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie.title).toEqual('Top Gun')
+            expect(response.body.movie.title).toEqual('Full Metal Jacket')
             expect(response.body.movie.runtimeMins).toEqual(110)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(0)
@@ -52,14 +53,14 @@ describe("Movies Endpoint", () => {
     describe("GET /movies/:id", () => {
         it("will get a movie by id", async () => {
             const screen = await createScreen(1)
-            const created = await createMovie('Dodgeball', 120, screen)
+            const created = await createMovie('Lucky', 89, screen)
 
             const response = await supertest(app).get(`/movies/${created.id}`)
-
+            
             expect(response.status).toEqual(200)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie.title).toEqual('Dodgeball')
-            expect(response.body.movie.runtimeMins).toEqual(120)
+            expect(response.body.movie.title).toEqual('Lucky')
+            expect(response.body.movie.runtimeMins).toEqual(89)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(1)
         })
@@ -68,20 +69,20 @@ describe("Movies Endpoint", () => {
     describe("PUT /movies/:id", () => {
         it("will update a movie by id", async () => {
             const screen = await createScreen(1)
-            const created = await createMovie('Dodgeball', 120, screen)
+            const created = await createMovie('King of Comedy', 118, screen)
 
             const request = {
-                title: 'Scream',
+                title: 'Scary Movie',
                 runtimeMins: 113
             }
 
             const response = await supertest(app)
                 .put(`/movies/${created.id}`)
                 .send(request)
-
+            
             expect(response.status).toEqual(201)
             expect(response.body.movie).not.toEqual(undefined)
-            expect(response.body.movie.title).toEqual('Scream')
+            expect(response.body.movie.title).toEqual('Scary Movie')
             expect(response.body.movie.runtimeMins).toEqual(113)
             expect(response.body.movie.screenings).not.toEqual(undefined)
             expect(response.body.movie.screenings.length).toEqual(1)
