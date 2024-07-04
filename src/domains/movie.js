@@ -18,7 +18,7 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
 				? filterRuntimes
 				: undefined,
 				screenings: {
-				every: {
+				some: {
 						startsAt: { gt: now },
 					},
 				},

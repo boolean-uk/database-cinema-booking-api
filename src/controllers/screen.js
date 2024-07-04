@@ -12,32 +12,27 @@ const {
 const createScreen = async (req, res, next) => {
 	const screnToAdd = req.body
 
-	try {
-		if (!screnToAdd.number) {
-			throw new MissingFieldsError(
-				"Number must be provided in order to add a screen"
-			)
-		}
-
-		const screensList = await getAllScreensDb()
-		const existingScreen = screensList.find(
-			(scr) => scr.number === screnToAdd.number
+	if (!screnToAdd.number) {
+		throw new MissingFieldsError(
+			"Number must be provided in order to add a screen"
 		)
-
-		if (existingScreen) {
-			throw new ExistingDataError(
-				"A screen with the provided number already exists"
-			)
-		}
-		const createScreen = await createScreenDB(
-			screnToAdd.number,
-			screnToAdd.screenings
-		)
-		res.status(201).json({ screen: createScreen })
-	} catch (e) {
-		console.log(e)
-		next(e)
 	}
+
+	const screensList = await getAllScreensDb()
+	const existingScreen = screensList.find(
+		(scr) => scr.number === screnToAdd.number
+	)
+
+	if (existingScreen) {
+		throw new ExistingDataError(
+			"A screen with the provided number already exists"
+		)
+	}
+	const createScreen = await createScreenDB(
+		screnToAdd.number,
+		screnToAdd.screenings
+	)
+	res.status(201).json({ screen: createScreen })
 }
 
 const getAllScreens = async (req, res) => {

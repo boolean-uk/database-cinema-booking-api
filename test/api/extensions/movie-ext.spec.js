@@ -3,12 +3,15 @@ const app = require("../../../src/server.js")
 const { createMovie } = require("../../helpers/createMovie.js")
 const { createScreen } = require("../../helpers/createScreen.js")
 
-describe("Movies endpoin", () => {
+describe("Movies endpoint", () => {
 	describe("GET /movies?runtimeLt", () => {
 		it("will get a list of movies filterd by provided_runtimeMins < runtimeLt", async () => {
-			await createMovie("Movie 1", 111)
-			await createMovie("Movie 2", 222)
-			await createMovie("Movie 3", 333)
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const scr3 = await createScreen(3)
+			await createMovie("Movie 1", 111, scr1)
+			await createMovie("Movie 2", 222, scr2)
+			await createMovie("Movie 3", 333, scr3)
 
 			const response = await supertest(app).get(
 				"/movies?runtimeLt=300"
@@ -29,9 +32,12 @@ describe("Movies endpoin", () => {
 
 	describe("GET /movies?runtimeGt", () => {
 		it("will get a list of movies filterd by provided_runtimeMins > runtimeGt", async () => {
-			await createMovie("Movie 1", 111)
-			await createMovie("Movie 2", 222)
-			await createMovie("Movie 3", 333)
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const scr3 = await createScreen(3)
+			await createMovie("Movie 1", 111, scr1)
+			await createMovie("Movie 2", 222, scr2)
+			await createMovie("Movie 3", 333, scr3)
 
 			const response = await supertest(app).get(
 				"/movies?runtimeGt=200"
@@ -51,14 +57,16 @@ describe("Movies endpoin", () => {
 
 	describe("GET /movies?runtimeLt&runtimeGt", () => {
 		it("will get a list of movies filterd by runtimeLt > provided_runtimeMins > runtimeGt", async () => {
-			await createMovie("Movie 1", 111)
-			await createMovie("Movie 2", 222)
-			await createMovie("Movie 3", 333)
-
+			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
+			const scr3 = await createScreen(3)
+			await createMovie("Movie 1", 111, scr1)
+			await createMovie("Movie 2", 222, scr2)
+			await createMovie("Movie 3", 333, scr3)
 			const response = await supertest(app).get(
 				"/movies?runtimeLt=300&runtimeGt=200"
 			)
-			
+
 			expect(response.status).toEqual(200)
 			expect(response.body.movies).not.toEqual(undefined)
 			expect(response.body.movies.length).toEqual(1)
