@@ -4,7 +4,6 @@ const {
 	getMovieByIdDb,
 	createMovieDb,
 	updateMovieDb,
-	getMovieByTitleDb,
 } = require("../domains/movie")
 
 const {
@@ -31,10 +30,9 @@ const createMovie = async (req, res, next) => {
 			)
 		}
 
-		const moviesList = await getAllMoviesDb()
-		const existingMovie = moviesList.find((mv) => mv.title === title)
-
-		if (existingMovie) {
+		const moviesList = await getMovieByIdDb(title)
+		
+		if (moviesList) {
 			throw new ExistingDataError(
 				"A movie with the provided title already exists"
 			)
@@ -81,11 +79,10 @@ const updateMovie = async (req, res, next) => {
 	const screenings = updateInfo.screenings
 
 
-	const moviesList = await getAllMoviesDb()
-	const existingId = moviesList.find((mv) => mv.id === reqId)
+	const moviesList = await getMovieByIdDb(reqId)
 
 	try {
-		if (!existingId) {
+		if (!moviesList) {
 			throw new DataNotFoundError(
 				"No movie with the provided ID exists"
 			)

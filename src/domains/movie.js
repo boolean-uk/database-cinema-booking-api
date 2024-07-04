@@ -2,6 +2,8 @@ const prisma = require("../utils/prisma")
 
 const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
 	const filterRuntimes = {}
+	const now = new Date()
+
 
 	if (runtimeLt) {
 		filterRuntimes.lt = Number(runtimeLt)
@@ -15,6 +17,11 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
 			runtimeMins: Object.keys(filterRuntimes).length
 				? filterRuntimes
 				: undefined,
+				screenings: {
+				some: {
+						startsAt: { gt: now },
+					},
+				},
 		},
 		include: {
 			screenings: true,
@@ -42,7 +49,6 @@ const createMovieDb = async (title, minutes, screenings) => {
 		})
 		return newMovie
 	} else {
-		
 		const newMovie = await prisma.movie.create({
 			data: {
 				title: title,
@@ -52,7 +58,7 @@ const createMovieDb = async (title, minutes, screenings) => {
 				screenings: true,
 			},
 		})
-		
+
 		return newMovie
 	}
 }
@@ -71,6 +77,7 @@ const getMovieByTitleDb = async (title) => {
 
 const getMovieByIdDb = async (reqId) => {
 	const reqType = Number(reqId)
+	console.log(reqType);
 
 	if (isNaN(reqType)) {
 		return await getMovieByTitleDb(reqId)
@@ -88,7 +95,6 @@ const getMovieByIdDb = async (reqId) => {
 }
 
 const updateMovieDb = async (reqId, title, minutes, screenings) => {
-
 	const updateData = {
 		title: title,
 		runtimeMins: minutes,

@@ -71,6 +71,7 @@ describe("Movies endpoin", () => {
 	describe("POST /movies", () => {
 		it("will add a movie with screenings if provided", async () => {
 			const scr1 = await createScreen(1)
+			const scr2 = await createScreen(2)
 
 			const request = {
 				title: "Movie 1",
@@ -81,11 +82,11 @@ describe("Movies endpoin", () => {
 						screenId: scr1.id,
 						startsAt: Date.now(),
 					},
-					// {
-					// 	movieId: 1,
-					// 	screenId: screen2.id,
-					// 	startsAt: "2023-06-11T18:30:00.000Z",
-					// },
+					{
+						movieId: 1,
+						screenId: scr2.id,
+						startsAt:  Date.now() //"2023-06-11T18:30:00.000Z",
+					},
 				],
 			}
 
@@ -98,7 +99,7 @@ describe("Movies endpoin", () => {
 			expect(response.body.movie.title).toEqual("Movie 1")
 			expect(response.body.movie.runtimeMins).toEqual(111)
 			expect(response.body.movie.screenings).not.toEqual(undefined)
-			expect(response.body.movie.screenings.length).toEqual(1)
+			expect(response.body.movie.screenings.length).toEqual(2)
 		})
 
 		it("will be still able to add a movie if screenings are not provided", async () => {
