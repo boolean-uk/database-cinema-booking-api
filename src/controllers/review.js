@@ -5,7 +5,6 @@ const {
 	getReviewsByMovieTitleDb,
 } = require("../domains/review")
 const { getMovieByIdDb } = require("../domains/movie")
-const { getMovieById } = require("../controllers/movie")
 
 const {
 	MissingFieldsError,

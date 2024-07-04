@@ -22,7 +22,6 @@ const getAllreviewsDb = async () => {
 
 
 const getReviewsByMovieTitleDb = async (title) => {
-    console.log(title);
 	const getReviewsForMovie = await prisma.review.findFirst({
 		where: {
 			movie: {
