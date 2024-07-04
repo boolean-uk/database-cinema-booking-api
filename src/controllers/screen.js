@@ -6,10 +6,9 @@ const {
 const {
 	MissingFieldsError,
 	ExistingDataError,
-	DataNotFoundError,
 } = require("../errors/errors")
 
-const createScreen = async (req, res, next) => {
+const createScreen = async (req, res) => {
 	const screnToAdd = req.body
 
 	if (!screnToAdd.number) {

@@ -37,7 +37,7 @@ const createCustomer = async (req, res) => {
 	}
 }
 
-const updateCustomer = async (req, res, next) => {
+const updateCustomer = async (req, res) => {
 	const reqId = Number(req.params.id)
 	const { name, contact } = req.body
 

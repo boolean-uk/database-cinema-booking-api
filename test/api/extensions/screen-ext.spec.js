@@ -14,7 +14,7 @@ describe("Screen Endpoint", () => {
 				screenings: [
 					{
 						movieId: movie1.id,
-						startsAt: Date.now()",
+						startsAt: Date.now(),
 					},
 					{
 						movieId: movie2.id,

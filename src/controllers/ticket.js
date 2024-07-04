@@ -5,11 +5,10 @@ const { getAllScreeningsDb } = require('../domains/screening')
 
 const {
 	MissingFieldsError,
-	ExistingDataError,
 	DataNotFoundError,
 } = require("../errors/errors")
 
-const createTicket = async (req, res, next) => {
+const createTicket = async (req, res) => {
     const { screeningId, customerId } = req.body
     
     const customers = await getAllCustomersDb()
@@ -17,7 +16,7 @@ const createTicket = async (req, res, next) => {
     const screenings = await getAllScreeningsDb()
     const existingScreening = screenings.find(scr => scr.id === screeningId)
 
-	try {
+
 		if (!screeningId || !customerId) {
 			throw new MissingFieldsError(
 				"Screening and Customer ID must be provided in order to create a ticket"
@@ -31,10 +30,6 @@ const createTicket = async (req, res, next) => {
         }
 		const newTicket = await createTicketDB(screeningId, customerId)
 		res.status(201).json({ ticket: newTicket })
-	} catch (e) {
-		console.log(e)
-		next(e)
-	}
 }
 
 module.exports = { createTicket }

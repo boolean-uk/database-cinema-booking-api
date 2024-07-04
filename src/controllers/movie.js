@@ -20,7 +20,7 @@ const getAllMovies = async (req, res) => {
 	res.status(200).json({ movies: allMovies })
 }
 
-const createMovie = async (req, res, next) => {
+const createMovie = async (req, res) => {
 	const { title, runtimeMins, screenings } = req.body
 
 	if (!title || !runtimeMins) {
@@ -51,7 +51,7 @@ const createMovie = async (req, res, next) => {
 	res.status(201).json({ movie: createdMovie })
 }
 
-const getMovieById = async (req, res, next) => {
+const getMovieById = async (req, res) => {
 	const idOrTitle = req.params.id
 
 		const movie = await getMovieByIdDb(idOrTitle)
@@ -64,7 +64,7 @@ const getMovieById = async (req, res, next) => {
 
 }
 
-const updateMovie = async (req, res, next) => {
+const updateMovie = async (req, res) => {
 	const reqId = Number(req.params.id)
 	const updateInfo = req.body
 	const screenings = updateInfo.screenings
