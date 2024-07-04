@@ -18,7 +18,7 @@ model Customer {
   tickets   Ticket[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Review    Review[]
+  review    Review[]
 }
 
 model Contact {
@@ -38,7 +38,7 @@ model Movie {
   runtimeMins Int
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  Review      Review[]
+  review      Review[]
 }
 
 model Screen {

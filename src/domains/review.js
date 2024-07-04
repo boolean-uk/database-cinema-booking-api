@@ -12,8 +12,26 @@ const createReviewDb = async (movieId, customerId, content) => {
 }
 
 const getAllreviewsDb = async () => {
-	const getAllReviews = await prisma.review.findMany()
+    const getAllReviews = await prisma.review.findMany({
+        include: {
+            movie: true,
+        }
+    })
 	return getAllReviews
 }
 
-module.exports = { createReviewDb, getAllreviewsDb }
+
+const getReviewsByMovieTitleDb = async (title) => {
+    console.log(title);
+	const getReviewsForMovie = await prisma.review.findFirst({
+		where: {
+			movie: {
+				title: title,
+			},
+		},
+    })
+	return getReviewsForMovie
+}
+
+
+module.exports = { createReviewDb, getAllreviewsDb, getReviewsByMovieTitleDb }

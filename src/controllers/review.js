@@ -2,13 +2,19 @@ const { PrismaClientKnownRequestError } = require("@prisma/client")
 const {
 	createReviewDb,
 	getAllreviewsDb,
+	getReviewsByMovieTitleDb,
 } = require("../domains/review")
+const { getMovieByIdDb } = require("../domains/movie")
+const { getMovieById } = require("../controllers/movie")
 
-const { MissingFieldsError } = require("../errors/errors")
+const {
+	MissingFieldsError,
+	DataNotFoundError,
+} = require("../errors/errors")
 
 const getAllReviews = async (req, res) => {
-    const allReviews = await getAllreviewsDb()
-    res.status(200).json({reviews: allReviews})
+	const allReviews = await getAllreviewsDb()
+	res.status(200).json({ reviews: allReviews })
 }
 
 const createReview = async (req, res) => {
@@ -24,7 +30,22 @@ const createReview = async (req, res) => {
 	res.status(201).json({ review: review })
 }
 
+const getReviewsByMovieTitle = async (req, res) => {
+	const { idOrTitle } = req.params
+	const movie = await getMovieByIdDb(idOrTitle)
+
+	if (!movie) {
+		throw new DataNotFoundError(
+			"No movie with the provided title exists"
+		)
+	}
+
+	const movieReviews = await getReviewsByMovieTitleDb(idOrTitle)
+	res.status(200).json({ reviews: movieReviews })
+}
+
 module.exports = {
 	createReview,
 	getAllReviews,
+	getReviewsByMovieTitle,
 }
