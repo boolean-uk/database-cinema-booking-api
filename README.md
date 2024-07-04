@@ -39,9 +39,9 @@ The full database schema and seed file for this exercise has already been implem
 
 - Change your movie list GET route to only respond with movies that have a future screening time
 - Add the ability for customers to leave reviews on movies
-    - This will require a new entity in your diagram, schema file and seed file. Remember the `npx prisma generate`, `npx prisma migrate dev --create-only --skip-seed --name reviews` and `npx prisma migrate reset` commands from an earlier exercise!
+  - This will require a new entity in your diagram, schema file and seed file. Remember the `npx prisma generate`, `npx prisma migrate dev --create-only --skip-seed --name reviews` and `npx prisma migrate reset` commands from an earlier exercise!
 - You will need to create your own tests for these endpoints. Use the existing test provided in `test/api/extensions` as a guide.
-    - If you create the new `Review` entity, then you will also need to re-run `npm run test:migration` so that your test database runs the migration to create this table. Do this AFTER you have created the new migration file.
+  - If you create the new `Review` entity, then you will also need to re-run `npm run test:migration` so that your test database runs the migration to create this table. Do this AFTER you have created the new migration file.
 
 ## Testing your work
 
@@ -49,9 +49,10 @@ The full database schema and seed file for this exercise has already been implem
 - Next, run the command `npm run test:migration` - this will run the schema migrations against the test database. **You only need to do this the one time.**
 
 Now, whenever you want to run tests locally:  
+
 - Run the test suite with `npm test` for core requirements.
 - Run the extension test suite with `npm run test-extensions`.
-    - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide.
+  - When working on extensions, create your own tests by using the one provided in `test/api/extensions` as a guide.
 
 So far, you may have been using `curl` to manually test your API endpoints. You can continue to use this approach if you choose, or you can download a tool to make things a little easier. There are two main options:
 

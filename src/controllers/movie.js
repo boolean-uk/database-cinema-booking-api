@@ -1,12 +1,17 @@
-const all = async (req, res) => {};
-const create = async (req, res) => {};
-const get = async (req, res) => {};
-const update = async (req, res) => {};
-const remove = async (req, res) => {};
+const { all, getById, create, update, remove } = require("../domains/movie");
+
+const fetchAll = async (req, res) => {
+  const movies = await all();
+  res.status(200).json({ movies: movies });
+};
+const fetchCreate = async (req, res) => {};
+const fetchGet = async (req, res) => {};
+const fetchUpdate = async (req, res) => {};
+const fetchRemove = async (req, res) => {};
 module.exports = {
-  all,
-  create,
-  get,
-  update,
-  remove,
+  all: fetchAll,
+  create: fetchCreate,
+  get: fetchGet,
+  update: fetchUpdate,
+  remove: fetchRemove,
 };

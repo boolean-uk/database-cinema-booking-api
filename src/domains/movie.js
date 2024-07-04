@@ -27,10 +27,10 @@ const create = async (title, runtimeMins) => {
 const update = async () => {};
 const remove = async () => {};
 module.exports = {
-  all,
-  getById,
-  getByTitle,
-  create,
-  update,
-  remove,
+    all,
+    getById,
+    getByTitle,
+    create,
+    update,
+    remove
 };
