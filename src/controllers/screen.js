@@ -1,13 +1,15 @@
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library")
 const { createScreen, findScreen } = require("../domains/screen")
 
 const addScreen = async (req, res) => {
     const { number } = req.body
+    const screenFound = await findScreen(number)
     if (!number) {
         return res.status(400).json({
             error: "Number field missing from screenings"
         })
     }
-    if (findScreen(number) === true) {
+    if (screenFound) {
         return res.status(409).json({
             error: "This screen already exists please select another screen"
         })
@@ -19,10 +21,12 @@ const addScreen = async (req, res) => {
         screen: createdScreen
     })
     } catch(e) {
-        if(e.code === "P2002") {
-            return res.status(409).json({
-                error: "This screen already exists please select another screen"
-            })
+        if(e instanceof PrismaClientKnownRequestError) {
+            if(e.code === "P2002") {
+                return res.status(409).json({
+                    error: "This screen already exists please select another screen"
+                })
+            }
         }
     }
 }

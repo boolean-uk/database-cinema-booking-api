@@ -1,17 +1,26 @@
-const { getAllMovies, createMovie, updateMovie, getAllMoviesByRuntimeLt, getAllMoviesByRuntimeGt, getMovieByTitle, getMovieById } = require('../domains/movie.js')
+const { 
+    getAllMovies,
+    createMovie,
+    updateMovie,
+    getAllMoviesByRuntimeLt,
+    getAllMoviesByRuntimeGt,
+    getMovieByTitle,
+    getMovieById 
+} = require('../domains/movie.js')
+
 const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library')
 
 const getAll = async (req, res) => {
+    const { runtimeLt,runtimeGt } = req.query
     let allMovies
-    if(!req.query.runtimeGt || !req.query.runtimeLt) {
-        allMovies = (await getAllMovies()).map(m => m)
-    } 
-    if(req.query.runtimeGt) {
-        allMovies = (await getAllMoviesByRuntimeGt(req.query.runtimeGt)).map(m => m)
+
+    if(runtimeGt) {
+        allMovies = await getAllMoviesByRuntimeGt(Number(runtimeGt))
     }
-    if (req.query.runtimeLt) {
-        allMovies = (await getAllMoviesByRuntimeLt(req.query.runtimeLt)).map(m => m)
+    if (runtimeLt) {
+        allMovies = await getAllMoviesByRuntimeLt(Number(runtimeLt))
     }
+    allMovies = await getAllMovies()
     
     res.status(200).json({
         movies: allMovies
@@ -24,18 +33,20 @@ const addMovie = async (req, res) => {
         runtimeMins
     } = req.body
 
+    const titleFound = await getMovieByTitle(title)
+
     if (!title || !runtimeMins) {
         return res.status(400).json({
             error: "Movie title or runtimeMins field missing"
         })
     } 
-    if (getMovieByTitle(title) === true) {
+    if (titleFound) {
         return res.status(409).json({
-            error: "Movie already exists, please choose another to add"
+            error: "Movie with that title already exists"
         })
     } 
     try {
-        const newMovie = await createMovie(req)
+        const newMovie = await createMovie(title, runtimeMins)
         
         res.status(201).json({
             movie: newMovie
@@ -44,7 +55,7 @@ const addMovie = async (req, res) => {
         if(e instanceof PrismaClientKnownRequestError) {
             if(e.code === "P2002") {
                 return res.status(409).json({
-                    error: "Movie already exists, please choose another to add"
+                    error: "Movie with that title already exists"
                 })
             }
             res.status(500).json({
@@ -59,7 +70,7 @@ const findByID = async (req, res) => {
     const found = await getMovieById(id)
     if (!found) {
         return res.status(404).json({
-            error: "Could not find this movies, try another ID"
+            error: "Could not find movie with that ID"
         })
     } else {
         res.status(200).json({
@@ -74,23 +85,26 @@ const updateMovieByID = async (req, res) => {
         runtimeMins
     } = req.body
     const id = Number(req.params.id)
+    const foundId = await getMovieById(id)
+    const foundTitle = await getMovieByTitle(title)
     if (!title || !runtimeMins) {
         return res.status(400).json({
             error: "Movie title or runtimeMins field missing"
         })
     } 
-    if (!getMovieById(id)) {
+    if (!foundId) {
         return res.status(404).json({
-            error: "Could not find this movies, try another ID"
+            error: "Could not find movie with that ID"
         })
     } 
-    if (getMovieByTitle(title) === true) {
+    if (foundTitle) {
         return res.status(409).json({
-            error: "Movie already exists, please choose another to add"
+            error: "Movie with that title already exists"
         })
     } 
     try {
-        const updatedMovie = await updateMovie(req)
+        const updatedMovie = await updateMovie(id, title,
+            runtimeMins)
         res.status(201).json({
         movie: updatedMovie
         })
@@ -98,11 +112,11 @@ const updateMovieByID = async (req, res) => {
         if (e instanceof PrismaClientKnownRequestError) {
             if(e.code === "P2002") {
                 return res.status(409).json({
-                    error: "Movie already exists, please choose another to add"
+                    error: "Movie with that title already exists"
                 })
             } else if (e.code === "P2001") {
                 return res.status(404).json({
-                    error: "Could not find this movies, try another ID"
+                    error: "Could not find movie with that ID"
                 })
             }
         }

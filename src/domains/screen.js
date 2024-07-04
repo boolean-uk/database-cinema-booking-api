@@ -11,11 +11,18 @@ const createScreen = async (req) => await prisma.screen.create({
 
 const findScreen = async (number) => await prisma.screen.findFirst({
     where: {
-        number: Number(number)
+        number: number
+    }
+})
+
+const findScreeningById = async (screeningId) => await prisma.screen.findUnique({
+    where: {
+        id: screeningId
     }
 })
 
 module.exports = {
     createScreen,
-    findScreen
+    findScreen,
+    findScreeningById
 }

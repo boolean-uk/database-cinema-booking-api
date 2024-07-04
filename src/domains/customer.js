@@ -42,7 +42,7 @@ const updateCustomer = async (id, name, phone, email) => await prisma.customer.u
 
 const getCustomerByID = async (id) => await prisma.customer.findUnique({
   where: {
-    id: id
+    id: Number(id)
   },
   include: {
     contact: true

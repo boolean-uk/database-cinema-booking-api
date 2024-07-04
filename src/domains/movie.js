@@ -6,23 +6,25 @@ const getAllMovies = async () => await prisma.movie.findMany({
     }
 })
 
-const createMovie = async (req) => await prisma.movie.create({
+const createMovie = async (title,
+    runtimeMins) => await prisma.movie.create({
     data: {
-        title: req.body.title,
-        runtimeMins: req.body.runtimeMins
+        title: title,
+        runtimeMins: runtimeMins
     },
     include: {
         screenings: true
     }
 })
 
-const updateMovie = async (req) => await prisma.movie.update({
+const updateMovie = async (id, title,
+    runtimeMins) => await prisma.movie.update({
     where: {
-        id: Number(req.params.id)
+        id: id
     },
     data: {
-        title: req.body.title,
-        runtimeMins: req.body.runtimeMins
+        title: title,
+        runtimeMins: runtimeMins
     },
     include: {
         screenings: true
@@ -32,7 +34,7 @@ const updateMovie = async (req) => await prisma.movie.update({
 const getAllMoviesByRuntimeGt = async (query) => await prisma.movie.findMany({
     where: {
         runtimeMins: {
-            gt: Number(query)
+            gt: query
         }
     },
     include: {
@@ -43,7 +45,7 @@ const getAllMoviesByRuntimeGt = async (query) => await prisma.movie.findMany({
 const getAllMoviesByRuntimeLt = async (query) => await prisma.movie.findMany({
     where: {
         runtimeMins: {
-            lt: Number(query)
+            lt: query
         }
     },
     include: {
