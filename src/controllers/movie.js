@@ -29,7 +29,7 @@ const fetchUpdate = async (req, res) => {
   if (!found) return res.status(404).json(`No movie found with id: ${id}`);
 
   const updated = await update(id, { title, runtimeMins });
-  res.status(201).json({ movie: found });
+  res.status(201).json({ movie: updated });
 };
 
 const fetchRemove = async (req, res) => {};
