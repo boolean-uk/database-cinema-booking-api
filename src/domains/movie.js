@@ -18,7 +18,7 @@ const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
 				? filterRuntimes
 				: undefined,
 				screenings: {
-				some: {
+				every: {
 						startsAt: { gt: now },
 					},
 				},
@@ -77,7 +77,6 @@ const getMovieByTitleDb = async (title) => {
 
 const getMovieByIdDb = async (reqId) => {
 	const reqType = Number(reqId)
-	console.log(reqType);
 
 	if (isNaN(reqType)) {
 		return await getMovieByTitleDb(reqId)

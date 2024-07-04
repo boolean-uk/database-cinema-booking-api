@@ -14,6 +14,7 @@ describe("Movies endpoin", () => {
 				"/movies?runtimeLt=300"
 			)
 
+			console.log(response.body)
 			expect(response.status).toEqual(200)
 			expect(response.body.movies).not.toEqual(undefined)
 			expect(response.body.movies.length).toEqual(2)
@@ -57,7 +58,7 @@ describe("Movies endpoin", () => {
 			const response = await supertest(app).get(
 				"/movies?runtimeLt=300&runtimeGt=200"
 			)
-
+			
 			expect(response.status).toEqual(200)
 			expect(response.body.movies).not.toEqual(undefined)
 			expect(response.body.movies.length).toEqual(1)
@@ -85,7 +86,7 @@ describe("Movies endpoin", () => {
 					{
 						movieId: 1,
 						screenId: scr2.id,
-						startsAt:  Date.now() //"2023-06-11T18:30:00.000Z",
+						startsAt: Date.now(), //"2023-06-11T18:30:00.000Z",
 					},
 				],
 			}
