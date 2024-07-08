@@ -1,28 +1,18 @@
-const prisma = require("../src/utils/prisma")
+const { PrismaClient } = require('@prisma/client');
 
-const deleteTables = () => {
-  const deleteTables = [
-    prisma.ticket.deleteMany(),
-    prisma.screening.deleteMany(),
-    prisma.movie.deleteMany(),
-    prisma.screen.deleteMany(),
-    prisma.contact.deleteMany(),
-    prisma.customer.deleteMany(),
-  ];
+const prisma = new PrismaClient();
 
-  // Conditionally delete this table as this will only exist if "Extensions to the Extensions" bullet 2 is implemented
-  prisma.reviews && deleteTables.push(prisma.reviews.deleteMany())
-  return prisma.$transaction(deleteTables)
-}
+// Setup function before tests
+beforeAll(async () => {
+  await prisma.$connect();
+  // Additional setup (e.g., seed test data)
+});
 
-global.beforeAll(() => {
-  return deleteTables()
-})
+// Teardown function after tests
+afterAll(async () => {
+  await prisma.$disconnect();
+});
 
-global.afterEach(() => {
-  return deleteTables()
-})
-
-global.afterAll(() => {
-  return prisma.$disconnect()
-})
+module.exports = {
+  prisma,
+};

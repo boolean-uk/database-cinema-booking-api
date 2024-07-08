@@ -1,21 +1,24 @@
+// src/server.js
+
 const express = require('express');
+const movieRouter = require('./routers/movies'); // Assuming this file exists and handles movie routes
+const customerRouter = require('./routers/customer'); // Assuming this file exists and handles customer routes
+const screenRouter = require('./routers/screens'); // Assuming this file exists and handles screen routes
+
 const app = express();
 
-const cors = require('cors');
-const morgan = require('morgan');
+// Middleware
+app.use(express.json()); // Middleware to parse JSON request bodies
 
-app.disable('x-powered-by');
+// Routes
+app.use('/movies', movieRouter); // Mounting movieRouter to handle routes starting with '/movies'
+app.use('/customer', customerRouter); // Mounting customerRouter to handle routes starting with '/customers'
+app.use('/screens', screenRouter); // Mounting screenRouter to handle routes starting with '/screens'
 
-// Add middleware
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
-
-// Tell express to use your routers here
-const customerRouter = require('./routers/customer');
-app.use('/customers', customerRouter);
-
-
-module.exports = app
+module.exports = app; // Exporting the express app instance for testing purposes
