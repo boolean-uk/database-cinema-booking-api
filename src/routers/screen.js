@@ -1,20 +1,9 @@
-/*
+// src/routers/screen.js
+const express = require('express');
+const { createScreen } = require('../controllers/screen');
 
-const express = require ("express");
-const {
-    getScreen,
-    createScreen,
-    getScreenById,
-    updateScreenById
-} = require("./controllers/screen")
+const router = express.Router();
 
-const router = express.Router()
+router.post('/', createScreen);
 
-router.get("/", getScreen);
-router.post("/", createScreen);
-router.get("/:id", getScreenById);
-router.put("/:id", updateScreenById)
-
-module.exports = router
-
-*/
+module.exports = router;
