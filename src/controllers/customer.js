@@ -40,7 +40,7 @@ const updateCustomer = async (req, res) => {
   try {
     const updatedCustomer = await updateCustomerDb(id, name, contact);
 
-    res.status(200).json({ customer: updatedCustomer });
+    res.status(201).json({ customer: updatedCustomer });
   } catch (error) {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: error.message });

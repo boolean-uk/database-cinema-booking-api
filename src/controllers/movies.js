@@ -54,7 +54,7 @@ const {
         return res.status(400).json({ error: 'Missing fields in request body' });
       }
       const updatedMovie = await updateMovieByIdDb(Number(id), title, runtimeMins);
-      res.status(200).json({ movie: updatedMovie });
+      res.status(201).json({ movie: updatedMovie });
     } catch (error) {
       if (error.code === 'P2015') {
         res.status(404).json({ error: 'Movie not found' });

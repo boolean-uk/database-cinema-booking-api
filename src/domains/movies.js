@@ -37,32 +37,13 @@ const createMovieDb = async (title, runtimeMins, screenings) => {
  * @param {number} [runtimeGt] - Minimum runtime filter (optional).
  * @returns {Promise<object[]>} Array of movies that match the runtime filters.
  */
-const getAllMoviesDb = async (runtimeLt, runtimeGt) => {
-    const where = {
-        screenings: {
-            some: {
-                startsAt: { gt: new Date().toISOString() },
-            },
-        },
-    };
+const getAllMoviesDb = async () => {
 
-    if (runtimeLt !== undefined) {
-        where.runtimeMins = { lt: runtimeLt };
-    }
-    if (runtimeGt !== undefined) {
-        where.runtimeMins = { ...where.runtimeMins, gt: runtimeGt };
-    }
 
     const movies = await prisma.movie.findMany({
         include: {
-            screenings: {
-                where: {
-                    startsAt: { gt: new Date().toISOString() },
-                },
-            },
-            reviews: true,
+            screenings: {}
         },
-        where,
     });
 
     return movies;

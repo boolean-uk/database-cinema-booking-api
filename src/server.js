@@ -1,18 +1,26 @@
 // src/server.js
 
 const express = require('express');
-const movieRouter = require('./routers/movies'); // Assuming this file exists and handles movie routes
-const customerRouter = require('./routers/customer'); // Assuming this file exists and handles customer routes
-const screenRouter = require('./routers/screens'); // Assuming this file exists and handles screen routes
-
 const app = express();
 
-// Middleware
-app.use(express.json()); // Middleware to parse JSON request bodies
+const cors = require('cors');
+const morgan = require('morgan');
+
+app.disable('x-powered-by');
+
+// Add middleware
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const movieRouter = require('./routers/movies'); 
+const customerRouter = require('./routers/customer'); 
+const screenRouter = require('./routers/screens');
 
 // Routes
 app.use('/movies', movieRouter); // Mounting movieRouter to handle routes starting with '/movies'
-app.use('/customer', customerRouter); // Mounting customerRouter to handle routes starting with '/customers'
+app.use('/customers', customerRouter); // Mounting customerRouter to handle routes starting with '/customers'
 app.use('/screens', screenRouter); // Mounting screenRouter to handle routes starting with '/screens'
 
 // Error handling middleware
