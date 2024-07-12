@@ -63,32 +63,21 @@ const fetchMovieByID = async (req, res) => {
 }
 
 const updateMovie = async (req, res) => {
-
-    const movieId = req.params.id
-    const movie = await updateMovieById(parseInt(movieId))
-    
-    const {
-        title,
-        runtimeMins
-    } = req.body
-
-    if (!movie) {
-        return res.status(404).json({
-          error: "movie not found"
-        })
-    }
-
+    const { id } = req.params
+    const { title, runtimeMins, screenings } = req.body
+  
     try {
-        const updatedMovie = await updateMovieById(movie, title, runtimeMins)
-        
-        res.status(201).json({
-            movie: updatedMovie
-        })
+
+      const updatedMovie = await updateMovieById(id, title, runtimeMins, screenings)
+      res.status(201).json({ movie: updatedMovie })
+
     } catch (error) {
-        console.error('Error fetching movie:', error)
-        res.status(500).json({ error: 'Internal server error' })
+
+      console.error('Error updating movie and screenings:', error)
+      res.status(500).json({ error: 'Internal server error' })
+      
     }
-}
+  }
 
 
 module.exports = { getMovies, createMovie, fetchMovieByID, updateMovie }

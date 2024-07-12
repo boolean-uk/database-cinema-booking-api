@@ -36,20 +36,29 @@ const getMovieById = async (id) => {
     return movie
 }
 
-const updateMovieById = async (id, title, runtimeMins) => {
-    const movie = await prisma.movie.update({
-        where: {
-            id: id
-        },
+const updateMovieById = async (movieId, title, runtimeMins, screenings) => {
+    
+    const updateData = await prisma.movie.update({
+        where: { id: parseInt(movieId) },
         data: {
-            title: title,
-            runtimeMins: runtimeMins
+            title,
+            runtimeMins,
+            screenings: {
+              update: screenings? screenings.map(screening => ({
+                where: { id: screening.id },
+                data: {
+                  startsAt: screening.startsAt,
+                  screenId: screening.screenId
+                }
+              })) : []
+            }
         },
+
         include: {
             screenings: true
         }
     })
-    return movie
+    return updateData
 }
 
 module.exports = { getListMovies, postMovie, getMovieById, updateMovieById }
