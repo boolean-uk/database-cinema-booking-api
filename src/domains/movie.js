@@ -24,5 +24,32 @@ const postMovie = async (title, runtimeMins) => {
     return movie
 }
 
+const getMovieById = async (id) => {
+    const movie = await prisma.movie.findUnique({
+        where: {
+            id: parseInt(id)
+        },
+        include: {
+            screenings: true
+        }
+    })
+    return movie
+}
 
-module.exports = { getListMovies, postMovie }
+const updateMovieById = async (id, title, runtimeMins) => {
+    const movie = await prisma.movie.update({
+        where: {
+            id: id
+        },
+        data: {
+            title: title,
+            runtimeMins: runtimeMins
+        },
+        include: {
+            screenings: true
+        }
+    })
+    return movie
+}
+
+module.exports = { getListMovies, postMovie, getMovieById, updateMovieById }
