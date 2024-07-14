@@ -1,5 +1,5 @@
 const { PrismaClientKnownRequestError } = require("@prisma/client")
-const { createCustomerDb } = require('../domains/customer.js')
+const { createCustomerDb, updateCustomerById } = require('../domains/customer.js')
 
 const createCustomer = async (req, res) => {
   const {
@@ -43,6 +43,28 @@ const createCustomer = async (req, res) => {
   }
 }
 
+const updateCustomer = async (req, res) => {
+
+  const { id } = req.params
+  const { name } = req.body
+
+  if (!name) {
+    return res.status(400).json({ error: 'Invalid data format' });
+  }
+
+  try {
+
+    const updateCustomerDetails = await updateCustomerById (id, name)
+    res.status(201).json({customer: updateCustomerDetails })
+
+  } catch (error) {
+
+    console.error('Error updating customer:', error)
+    res.status(500).json({ error: 'Internal server error' })
+
+  }
+}
+
 module.exports = {
-  createCustomer
+  createCustomer, updateCustomer
 }
