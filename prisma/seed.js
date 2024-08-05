@@ -2,16 +2,19 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function seed() {
-  await createCustomer();
+  const customers = await createCustomer();
   const movies = await createMovies();
   const screens = await createScreens();
   await createScreenings(screens, movies);
+  await createReviews(customers, movies)
 
   process.exit(0);
 }
 
 async function createCustomer() {
-  const customer = await prisma.customer.create({
+  const customers = [];
+
+  const customer1 = await prisma.customer.create({
     data: {
       name: 'Alice',
       contact: {
@@ -26,9 +29,33 @@ async function createCustomer() {
     }
   });
 
-  console.log('Customer created', customer);
+  const customer2 = await prisma.customer.create({
+    data: {
+      name: 'John',
+      contact: {
+        create: {
+          email: 'john@boolean.co.uk',
+          phone: '1233687890'
+        }
+      }
+    },
+    include: {
+      contact: true
+    }
+  });
 
-  return customer;
+  const rawCustomers = [
+    customer1,
+    customer2
+  ]
+
+  for (const rawCustomer of rawCustomers) {
+    customers.push(rawCustomer);
+  }
+
+  console.log('Customer created', customers);
+
+  return customers;
 }
 
 async function createMovies() {
@@ -93,6 +120,31 @@ async function createScreenings(screens, movies) {
       });
 
       console.log('Screening created', screening);
+    }
+  }
+}
+
+async function createReviews(customers, movies) {
+  for (const customer of customers) {
+    for (let i = 0; i < movies.length; i++) {
+
+      const review = await prisma.review.create({
+        data: {
+          content: "best movie ever",
+          movie: {
+            connect: {
+              id: movies[i].id
+            }
+          },
+          customer: {
+            connect: {
+              id: customer.id
+            }
+          }
+        }
+      });
+
+      console.log('Review created', review);
     }
   }
 }
