@@ -34,7 +34,6 @@ model Movie {
   screenings  Screening[]
   title       String      @unique
   runtimeMins Int
-  reviews     Review[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
